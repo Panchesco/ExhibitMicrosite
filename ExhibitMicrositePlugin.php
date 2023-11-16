@@ -28,14 +28,14 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   {
     include "config_form.php";
   }
-  
+
   public function hookPublicHead()
     {
       //;
     }
-    
-    
-    
+
+
+
     /**
     * Display the CSS style and javascript for the exhibit in the admin head
     */
@@ -72,7 +72,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
     $water["flex-text"] = [
       "name" => "Bootstrap Flex Text Block",
-      "description" => "A text block for display in a Bootstrap 5 Flex grid..",
+      "description" => "A text block for display in a Bootstrap 5 Flex grid.",
     ];
 
     $water["flex-file-text"] = [
@@ -91,23 +91,30 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       return;
     }
 
-    require_once "routes.php";
 
-    foreach ($routes_data as $key => $data) {
-      $router = $args["router"];
-      $router->addRoute(
-        $data["route"],
-        new Zend_Controller_Router_Route($data["route"], [
-          "module" => "ExhibitMicrosite",
-          "controller" => $data["controller"],
-          "action" => $data["action"],
-        ])
-      );
-    }
+
+    $router = $args['router'];
+    $router->addConfig(new Zend_Config_Ini(__DIR__ .
+        DIRECTORY_SEPARATOR . 'routes.ini', 'routes'));
+
+
+
+    // require_once "routes.php";
+    // foreach ($routes_data as $key => $data) {
+    //   $router = $args["router"];
+    //   $router->addRoute(
+    //     $data["route"],
+    //     new Zend_Controller_Router_Route($data["route"], [
+    //       "module" => $data['module'],
+    //       "controller" => $data["controller"],
+    //       "action" => $data["action"],
+    //     ])
+    //   );
+    // }
   }
-  
-  
-  
+
+
+
   public function filterThemeOptions($options, $args)
   {
       $request = Zend_Controller_Front::getInstance()->getRequest();
@@ -123,7 +130,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       // }
       return [];//$themeOptions;
   }
-  
+
   /**
    * Filter for changing the public theme between exhibits.
    *
@@ -133,13 +140,13 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   function filterPublicThemeName($themeName)
   {
     static $exhibitTheme;
-  
+
     if ($exhibitTheme) {
       return $exhibitTheme;
     }
-  
+
     $request = Zend_Controller_Front::getInstance()->getRequest();
-        
+
     if ($request && $request->getModuleName() == "ExhibitMicrosite") {
       $slug = $request->getParam("exhibit_slug");
       $exhibit = get_db()
@@ -152,14 +159,14 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         return $exhibitTheme;
       }
     }
-  
+
     // Short-circuit any future calls to the hook if we didn't change the theme
     $exhibitTheme = $themeName;
     return $exhibitTheme;
   }
-  
-  
-  
+
+
+
   /**
    * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
    *
@@ -167,7 +174,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    * @param string $args Unused here
    */
   function microsite_theme_options($themeOptions, $args)
-  { 
+  {
      $request = Zend_Controller_Front::getInstance()->getRequest();
     try {
       $exhibit = get_record("Exhibit",["public"=>1,"slug" => $request->getParam("exhibit_slug")]);
@@ -183,10 +190,10 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     return $themeOptions;
   }
 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
 } // End ExhbitMicrosite Class
