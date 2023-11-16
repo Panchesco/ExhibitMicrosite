@@ -1,0 +1,8 @@
+/**
+ * Prevents waterworks blocks from displaying unless the active theme is Water.
+ * ../javascripts/app.js checks for active theme and makes the blocks visible
+ * if Water is the active theme.
+ */
+[id^="water-"] {
+  display: none;
+}
