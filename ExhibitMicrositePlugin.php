@@ -4,12 +4,18 @@
  * @category plugin
  */
 
-include_once "functions.php";
+require_once "functions.php";
 
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
-  protected $_hooks = ["install", "uninstall","admin_head","public_head", "define_routes"];
-  protected $_filters = ["exhibit_layouts","public_theme_name"];
+  protected $_hooks = [
+    "install",
+    "uninstall",
+    "admin_head",
+    "public_head",
+    "define_routes",
+  ];
+  protected $_filters = ["exhibit_layouts", "public_theme_name"];
 
   protected function hookInstall()
   {
@@ -30,31 +36,30 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   }
 
   public function hookPublicHead()
-    {
-      //;
+  {
+    //;
+  }
+
+  /**
+   * Display the CSS style and javascript for the exhibit in the admin head
+   */
+  public function hookAdminHead()
+  {
+    $request = Zend_Controller_Front::getInstance()->getRequest();
+    $module = $request->getModuleName();
+    $controller = $request->getControllerName();
+    // Check if using Exhibits controller, and add the stylesheet for general display of exhibits
+    if ($module == "exhibit-builder" && $controller == "exhibits") {
+
+      queue_css_file(["styles", "palettes"], "screen");
+      queue_js_file(["app", "blocks", "palettes"]);
+      $options["api"] = get_option("api_enable");
+      $options["palette"] = [];
+      $options["collection_ids"] = [];
+      $json = json_encode($options, JSON_PRETTY_PRINT);
+      ?><script>const microsite = <?php echo $json; ?></script><?php
     }
-
-
-
-    /**
-    * Display the CSS style and javascript for the exhibit in the admin head
-    */
-     public function hookAdminHead()
-      {
-        $request = Zend_Controller_Front::getInstance()->getRequest();
-        $module = $request->getModuleName();
-        $controller = $request->getControllerName();
-        // Check if using Exhibits controller, and add the stylesheet for general display of exhibits
-        if ($module == "exhibit-builder" && $controller == "exhibits") {
-          queue_css_file(["styles", "palettes"], "screen");
-          queue_js_file(["app", "blocks", "palettes"]);
-          $options["api"] = get_option("api_enable");
-          $options["palette"] = [];
-          $options["collection_ids"] = [];
-          $json = json_encode($options, JSON_PRETTY_PRINT);
-          ?><script>const microsite = <?php echo $json; ?></script><?php
-        }
-      }
+  }
 
   /**
    * Adds Bootstrap 5 Flex friendly Exhibit Blocks.
@@ -90,45 +95,29 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     if (is_admin_theme()) {
       return;
     }
-
-
-
-    $router = $args['router'];
-    $router->addConfig(new Zend_Config_Ini(__DIR__ .
-        DIRECTORY_SEPARATOR . 'routes.ini', 'routes'));
-
-
-
-    // require_once "routes.php";
-    // foreach ($routes_data as $key => $data) {
-    //   $router = $args["router"];
-    //   $router->addRoute(
-    //     $data["route"],
-    //     new Zend_Controller_Router_Route($data["route"], [
-    //       "module" => $data['module'],
-    //       "controller" => $data["controller"],
-    //       "action" => $data["action"],
-    //     ])
-    //   );
-    // }
+    $router = $args["router"];
+    $router->addConfig(
+      new Zend_Config_Ini(
+        __DIR__ . DIRECTORY_SEPARATOR . "routes.ini",
+        "routes"
+      )
+    );
   }
-
-
 
   public function filterThemeOptions($options, $args)
   {
-      $request = Zend_Controller_Front::getInstance()->getRequest();
-      $module = $request->getModuleName();
+    $request = Zend_Controller_Front::getInstance()->getRequest();
+    $module = $request->getModuleName();
 
-      // if (Omeka_Context::getInstance()->getRequest()->getModuleName() == 'exhibit-builder' && function_exists('__v')) {
-      //     if ($exhibit = exhibit_builder_get_current_exhibit()) {
-      //         $exhibitThemeOptions = $exhibit->getThemeOptions();
-      //     }
-      // }
-      // if (!empty($exhibitThemeOptions)) {
-      //     return serialize($exhibitThemeOptions);
-      // }
-      return [];//$themeOptions;
+    // if (Omeka_Context::getInstance()->getRequest()->getModuleName() == 'exhibit-builder' && function_exists('__v')) {
+    //     if ($exhibit = exhibit_builder_get_current_exhibit()) {
+    //         $exhibitThemeOptions = $exhibit->getThemeOptions();
+    //     }
+    // }
+    // if (!empty($exhibitThemeOptions)) {
+    //     return serialize($exhibitThemeOptions);
+    // }
+    return []; //$themeOptions;
   }
 
   /**
@@ -155,17 +144,16 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       if ($exhibit && $exhibit->theme) {
         // Save result in static for future calls
         $exhibitTheme = $exhibit->theme;
-        add_filter("theme_options", [$this,"microsite_theme_options"]);
+        add_filter("theme_options", [$this, "microsite_theme_options"]);
         return $exhibitTheme;
       }
     }
 
+    echo $exhibitTheme;
     // Short-circuit any future calls to the hook if we didn't change the theme
     $exhibitTheme = $themeName;
     return $exhibitTheme;
   }
-
-
 
   /**
    * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
@@ -175,9 +163,12 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    */
   function microsite_theme_options($themeOptions, $args)
   {
-     $request = Zend_Controller_Front::getInstance()->getRequest();
+    $request = Zend_Controller_Front::getInstance()->getRequest();
     try {
-      $exhibit = get_record("Exhibit",["public"=>1,"slug" => $request->getParam("exhibit_slug")]);
+      $exhibit = get_record("Exhibit", [
+        "public" => 1,
+        "slug" => $request->getParam("exhibit_slug"),
+      ]);
       if ($exhibit) {
         $exhibitThemeOptions = $exhibit->getThemeOptions();
         if (!empty($exhibitThemeOptions)) {
@@ -189,11 +180,4 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     }
     return $themeOptions;
   }
-
-
-
-
-
-
-
 } // End ExhbitMicrosite Class
