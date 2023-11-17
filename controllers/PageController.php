@@ -29,7 +29,7 @@ class ExhibitMicrosite_PageController extends
         ->findBySlug($this->_slug);
     }
 
-    $this->theme_options = $this->_exhibit->getThemeOptions();
+    $this->_theme_options = $this->_exhibit->getThemeOptions();
   }
 
   public function showAction()
@@ -62,33 +62,28 @@ class ExhibitMicrosite_PageController extends
       $this->_depth++;
     }
 
-    $exhibitPage = $this->_helper->db
-      ->getTable("ExhibitPage")
-      ->findBySlug("home");
-
-    print_r("<pre>");
-    print_r($exhibitPage);
-    print_r("</pre>");
-
-    die();
+    $exhibitPage = get_record("ExhibitPage", ["slug" => $slug]);
 
     $this->view->assign(["exhibitPage" => $exhibitPage]);
 
     $this->view->addScriptPath(
-      THEME_DIR . "/exhibit-microsite/views/exhibit-microsite/exhibit-page"
-    );
-    $this->view->addScriptPath(
-      PLUGIN_THEME_DIR .
+      PUBLIC_THEME_DIR .
         "/" .
-        $this->theme_options["theme"] .
+        $this->_theme_options["theme_name"] .
         "/views/exhibit-microsite/exhibit-page"
     );
 
-    // echo $this->view->partial("show.php", [
-    //   "exhibitPage" => $exhibitPage,
-    //   "theme_options" => $this->theme_options,
-    // ]);
+    $this->view->addScriptPath(
+      PLUGIN_DIR .
+        "/exhibit-microsite" .
+        "/views/exhibit-microsite/exhibit-page"
+    );
 
+    print_r("<pre>");
+    print_r(get_object_vars($this->view));
+    print_r("</pre>");
+
+    die();
     exit();
   }
 }
