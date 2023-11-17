@@ -11,6 +11,7 @@ class ExhibitMicrosite_PageController extends
   protected $_page;
   protected $_depth;
   protected $_theme_options;
+  protected $_page_slugs = [];
 
   protected function _init()
   {
@@ -49,16 +50,19 @@ class ExhibitMicrosite_PageController extends
 
     if ($this->_page_slug_1) {
       $slug = $this->_page_slug_1;
+      $this->_page_slugs[] = $slug;
       $this->_depth++;
     }
 
     if ($this->_page_slug_2) {
       $slug = $this->_page_slug_2;
+      $this->_page_slugs[] = $slug;
       $this->_depth++;
     }
 
     if ($this->_page_slug_3) {
       $slug = $this->_page_slug_3;
+      $this->_page_slugs[] = $slug;
       $this->_depth++;
     }
 
@@ -67,17 +71,23 @@ class ExhibitMicrosite_PageController extends
     $this->view->assign(["exhibitPage" => $exhibitPage]);
 
     $this->view->addScriptPath(
-      PUBLIC_THEME_DIR .
-        "/" .
-        $this->_theme_options["theme_name"] .
-        "/views/exhibit-microsite/exhibit-page"
+      PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
     );
 
     $this->view->addScriptPath(
-      PLUGIN_DIR . "/ExhibitMicrosite" . "/views/exhibit-microsite/exhibit-page"
+      PUBLIC_THEME_DIR .
+        "/" .
+        $this->_theme_options["theme_name"] .
+        "/exhibit-microsite/views"
     );
 
-    echo $this->view->partial("show.php", []);
+    echo $this->view->partial("exhibit-pages/show.php", [
+      "exhibit" => $this->_exhibit,
+      "exhibitPage" => $exhibitPage,
+      "page_slugs" => $this->_page_slugs,
+      "theme_options" => $this->_theme_options,
+      "view" => $this->view,
+    ]);
 
     exit();
   }

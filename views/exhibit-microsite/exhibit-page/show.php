@@ -1,1 +1,0 @@
-<?php echo __FILE__; ?>Happy day

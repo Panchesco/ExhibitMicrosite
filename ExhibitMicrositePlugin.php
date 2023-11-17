@@ -136,8 +136,8 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
     $request = Zend_Controller_Front::getInstance()->getRequest();
 
-    if ($request && $request->getModuleName() == "ExhibitMicrosite") {
-      $slug = $request->getParam("exhibit_slug");
+    if ($request && $request->getModuleName() == "exhibit-microsite") {
+      $slug = $request->getParam("slug");
       $exhibit = get_db()
         ->getTable("Exhibit")
         ->findBySlug($slug);
@@ -149,9 +149,9 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       }
     }
 
-    echo $exhibitTheme;
     // Short-circuit any future calls to the hook if we didn't change the theme
     $exhibitTheme = $themeName;
+
     return $exhibitTheme;
   }
 
