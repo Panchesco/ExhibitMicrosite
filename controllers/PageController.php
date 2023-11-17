@@ -74,16 +74,11 @@ class ExhibitMicrosite_PageController extends
     );
 
     $this->view->addScriptPath(
-      PLUGIN_DIR .
-        "/exhibit-microsite" .
-        "/views/exhibit-microsite/exhibit-page"
+      PLUGIN_DIR . "/ExhibitMicrosite" . "/views/exhibit-microsite/exhibit-page"
     );
 
-    print_r("<pre>");
-    print_r(get_object_vars($this->view));
-    print_r("</pre>");
+    echo $this->view->partial("show.php", []);
 
-    die();
     exit();
   }
 }
