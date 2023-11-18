@@ -4,18 +4,23 @@
  * @category plugin
  */
 
-require_once "functions.php";
-
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
   protected $_hooks = [
     "install",
+    "config",
+    "config_form",
+    "define_acl",
     "uninstall",
     "admin_head",
     "public_head",
     "define_routes",
   ];
-  protected $_filters = ["exhibit_layouts", "public_theme_name"];
+  protected $_filters = [
+    "exhibit_layouts",
+    "public_theme_name",
+    "admin_navigation_main",
+  ];
 
   protected function hookInstall()
   {
@@ -28,11 +33,15 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
   public function hookConfig($args)
   {
+    set_option(
+      "microsite_exhibit_exhibits",
+      $_POST["microsite_exhibit_exhibits"]
+    );
   }
 
   public function hookConfigForm()
   {
-    include "config_form.php";
+    include __DIR__ . "/config_form.php";
   }
 
   public function hookPublicHead()
@@ -52,12 +61,18 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     if ($module == "exhibit-builder" && $controller == "exhibits") {
 
       queue_css_file(["styles", "palettes"], "screen");
-      queue_js_file(["app", "blocks", "palettes"]);
+      queue_js_file(["app", "palettes"]);
+
+      $view = get_view();
+      $view->addScriptPath(
+        PLUGIN_DIR . "/ExhibitMicrosite/views/shared/exhibit_layouts"
+      );
+
       $options["api"] = get_option("api_enable");
       $options["palette"] = [];
       $options["collection_ids"] = [];
       $json = json_encode($options, JSON_PRETTY_PRINT);
-      ?><script>const microsite = <?php echo $json; ?></script><?php
+      ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
     }
   }
 
@@ -95,6 +110,12 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     if (is_admin_theme()) {
       return;
     }
+
+    // Don't add these route if this isn't a microsite.
+    if ($this->_is_microsite() === false) {
+      return;
+    }
+
     $router = $args["router"];
     $router->addConfig(
       new Zend_Config_Ini(
@@ -118,6 +139,39 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     //     return serialize($exhibitThemeOptions);
     // }
     return []; //$themeOptions;
+  }
+
+  /**
+   * Define the ACL.
+   *
+   * @param Omeka_Acl
+   */
+  public function hookDefineAcl($args)
+  {
+    $acl = $args["acl"];
+
+    $indexResource = new Zend_Acl_Resource("ExhibitMicrosite_Index");
+
+    $acl->add($indexResource);
+
+    $acl->allow(["super", "admin"], ["ExhibitMicrosite_Index"]);
+  }
+
+  /**
+   * Add the Exhibit Microsites link to the admin main navigation.
+   *
+   * @param array Navigation array.
+   * @return array Filtered navigation array.
+   */
+  public function filterAdminNavigationMain($nav)
+  {
+    $nav[] = [
+      "label" => __("Exhibit Microsites"),
+      "uri" => url("exhibit-microsite"),
+      "resource" => "ExhibitMicrosite_Index",
+      "privilege" => "browse",
+    ];
+    return $nav;
   }
 
   /**
@@ -156,6 +210,23 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   }
 
   /**
+   * Confirms the current URI is that of a microsite.
+   * @return boolean.
+   */
+  protected function _is_microsite()
+  {
+    // We need to confirm the current request is a microsite before adding the routes.
+    $microsites = @unserialize(get_option("exhibit_microsite_exhibits"));
+    $uri = htmlentities($_SERVER["REQUEST_URI"]);
+    foreach ($microsites as $slug => $exhibit_id) {
+      if (strpos($uri, $slug, 0) !== false) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
    *
    * @param string $themeOptions Serialized array of theme options
@@ -167,7 +238,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     try {
       $exhibit = get_record("Exhibit", [
         "public" => 1,
-        "slug" => $request->getParam("exhibit_slug"),
+        "slug" => $request->getParam("slug"),
       ]);
       if ($exhibit) {
         $exhibitThemeOptions = $exhibit->getThemeOptions();

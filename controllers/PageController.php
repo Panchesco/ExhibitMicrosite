@@ -12,22 +12,47 @@ class ExhibitMicrosite_PageController extends
   protected $_depth;
   protected $_theme_options;
   protected $_page_slugs = [];
+  protected $_route;
 
   protected function _init()
   {
     // Set the current exhibit;
-    $request = Zend_Controller_Front::getInstance()->getRequest();
-    $this->_slug = $request->getParam("slug");
-    $this->_page_slug_1 = $request->getParam("page_slug_1");
-    $this->_page_slug_2 = $request->getParam("page_slug_2");
-    $this->_page_slug_3 = $request->getParam("page_slug_3");
-    $this->_page_number = $request->getParam("page_number");
-    $this->_depth = 0;
+    $this->_request = Zend_Controller_Front::getInstance()->getRequest();
+    $this->_route = $this->getFrontController()
+      ->getRouter()
+      ->getCurrentRouteName();
+
+    $this->_slug = $this->_request->getParam("slug");
 
     if (!$this->_exhibit) {
       $this->_exhibit = $this->_helper->db
         ->getTable("Exhibit")
         ->findBySlug($this->_slug);
+    }
+
+    // Set $this->_slug to current ExhibitPage slug.
+    $this->_page_slug_1 = $this->_request->getParam("page_slug_1");
+    $this->_page_slug_2 = $this->_request->getParam("page_slug_2");
+    $this->_page_slug_3 = $this->_request->getParam("page_slug_3");
+    $this->_page_number = $this->_request->getParam("page_number");
+    $this->_depth = 0;
+
+    if ($this->_page_slug_1) {
+      $this->_slug = $this->_page_slug_1;
+      $this->_page_slugs[] = $this->_slug;
+      $this->_depth++;
+    }
+
+    if ($this->_page_slug_2) {
+      $this->_slug = $this->_page_slug_2;
+      $this->_page_slugs[] = $this->_slug;
+      $this->_depth++;
+    }
+
+    if ($this->_page_slug_3) {
+      $this->_slug = $this->_page_slug_3;
+      $this->_page_slugs[] = $this->_slug;
+      $this->_depth++;
     }
 
     $this->_theme_options = $this->_exhibit->getThemeOptions();
@@ -37,41 +62,12 @@ class ExhibitMicrosite_PageController extends
   {
     $this->_init();
 
-    $route = $this->getFrontController()
-      ->getRouter()
-      ->getCurrentRouteName();
+    $this->_exhibitPage = get_record("ExhibitPage", ["slug" => $this->_slug]);
 
-    $request = Zend_Controller_Front::getInstance()->getRequest();
-
-    $route = $this->getFrontController()
-      ->getRouter()
-      ->getCurrentRouteName();
-    $request = Zend_Controller_Front::getInstance()->getRequest();
-
-    if ($this->_page_slug_1) {
-      $slug = $this->_page_slug_1;
-      $this->_page_slugs[] = $slug;
-      $this->_depth++;
-    }
-
-    if ($this->_page_slug_2) {
-      $slug = $this->_page_slug_2;
-      $this->_page_slugs[] = $slug;
-      $this->_depth++;
-    }
-
-    if ($this->_page_slug_3) {
-      $slug = $this->_page_slug_3;
-      $this->_page_slugs[] = $slug;
-      $this->_depth++;
-    }
-
-    $exhibitPage = get_record("ExhibitPage", ["slug" => $slug]);
-
-    $this->view->assign(["exhibitPage" => $exhibitPage]);
+    $this->view->assign(["exhibitPage" => $this->_exhibitPage]);
 
     $this->view->addScriptPath(
-      PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
+      PLUGIN_DIR . "/exhibit-microsite/views/exhibit-pages"
     );
 
     $this->view->addScriptPath(
@@ -83,7 +79,7 @@ class ExhibitMicrosite_PageController extends
 
     echo $this->view->partial("exhibit-pages/show.php", [
       "exhibit" => $this->_exhibit,
-      "exhibitPage" => $exhibitPage,
+      "exhibitPage" => $this->_exhibitPage,
       "page_slugs" => $this->_page_slugs,
       "theme_options" => $this->_theme_options,
       "view" => $this->view,
