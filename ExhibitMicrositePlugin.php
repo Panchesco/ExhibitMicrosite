@@ -4,6 +4,14 @@
  * @category plugin
  */
 
+if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
+  define("EXHIBIT_MICROSITE_PLUGIN_DIR", dirname(__FILE__));
+}
+
+require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
+// require_once EXHIBIT_PLUGIN_DIR . "/helpers/ExhibitPageFunctions.php";
+// require_once EXHIBIT_PLUGIN_DIR . "/views/helpers/ExhibitAttachment.php";
+
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
   protected $_hooks = [
@@ -69,7 +77,29 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       );
 
       $options["api"] = get_option("api_enable");
-      $options["palette"] = [];
+      $options["palette"] = [
+        "#8B0015",
+        "#AB0520",
+        "#9D5A20",
+        "#EBD999",
+        "#F4EDE5",
+        "#4A634E",
+        "#001c48",
+        "#0c234b",
+        "#1E5288",
+        "#E2E9EB",
+        "#222222",
+        "#212529",
+        "#343A40",
+        "#495057",
+        "#6C757D",
+        "#ADB5BD",
+        "#CED4DA",
+        "#DEE2E6",
+        "#E9ECEF",
+        "#F8F9FA",
+        "#FFFFFF",
+      ];
       $options["collection_ids"] = [];
       $json = json_encode($options, JSON_PRETTY_PRINT);
       ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
@@ -85,18 +115,18 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    */
   public function filterExhibitLayouts($layouts)
   {
-    $water["flex-file"] = [
-      "name" => "Bootstrap Flex File Block",
-      "description" => "A file block for display in a Bootstrap 5 Flex grid.",
-    ];
-
     $water["flex-text"] = [
       "name" => "Bootstrap Flex Text Block",
       "description" => "A text block for display in a Bootstrap 5 Flex grid.",
     ];
 
+    $water["flex-file"] = [
+      "name" => "Bootstrap Flex File Block",
+      "description" => "A file block for display in a Bootstrap 5 Flex grid.",
+    ];
+
     $water["flex-file-text"] = [
-      "name" => "Flex File with Text Block",
+      "name" => "Bootstrap Flex File with Text Block",
       "description" =>
         "A file with text block for display in a Bootstrap 5 Flex grid..",
     ];

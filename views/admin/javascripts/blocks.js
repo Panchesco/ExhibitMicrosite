@@ -46,7 +46,7 @@ const exhibitMicrositeLimitItems = {
 
 document.addEventListener("DOMContentLoaded", () => {
   const config = {
-    blocksSelectors: ["water-file"],
+    blocksSelectors: ["flex-file"],
   };
 
   if (typeof document.getElementById("apply-attachment") != "undefined") {

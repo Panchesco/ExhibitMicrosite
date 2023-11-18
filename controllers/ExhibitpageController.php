@@ -1,6 +1,6 @@
 <?php
 
-class ExhibitMicrosite_PageController extends
+class ExhibitMicrosite_ExhibitpageController extends
   Omeka_Controller_AbstractActionController
 {
   protected $_exhibit;
@@ -56,16 +56,7 @@ class ExhibitMicrosite_PageController extends
     }
 
     $this->_theme_options = $this->_exhibit->getThemeOptions();
-  }
-
-  public function showAction()
-  {
-    $this->_init();
-
     $this->_exhibitPage = get_record("ExhibitPage", ["slug" => $this->_slug]);
-
-    $this->view->assign(["exhibitPage" => $this->_exhibitPage]);
-
     $this->view->addScriptPath(
       PLUGIN_DIR . "/exhibit-microsite/views/exhibit-pages"
     );
@@ -76,6 +67,13 @@ class ExhibitMicrosite_PageController extends
         $this->_theme_options["theme_name"] .
         "/exhibit-microsite/views"
     );
+  }
+
+  public function showAction()
+  {
+    $this->_init();
+    $this->view->assign(["exhibitPage" => $this->_exhibitPage]);
+    $this->view->exhibitPage = $this->_exhibitPage;
 
     echo $this->view->partial("exhibit-pages/show.php", [
       "exhibit" => $this->_exhibit,

@@ -23,10 +23,6 @@ class ExhibitMicrosite_DefaultController extends
 
     $this->_theme_options = $this->_exhibit->getThemeOptions();
 
-    print_r("<pre>");
-    print_r($this->_theme_options);
-    print_r("<pre>");
-
     $this->view->addScriptPath(
       PUBLIC_THEME_DIR .
         "/" .
@@ -44,7 +40,5 @@ class ExhibitMicrosite_DefaultController extends
       "theme_options" => $this->_theme_options,
       "view" => $this->view,
     ]);
-
-    //exit();
   }
 }
