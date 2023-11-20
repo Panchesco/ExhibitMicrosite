@@ -10,7 +10,7 @@
 ?>
 <div class="align-self">
   <?php echo $this->formLabel( $formStem . "[options][align_self]", __("How
-  should blocks align vertically in a row?") ); ?>
+  should this block align vertically in a row of blocks?") ); ?>
   <div>
     <?php // Omeka version at time of plugin dev, does not support formNumber, so formSelect it is...
 echo $this->formSelect( $formStem . "[options][align_self]",

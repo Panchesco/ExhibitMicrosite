@@ -12,7 +12,8 @@ $options["col_span"] = (isset($options["col_span"])) ? $options["col_span"] : '6
 ?>
 <div class="col-span">
   <?php echo $this->formLabel( $formStem . "[options][col_span]", __("How many
-  columns should the theme block span? Minimum is 1, maximum is 12.") ); ?>
+  columns should the this block span? The minimum is 1, The maximum is 12.") );
+  ?>
   <?php // Omeka version at time of plugin dev, does not support formNumber, so formSelect it is...
 echo $this->formSelect( $formStem . "[options][col_span]",
   @$options["col_span"], 6, array_merge([""=>__("Do not

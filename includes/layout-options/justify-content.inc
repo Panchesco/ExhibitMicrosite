@@ -11,7 +11,7 @@
 ?>
 <div class="'justify-content'">
   <?php echo $this->formLabel( $formStem . "[options][justify_content]", __("How
-  should blocks justify with relation to one another on a row?") ); ?>
+  should this block justify with relation to others in a row?") ); ?>
   <div>
     <?php // Omeka version at time of plugin dev, does not support formNumber, so formSelect it is...
 echo $this->formSelect( $formStem . "[options][justify_content]",

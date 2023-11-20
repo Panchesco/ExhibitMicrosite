@@ -118,3 +118,18 @@ if (!function_exists("emsIdStem")) {
     return trim(str_replace(["__", "--"], "-", $str), "-");
   }
 }
+
+if (!function_exists("inlineStylesString")) {
+  function inlineStylesString($atts)
+  {
+    if (empty($atts)) {
+      return "";
+    }
+    $str = ' style="';
+    foreach ($atts as $prop => $value) {
+      $str .= $prop . ":" . $value . ";";
+    }
+    $str .= '"';
+    return $str;
+  }
+}

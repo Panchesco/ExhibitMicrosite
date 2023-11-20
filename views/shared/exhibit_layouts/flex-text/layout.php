@@ -13,6 +13,27 @@
  * $exhibit_page_slug
  */
 // Options for wrapper class.
+
+// Set default colors and determine if there are inline color styles.
+$inlines = [];
+if (!isset($options["backgroundColor"])) {
+  $options["backgroundColor"] = "inherit";
+} else {
+  if ($options["backgroundColor"] !== "inherit") {
+    $inlines["background-color"] = $options["backgroundColor"];
+  }
+}
+
+if (!isset($options["color"])) {
+  $options["color"] = "inherit";
+} else {
+  if ($options["color"] !== "inherit") {
+    $inlines["color"] = $options["color"];
+  }
+}
+
+$inlineStyles = inlineStylesString($inlines);
+
 if (isset($options["align_self"]) && !empty($options["align_self"])) {
   $align_self = $options["align_self"];
 } else {
@@ -30,21 +51,6 @@ $class = $block->layout;
 $class .= " col-12 col-xl-" . $options["col_span"];
 $class .= " " . $align_self;
 
-// Options for wrapper inline styles.
-if (isset($options["background_color"])) {
-  $bg = "background-color:" . $options["background_color"] . ";";
-} else {
-  $bg = "";
-}
-
-if (isset($options["color"])) {
-  $color = "color:" . $options["color"] . ";";
-} else {
-  $color = "";
-}
-
-$style = ' style="' . $bg . $color . '"';
-
 // Bootstrap class declarations for text div.
 if (isset($options["block_padding_x"]) && !empty($options["block_padding_x"])) {
   $padding_x = " " . $options["block_padding_x"];
@@ -60,7 +66,7 @@ if (isset($options["block_padding_y"]) && !empty($options["block_padding_y"])) {
 
 $text_div_class = "text{$padding_x}{$padding_y}";
 ?>
-<div class="<?php echo $class; ?>" <?php echo $style; ?>>
+<div class="<?php echo $class; ?>"<?php echo $inlineStyles; ?>>
        <div class="d-flex <?php echo $flex_direction; ?> justify-content-start">
           <div class="<?php echo $text_div_class; ?>">
           <?php echo $text; ?>

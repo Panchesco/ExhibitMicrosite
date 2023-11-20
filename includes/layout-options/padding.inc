@@ -14,11 +14,11 @@
   <?php echo $this->formLabel( $formStem . "[options][block_padding_x]",
   __("Block Padding Sides") ); ?>
   <?php
-    $default = "px-4";
     echo $this->formSelect( $formStem . "[options][block_padding_x]",
-  @$options["block_padding_x"] ? @$options["block_padding_x"] : "px-4", [], [ ""
-  => __("Do not set"), "px-1" => __(".25"),"px-2" => __(".50"),"px-3" =>
-  __("1"),"px-4" => __("1.5"),"px-5" => __("3"),'auto' => 'Auto' ] ); ?>
+  @$options["block_padding_x"] ? @$options["block_padding_x"] : "px-4", [], [
+  "inherit-padding" => __("Do not set"), "px-1" => __(".25"),"px-2" =>
+  __(".50"),"px-3" => __("1"),"px-4" => __("1.5"),"px-5" => __("3"),'auto' =>
+  'Auto' ] ); ?>
 </div>
 
 <div class="block-padding-y">
@@ -26,7 +26,8 @@
   __("Block Padding Top and Bottom") ); ?>
   <?php
     echo $this->formSelect( $formStem . "[options][block_padding_y]",
-  @$options["block_padding_y"] ? @$options["block_padding_y"] : "py-4", [], [ ""
-  => __("Do not set"), "py-1" => __(".25"),"py-2" => __(".50"),"py-3" =>
-  __("1"),"py-4" => __("1.5"),"py-5" => __("3"),'auto' => 'Auto' ] ); ?>
+  @$options["block_padding_y"] ? @$options["block_padding_y"] : "py-4", [], [
+  "inherit-padding" => __("Do not set"), "py-1" => __(".25"),"py-2" =>
+  __(".50"),"py-3" => __("1"),"py-4" => __("1.5"),"py-5" => __("3"),'auto' =>
+  'Auto' ] ); ?>
 </div>
