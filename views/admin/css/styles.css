@@ -5,10 +5,3 @@
   box-shadow: 0 0 3px #7255ab;
   color: #7255ab;
 }
-
-.layout-thumbs #flex-file span,
-.layout-thumbs #flex-file-text span,
-.layout-thumbs #flex-text span,
-.layout-thumbs #flex-gallery span {
-  color: #7255ab;
-}

@@ -4,8 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.elementSelector = ".palettes-preview-wrapper";
       this.setProps = ["backgroundColor", "color"];
       // We need some default colors for when the color picker inputs are reset.
-      this.defaultBackgroundColor = "#ffffff";
-      this.defaultColor = "#222222";
+      this.defaults = ["#ffffff", "#222222"];
     }
 
     init(confi) {
@@ -18,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.buildTiles();
       this.setInputs();
       this.setColorPickers();
+      this.setColorPickerHandler();
       this.setCheckboxes();
       this.setTileEventHandler();
       this.setCheckboxes();
@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
               const data = JSON.parse(e.target.dataset.data);
               // Update color choice
               this.updateColorChoice(data);
+              this.palettes[i].checkboxes[c].checked = false;
             });
           });
         });
@@ -76,17 +77,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateColorChoice(data) {
-      // Update the preview
-      console.log(data);
-      this.updateStyle(data);
+      // Update the preview.
+      this.updatePreview(data);
+      // Update color picker and input values.
+      this.updateValues(data);
     }
 
-    updateStyle(data) {
+    updatePreview(data) {
       this.palettes[data.pal].preview.style[data.prop] = data.hex;
     }
 
-    updateValue(data) {
+    updateValues(data) {
       this.palettes[data.pal].inputs[data.set].setAttribute("value", data.hex);
+      this.palettes[data.pal].colorPickers[data.set].setAttribute(
+        "value",
+        data.hex
+      );
+    }
+
+    clearValues(data) {
+      this.palettes[data.pal].inputs[data.set].setAttribute("value", "inherit");
+      this.palettes[data.pal].colorPickers[data.set].setAttribute(
+        "value",
+        data.hex
+      );
     }
 
     updateInput(name, value) {
@@ -97,13 +111,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setColorPickers() {
       this.palettes.forEach((pal, i) => {
-        this.palettes[i].colorPicker = pal.querySelector('input[type="color"]');
+        this.palettes[i].colorPickers = pal.querySelectorAll(
+          'input[type="color"]'
+        );
+      });
+    }
+
+    setColorPickerHandler() {
+      this.palettes.forEach((pal, i) => {
+        this.palettes[i].colorPickers.forEach((pic, p) => {
+          this.palettes[i].colorPickers[p].addEventListener("input", (e) => {
+            const data = {
+              prop: pic.dataset.prop,
+              pal: i,
+              set: p,
+              hex: pic.value,
+            };
+            this.updatePreview(data);
+            this.updateValues(data);
+          });
+        });
       });
     }
 
     setCheckboxes() {
       this.palettes.forEach((pal, i) => {
         this.palettes[i].checkboxes = pal.querySelectorAll(".no-inline");
+      });
+      this.palettes.forEach((pal, i) => {
+        pal.checkboxes.forEach((box, b) => {
+          if (this.palettes[i].inputs[b].value == "inherit") {
+            box.checked = true;
+          } else {
+            box.checked = false;
+          }
+        });
       });
     }
 
@@ -119,10 +161,21 @@ document.addEventListener("DOMContentLoaded", () => {
           box.addEventListener("input", (e) => {
             const data = {};
             if (e.target.checked) {
-              // Set the input value to "inherit";
-              //this.palettes[i].
-            } else {
-              console.log("not checked");
+              if (b == 0) {
+                data.prop = "backgroundColor";
+                data.pal = i;
+                data.set = b;
+                data.hex = this.defaults[b];
+                this.updatePreview(data);
+                this.clearValues(data);
+              } else if (b == 1) {
+                data.prop = "color";
+                data.pal = i;
+                data.set = b;
+                data.hex = this.defaults[b];
+                this.updatePreview(data);
+                this.clearValues(data);
+              }
             }
           });
         });
