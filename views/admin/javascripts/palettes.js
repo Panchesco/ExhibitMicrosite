@@ -2,56 +2,81 @@ document.addEventListener("DOMContentLoaded", () => {
   class blockColors {
     constructor() {
       this.elementSelector = ".palettes-preview-wrapper";
-      this.setProps = ["backgroundColor", "color"];
+      this.setProps = ["color", "backgroundColor"];
       // We need some default colors for when the color picker inputs are reset.
-      this.defaults = ["#ffffff", "#222222"];
+      this.defaults = ["#222222", "#ffffff"];
+      this.blocksCount = document.querySelectorAll(".block-form").length;
+      this.addBlockSelector = ".add-link.big.button";
     }
 
-    init(confi) {
+    init(config) {
+      this.colors = [];
+      this.blocks = document.querySelectorAll(".block-form");
       this.palettes = document.querySelectorAll(this.elementSelector);
+      this.paletteBlockCount = this.palettes.length;
+
       this.palettes.forEach((pal, i) => {
         this.palettes[i].tileSets = pal.querySelectorAll(".tiles");
       });
-      this.setPreviewContainers();
-      this.setColors();
-      this.buildTiles();
-      this.setInputs();
-      this.setColorPickers();
-      this.setColorPickerHandler();
-      this.setCheckboxes();
-      this.setTileEventHandler();
-      this.setCheckboxes();
-      this.setCheckboxHandlers();
+      this.setPreviewContainers()
+        .then(this.setColors())
+        .then(this.buildTiles())
+        .then(this.setInputs())
+        .then(this.setColorPickers())
+        .then(this.setColorPickerHandler())
+        .then(this.setTileEventHandler())
+        .then(this.setCheckboxes())
+        .then(this.setCheckboxHandlers())
+        .then(this.newBlockHandler());
+    }
+
+    setPreviewContainers() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].preview = pal.querySelector(".preview");
+        });
+        resolve();
+      });
     }
 
     setColors() {
-      if (typeof exhibitMicrosite.palette !== "undefined") {
-        this.colors = exhibitMicrosite.palette;
-      } else {
-        this.colors = [];
-      }
+      return new Promise((resolve) => {
+        if (typeof exhibitMicrosite.palette !== "undefined") {
+          this.colors = exhibitMicrosite.palette;
+        } else {
+          this.colors = [];
+        }
+        resolve();
+      });
     }
 
     buildTiles() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].tileSets.forEach((set, c) => {
-          for (const key in this.colors) {
-            const tile = document.createElement("div");
-            const jsonData = {
-              prop: this.setProps[c],
-              pal: i,
-              set: c,
-              hex: this.colors[key],
-            };
-            const jsonDataStr = JSON.stringify(jsonData);
-            tile.classList.add("color");
-            tile.setAttribute("data-data", jsonDataStr);
-            tile.setAttribute("title", this.colors[key]);
-            tile.style.backgroundColor = this.colors[key];
-            this.palettes[i].tileSets[c].append(tile);
-          }
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].tileSets.forEach((set, c) => {
+            this.palettes[i].tileSets[c].tiles = [];
+            set.innerHTML = "";
+            for (const key in this.colors) {
+              const tile = document.createElement("div");
+              const jsonData = {
+                prop: this.setProps[c],
+                pal: i,
+                set: c,
+                hex: this.colors[key],
+                inherit: false,
+              };
+              const jsonDataStr = JSON.stringify(jsonData);
+              tile.classList.add("color");
+              tile.setAttribute("data-data", jsonDataStr);
+              tile.setAttribute("title", this.colors[key]);
+              tile.style.backgroundColor = this.colors[key];
+              this.palettes[i].tileSets[c].append(tile);
+              this.palettes[i].tileSets[c].tiles.push(tile);
+            }
+          });
         });
       });
+      resolve();
     }
 
     setInputs() {
@@ -60,20 +85,123 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    setColorPickers() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].colorPickers = pal.querySelectorAll(
+            'input[type="color"]'
+          );
+        });
+      });
+      resolve();
+    }
+
+    setColorPickerHandler() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].colorPickers.forEach((pic, p) => {
+            this.palettes[i].colorPickers[p].addEventListener("input", (e) => {
+              const data = {
+                prop: pic.dataset.prop,
+                pal: i,
+                set: p,
+                hex: pic.value,
+                inherit: false,
+              };
+              this.updatePreview(data);
+              this.updateValues(data);
+              this.setCheckboxes();
+            });
+          });
+        });
+        resolve();
+      });
+    }
+
     setTileEventHandler() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].tileSets.forEach((set, c) => {
-          const tiles = set.querySelectorAll(".color");
-          tiles.forEach((tile, t) => {
-            tile.addEventListener("click", (e) => {
-              const data = JSON.parse(e.target.dataset.data);
-              // Update color choice
-              this.updateColorChoice(data);
-              this.palettes[i].checkboxes[c].checked = false;
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].tileSets.forEach((set, c) => {
+            const tiles = set.querySelectorAll(".color");
+            tiles.forEach((tile, t) => {
+              tile.addEventListener("click", (e) => {
+                const data = JSON.parse(e.target.dataset.data);
+                // Update color choice
+                this.updateColorChoice(data);
+                this.palettes[i].checkboxes[c].checked = false;
+              });
             });
           });
         });
       });
+    }
+
+    setCheckboxes() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].checkboxes = pal.querySelectorAll(".no-inline");
+        });
+        this.palettes.forEach((pal, i) => {
+          pal.checkboxes.forEach((box, b) => {
+            if (this.palettes[i].inputs[b].value == "inherit") {
+              box.checked = true;
+            } else {
+              box.checked = false;
+            }
+          });
+        });
+        resolve();
+      });
+    }
+
+    setCheckboxHandlers() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].checkboxes.forEach((box, b) => {
+            this.palettes[i].checkboxes[b].addEventListener("input", (e) => {
+              if (e.target.checked) {
+                const data = {};
+                if (b == 0) {
+                  data.prop = "color";
+                  data.pal = i;
+                  data.set = b;
+                  data.hex = this.defaults[b];
+                  data.inherit = true;
+                } else if (b == 1) {
+                  data.prop = "backgroundColor";
+                  data.pal = i;
+                  data.set = b;
+                  data.hex = this.defaults[b];
+                  data.inherit = true;
+                }
+                this.updatePreview(data);
+                this.updateValues(data);
+                this.setActiveTile(data);
+              }
+            });
+          });
+        });
+        resolve();
+      });
+    }
+
+    newBlockHandler() {
+      const count = this.blocksCount;
+      document
+        .querySelector(this.addBlockSelector)
+        .addEventListener("click", (e) => {
+          let i = 0;
+          let intId = setInterval(() => {
+            if (document.querySelectorAll(".block-form").length > count) {
+              clearInterval(intId);
+              this.blocksCount++;
+              setTimeout(() => {
+                this.init();
+              }, 200);
+            }
+            i++;
+          }, 300);
+        });
     }
 
     updateColorChoice(data) {
@@ -84,15 +212,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updatePreview(data) {
-      this.palettes[data.pal].preview.style[data.prop] = data.hex;
+      this.palettes[data.pal].preview.style[data.prop] =
+        data.inherit === true ? "inherit" : data.hex;
     }
 
     updateValues(data) {
-      this.palettes[data.pal].inputs[data.set].setAttribute("value", data.hex);
-      this.palettes[data.pal].colorPickers[data.set].setAttribute(
-        "value",
-        data.hex
-      );
+      this.palettes[data.pal].inputs[data.set].value = data.hex;
+      this.palettes[data.pal].colorPickers[data.set].value = data.hex;
+      this.setActiveTile(data);
     }
 
     clearValues(data) {
@@ -103,83 +230,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
+    setActiveTile(data) {
+      this.palettes[data.pal].tileSets[data.set].tiles.forEach((tile, t) => {
+        tile.classList.remove("active");
+        if (!data.inherit && data.hex == tile.title) {
+          tile.classList.add("active");
+        }
+      });
+    }
+
     updateInput(name, value) {
       document
         .querySelector('[name="' + name + '"]')
         .setAttribute("value", value);
-    }
-
-    setColorPickers() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].colorPickers = pal.querySelectorAll(
-          'input[type="color"]'
-        );
-      });
-    }
-
-    setColorPickerHandler() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].colorPickers.forEach((pic, p) => {
-          this.palettes[i].colorPickers[p].addEventListener("input", (e) => {
-            const data = {
-              prop: pic.dataset.prop,
-              pal: i,
-              set: p,
-              hex: pic.value,
-            };
-            this.updatePreview(data);
-            this.updateValues(data);
-          });
-        });
-      });
-    }
-
-    setCheckboxes() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].checkboxes = pal.querySelectorAll(".no-inline");
-      });
-      this.palettes.forEach((pal, i) => {
-        pal.checkboxes.forEach((box, b) => {
-          if (this.palettes[i].inputs[b].value == "inherit") {
-            box.checked = true;
-          } else {
-            box.checked = false;
-          }
-        });
-      });
-    }
-
-    setPreviewContainers() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].preview = pal.querySelector(".preview");
-      });
-    }
-
-    setCheckboxHandlers() {
-      this.palettes.forEach((pal, i) => {
-        this.palettes[i].checkboxes.forEach((box, b) => {
-          box.addEventListener("input", (e) => {
-            const data = {};
-            if (e.target.checked) {
-              if (b == 0) {
-                data.prop = "backgroundColor";
-                data.pal = i;
-                data.set = b;
-                data.hex = this.defaults[b];
-                this.updatePreview(data);
-                this.clearValues(data);
-              } else if (b == 1) {
-                data.prop = "color";
-                data.pal = i;
-                data.set = b;
-                data.hex = this.defaults[b];
-                this.updatePreview(data);
-                this.clearValues(data);
-              }
-            }
-          });
-        });
-      });
     }
   } // End class.
 

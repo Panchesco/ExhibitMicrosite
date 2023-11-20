@@ -1,12 +1,7 @@
 <?php
 $formStem = $block->getFormStem();
 $options = $block->getOptions();
-$options["background-color"] = isset($options["background-color"])
-  ? $options["background-color"]
-  : "#e9ecef";
-$options["color"] = isset($options["color"]) ? $options["color"] : "#222222";
 $options["col-span"] = isset($options["col-span"]) ? $options["col-span"] : 6;
-$palette = themePalette();
 ?>
 <div class="selected-items" data-formstem="<?php echo $formStem; ?>" data-blocktype="water-file">
     <h4><?php echo __("Item"); ?></h4>
@@ -23,10 +18,12 @@ $palette = themePalette();
 <?php // Include partials
 
 
-include PLUGIN_DIR . "/Waterworks/includes/layout-options/col-span.inc";
-include PLUGIN_DIR . "/Waterworks/includes/layout-options/align-self.inc";
-include PLUGIN_DIR . "/Waterworks/includes/layout-options/flex-direction.inc";
-include PLUGIN_DIR . "/Waterworks/includes/layout-options/padding.inc";
-include PLUGIN_DIR . "/Waterworks/includes/layout-options/palettes.inc";
+include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/palettes.inc";
+include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/col-span.inc";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/align-self.inc";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/flex-direction.inc";
+include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/padding.inc";
 ?>
 </div>
