@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(this.setTileEventHandler())
         .then(this.setCheckboxes())
         .then(this.setCheckboxHandlers())
+        .then(this.setActiveTile())
         .then(this.newBlockHandler());
     }
 
@@ -176,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 this.updatePreview(data);
                 this.updateValues(data);
-                this.setActiveTile(data);
+                this.setActiveTile();
               }
             });
           });
@@ -219,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateValues(data) {
       this.palettes[data.pal].inputs[data.set].value = data.hex;
       this.palettes[data.pal].colorPickers[data.set].value = data.hex;
-      this.setActiveTile(data);
+      this.setActiveTile();
     }
 
     clearValues(data) {
@@ -230,12 +231,21 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    setActiveTile(data) {
-      this.palettes[data.pal].tileSets[data.set].tiles.forEach((tile, t) => {
-        tile.classList.remove("active");
-        if (!data.inherit && data.hex == tile.title) {
-          tile.classList.add("active");
-        }
+    setActiveTile() {
+      return new Promise((resolve) => {
+        this.palettes.forEach((pal, i) => {
+          this.palettes[i].tileSets.forEach((set, s) => {
+            const colorChoice = pal.inputs[s].value;
+            set.querySelectorAll(".color").forEach((color, c) => {
+              if (colorChoice == color.title) {
+                color.classList.add("active");
+              } else {
+                color.classList.remove("active");
+              }
+            });
+          });
+        });
+        resolve();
       });
     }
 

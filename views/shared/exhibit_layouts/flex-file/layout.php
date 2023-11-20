@@ -1,4 +1,4 @@
-<?php
+<?php echo __FILE__;
 /**
  * The following vars are available:
  * $options
@@ -21,6 +21,9 @@ $item_urls = [];
 $plus = [];
 $block_items = [];
 
+print_r("<pre>");
+print_r($options);
+print_r("<pre>");
 
 // Get the page attachments for the current block;
 $index = 1;
@@ -29,7 +32,8 @@ foreach ($attachments as $key => $attachment) {
     $block_items[$key]["item"] = $attachment->Item;
     $block_items[$key]["files"] = $attachment->Item->Files;
     $block_items[$key]["caption"] = $attachment->caption;
-    $block_items[$key]["item_url"] = current_url() . "/items/{$attachment->Item->id}";
+    $block_items[$key]["item_url"] =
+      current_url() . "/items/{$attachment->Item->id}";
     $block_items[$key]["plus"] =
       count($block_items[$key]["files"]) > 1
         ? count($block_items[$key]["files"]) - 1
@@ -37,7 +41,6 @@ foreach ($attachments as $key => $attachment) {
     $block_items[$key]["count"] = $index;
     $index++;
   }
-
 }
 
 $total_rows = count($block_items);

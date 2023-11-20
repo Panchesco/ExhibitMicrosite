@@ -1,11 +1,14 @@
 .color-picker-wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: stretch;
   width: 100%;
 }
 
 .palettes-col {
-  width: 50%;
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
 }
 
 .preview-wrapper label,
@@ -21,8 +24,8 @@
 .palette .color {
   display: inline-block;
   border: solid 1px #cccccc;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   overflow: clip;
   margin: 0 0.4em 0.4rem 0;
   cursor: pointer;
@@ -33,7 +36,9 @@
 
 .palette .color:hover,
 .palette .color.active {
-  transform: scale(125%);
+  transform: scale(110%);
+
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .preview-wrapper {
@@ -43,6 +48,7 @@
 
 .preview {
   padding: 1rem 1rem 2rem 1rem;
+  min-height: 200px;
 }
 
 .palettes-preview-wrapper {
