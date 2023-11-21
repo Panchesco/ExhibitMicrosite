@@ -27,14 +27,23 @@ $options["gallery-file-size"] = isset($options["gallery-file-size"])
 <?php // Include partials
 
 
-include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/palettes.inc";
-include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/col-span.inc";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/justify-content.inc";
+  "/includes/layout-options/admin/palettes.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/align-self.inc";
+  "/includes/layout-options/admin/col-span.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/flex-direction.inc";
-include EXHIBIT_MICROSITE_PLUGIN_DIR . "/includes/layout-options/padding.inc";
+  "/includes/layout-options/admin/justify-content.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/align-self.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/flex-direction.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/padding.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/flex-file-text-colors.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/flex-file-text-padding.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/flex-file-text-margin.php";
 ?>
 </div><!-- end .layout-options -->

@@ -49,7 +49,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
   public function hookConfigForm()
   {
-    include __DIR__ . "/config_form.php";
+    include EXHIBIT_MICROSITE_PLUGIN_DIR . "/config_form.php";
   }
 
   public function hookPublicHead()
@@ -73,7 +73,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
       $view = get_view();
       $view->addScriptPath(
-        PLUGIN_DIR . "/ExhibitMicrosite/views/shared/exhibit_layouts"
+        EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/shared/exhibit_layouts"
       );
 
       $options["api"] = get_option("api_enable");
@@ -149,10 +149,11 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     $router = $args["router"];
     $router->addConfig(
       new Zend_Config_Ini(
-        __DIR__ . DIRECTORY_SEPARATOR . "routes.ini",
+        EXHIBIT_MICROSITE_PLUGIN_DIR . "/routes.ini",
         "routes"
       )
     );
+
   }
 
   public function filterThemeOptions($options, $args)
