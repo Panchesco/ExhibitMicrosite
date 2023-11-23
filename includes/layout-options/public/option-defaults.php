@@ -50,7 +50,7 @@ if (isset($options["flex_direction"])) {
 }
 
 $class = $block->layout;
-$class .= " col-12 col-xl-" . $options["col_span"];
+$class .= " col-12 col-lg-" . $options["col_span"];
 $class .= " " . $align_self; // Bootstrap class declarations for text div.
 
 if (isset($options["block_padding_x"]) && !empty($options["block_padding_x"])) {
@@ -77,7 +77,7 @@ $block_flex_values .=
 
 $block_flex_values .=
   isset($options["col_span"]) && !empty($options["col_span"])
-    ? " col-xl-" . $options["col_span"]
+    ? " col-lg-" . $options["col_span"]
     : "";
 
 $block_flex_file_text_values = "";
@@ -86,7 +86,7 @@ $block_flex_file_text_values .= " flex-column";
 
 $block_flex_file_text_values .=
   isset($options["col_span"]) && !empty($options["col_span"])
-    ? " col-xl-" . $options["col_span"]
+    ? " col-lg-" . $options["col_span"]
     : "";
 
 $item_flex_values = "";

@@ -134,4 +134,73 @@ if (!function_exists("inlineStylesString")) {
   }
 }
 
+if (!function_exists("emsIdStem")) {
+  function emsIdStem($str)
+  {
+    $str = str_replace("blocks[", "blocks-", $str);
+    $str = trim(str_replace(["[", "]"], "-", $str), "_");
+    return trim(str_replace(["__", "--"], "-", $str), "-");
+  }
+}
 
+if (!function_exists("emsBreadcrumbArray")) {
+  function emsBreadcrumbArray($info)
+  {
+    $data["landing"] = [
+      "url" => url(
+        ["action" => "show", "slug" => $info["exhibit"]->slug],
+        "ems_exhibitLanding"
+      ),
+      "title" => $info["exhibit"]->title,
+    ];
+
+    if ($this->_page_slug_1) {
+      $data["page_1"] = [
+        "url" => url(
+          [
+            "action" => "show",
+            "slug" => $this->exhibit->slug,
+            "page_slug_1" => $this->_page_slug_1,
+          ],
+          "ems_exhibitPage1"
+        ),
+        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_1])
+          ->title,
+      ];
+    }
+
+    if ($this->_page_slug_2) {
+      $data["page_2"] = [
+        "url" => url(
+          [
+            "action" => "show",
+            "slug" => $this->exhibit->slug,
+            "page_slug_1" => $this->_page_slug_1,
+            "page_slug_2" => $this->_page_slug_2,
+          ],
+          "ems_exhibitPage2"
+        ),
+        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_2])
+          ->title,
+      ];
+    }
+
+    if ($this->_page_slug_3) {
+      $data["page_3"] = [
+        "url" => url(
+          [
+            "action" => "show",
+            "slug" => $this->exhibit->slug,
+            "page_slug_1" => $this->_page_slug_1,
+            "page_slug_2" => $this->_page_slug_2,
+            "page_slug_3" => $this->_page_slug_3,
+          ],
+          "ems_exhibitPage3"
+        ),
+        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_3])
+          ->title,
+      ];
+    }
+    return $data;
+  }
+}

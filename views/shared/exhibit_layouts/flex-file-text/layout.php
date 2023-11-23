@@ -28,7 +28,7 @@ $attachments = $block->getAttachments();
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/public/option-defaults.php";
 ?>
-<div class="block-flex-values<?php echo "$block_flex_file_text_values"; ?>">
+<div class="block block-flex-values<?php echo "$block_flex_file_text_values"; ?>">
 <?php foreach ($attachments as $key => $attachment):
   if ($attachment->Item && isset($attachment->Item->Files[0])): ?>
        <div class="item-wrapper<?php echo $item_flex_values; ?>"<?php echo $inline_styles; ?>>

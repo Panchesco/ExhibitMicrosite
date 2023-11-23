@@ -9,8 +9,9 @@ if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
 }
 
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
-// require_once EXHIBIT_PLUGIN_DIR . "/helpers/ExhibitPageFunctions.php";
-// require_once EXHIBIT_PLUGIN_DIR . "/views/helpers/ExhibitAttachment.php";
+require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
+require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/helpers/ExhibitMicrositeHelper.php";
 
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -28,6 +29,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     "exhibit_layouts",
     "public_theme_name",
     "admin_navigation_main",
+    "item_citation",
   ];
 
   protected function hookInstall()
@@ -153,7 +155,6 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         "routes"
       )
     );
-
   }
 
   public function filterThemeOptions($options, $args)
@@ -238,6 +239,27 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     $exhibitTheme = $themeName;
 
     return $exhibitTheme;
+  }
+
+  /**
+   * Filters the item citation to reflect the current URL hierarchy.
+   * @param string $citation
+   * @param array $args
+   * @return string.
+   */
+  function filterItemCitation($citation, $args)
+  {
+    if (isset($args["item"]) && is_object($args["item"])) {
+      $site_title = get_option("site_title");
+      $item = $args["item"];
+      $citation = "“";
+      $citation .= metadata("item", "rich_title", ["no_escape" => true]);
+      $citation .= ",” ";
+      $citation .= "<em>{$site_title}</em>, ";
+      $citation .= date("F j, Y") . ", ";
+      $citation .= WEB_ROOT . current_url();
+    }
+    return $citation;
   }
 
   /**

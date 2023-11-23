@@ -14,10 +14,9 @@
  */
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/public/option-defaults.php"; ?>
-<div class="<?php echo $class; ?>"<?php echo $inline_styles; ?>>
-       <div class="d-flex <?php echo $flex_direction; ?> justify-content-start">
-          <div class="<?php echo $text_div_class; ?>">
-          <?php echo $text; ?>
-          </div>
-       </div><!-- end .text -->
-</div><!-- end .water-gap -->
+ <div class="block block-flex-values<?php echo "$block_flex_values"; ?>">
+
+        <div class="item-wrapper<?php echo $item_flex_values; ?>"<?php echo $inline_styles; ?>>
+        <?php echo $text; ?>
+        </div><!-- end .item-wrapper -->
+ </div><!-- end .block-flex-values -->
