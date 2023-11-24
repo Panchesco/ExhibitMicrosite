@@ -353,16 +353,122 @@ class ExhibitMicrositeHelper
   {
     $this->breadcrumb_data = [];
 
+    $this->exhbitBreadcrumbData();
+
+    $this->exhibitPagesBreadcrumbData();
+
+    $this->itemsBreadcrumbData();
+  } // end function
+
+  public function exhbitBreadcrumbData()
+  {
+    $this->breadcrumb_data = [];
     if ($this->params->slug) {
-      $this->breadcrumb_data["ems_exhibitLanding"] = [
+      $this->breadcrumb_data[] = [
         "title" => $this->exhibit->title,
-        "url" => url([
-          "module" => "exhibit-microsite",
-          "controller" => "default",
-          "action" => "show",
-          "slug" => $this->params->slug,
-          "ems_exhibitLanding",
-        ]),
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "default",
+            "action" => "show",
+            "slug" => $this->params->slug,
+          ],
+          "ems_exhibitLanding"
+        ),
+      ];
+    }
+  }
+
+  public function exhibitPagesBreadcrumbData()
+  {
+    if ($this->params->page_slug_1) {
+      $this->breadcrumb_data[] = [
+        "title" => $this->exhibitPages[0]->title,
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "exhibitpage",
+            "action" => "show",
+            "slug" => $this->params->slug,
+            "page_slug_1" => $this->params->page_slug_1,
+          ],
+          "ems_exhibitPage1"
+        ),
+      ];
+    }
+
+    if ($this->params->page_slug_2) {
+      $this->breadcrumb_data[] = [
+        "title" => $this->exhibitPages[1]->title,
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "exhibitpage",
+            "action" => "show",
+            "slug" => $this->params->slug,
+            "page_slug_1" => $this->params->page_slug_1,
+            "page_slug_2" => $this->params->page_slug_2,
+          ],
+          "ems_exhibitPage2"
+        ),
+      ];
+    }
+
+    if ($this->params->page_slug_3) {
+      $this->breadcrumb_data[] = [
+        "title" => $this->exhibitPages[2]->title,
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "exhibitpage",
+            "action" => "show",
+            "slug" => $this->params->slug,
+            "page_slug_1" => $this->params->page_slug_1,
+            "page_slug_2" => $this->params->page_slug_2,
+            "page_slug_3" => $this->params->page_slug_3,
+          ],
+          "ems_exhibitPage3"
+        ),
+      ];
+    }
+  }
+
+  public function itemsBreadcrumbData()
+  {
+    if ($this->params->item_id || $this->params->file_id) {
+      $this->breadcrumb_data[] = [
+        "title" => __("Items"),
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "item",
+            "action" => "browse",
+            "slug" => $this->params->slug,
+          ],
+          "ems_browse_items"
+        ),
+      ];
+    }
+
+    $item = get_record_by_id("Item", $this->params->item_id);
+    if (element_exists("Dublin Core", "rich_title")) {
+      $title = metadata($item, "rich_title");
+    } else {
+      $title = null;
+    }
+
+    if ($title) {
+      $this->breadcrumb_data[] = [
+        "title" => $title,
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "item",
+            "action" => "browse",
+            "slug" => $this->params->slug,
+          ],
+          "ems_browse_items"
+        ),
       ];
     }
   }
@@ -376,12 +482,16 @@ class ExhibitMicrositeHelper
   {
     $html = "<ul>";
     foreach ($this->breadcrumb_data as $segment) {
-      $html .=
-        '<li><a href="' .
-        $segment["url"] .
-        '">' .
-        $segment["title"] .
-        "</a></li>";
+      if ($segment != end($this->breadcrumb_data)) {
+        $html .=
+          '<li><a href="' .
+          $segment["url"] .
+          '">' .
+          $segment["title"] .
+          "</a></li>";
+      } else {
+        $html .= "<li>" . $segment["title"] . "</li>";
+      }
     }
     $html .= "</ul>";
     return $html;

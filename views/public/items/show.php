@@ -17,7 +17,7 @@ $citation = "[citation]";
 
 <div class="row g-0">
   <nav id="breadcrumb" class="col-span-12">
-
+<?php echo $breadcrumb; ?>
   </nav>
   <div class="col-span-12">
     <h1><?php echo metadata("item", "rich_title", [
@@ -148,7 +148,7 @@ $citation = "[citation]";
               <h2 class="underlined"><?php echo __("Download"); ?></h2>
               <div class="element-text download-button">
                 <h3><a id="download" class="btn btn-solid btn-sage color-white" href="<?php echo file_display_url(
-                  $file,
+                  $active_file,
                   "fullsize"
                 ); ?>" download><?php echo __(
   "Download"

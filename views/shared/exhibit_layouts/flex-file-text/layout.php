@@ -41,7 +41,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
            "action" => "show",
            "item_id" => $attachment->Item->id,
          ],
-         "ems_show_item"
+         $item_route
        ); ?>
        <figure>
           <div class="image-wrapper">

@@ -50,7 +50,8 @@ class ExhibitMicrosite_ItemController extends
     }
 
     $this->microsite = new ExhibitMicrositeHelper([
-      "exhibit" => $this->exhibit,
+      "route" => $this->route,
+      "exhbit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
     ]);
 
@@ -126,7 +127,7 @@ class ExhibitMicrosite_ItemController extends
 
     echo $this->view->partial("items/show.php", [
       "active_file" => $this->active_file,
-      "breadcrumb_data" => $this->microsite->breadcrumbData(),
+      "breadcrumb" => $this->microsite->breadcrumbHTML(),
       "collection" => $collection,
       "collection_id" => $collection->id,
       "route" => $this->route,

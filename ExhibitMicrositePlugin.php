@@ -8,6 +8,8 @@ if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
   define("EXHIBIT_MICROSITE_PLUGIN_DIR", dirname(__FILE__));
 }
 
+require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitFunctions.php";
+require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitPageFunctions.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR .

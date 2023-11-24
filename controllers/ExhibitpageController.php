@@ -9,62 +9,43 @@ class ExhibitMicrosite_ExhibitpageController extends
   public $exhibitPage;
   public $route;
   public $slug;
-  protected $_page_slug_1;
-  protected $_page_slug_2;
-  protected $_page_slug_3;
-  protected $_page;
-  protected $_depth;
-  protected $_theme_options;
-  protected $_page_slugs = [];
+  public $page_slug_1;
+  public $page_slug_2;
+  public $page_slug_3;
+  public $page;
+  public $depth;
+  public $theme_options;
+  public $page_slugs = [];
 
-  protected function _init()
+  public function init()
   {
     // Set the current exhibit;
-    $this->_request = Zend_Controller_Front::getInstance()->getRequest();
+    $this->request = Zend_Controller_Front::getInstance()->getRequest();
     $this->route = $this->getFrontController()
       ->getRouter()
       ->getCurrentRouteName();
 
-    $this->slug = $this->_request->getParam("slug");
+    $this->params = new ParamsHelper();
 
     if (!$this->exhibit) {
       $this->exhibit = $this->_helper->db
         ->getTable("Exhibit")
-        ->findBySlug($this->slug);
+        ->findBySlug($this->params->slug);
     }
 
-    // Set $this->slug to current ExhibitPage slug.
-    $this->_page_slug_1 = $this->_request->getParam("page_slug_1");
-    $this->_page_slug_2 = $this->_request->getParam("page_slug_2");
-    $this->_page_slug_3 = $this->_request->getParam("page_slug_3");
-    $this->_page_number = $this->_request->getParam("page_number");
-    $this->_depth = 0;
-
-    if ($this->_page_slug_1) {
-      $this->slug = $this->_page_slug_1;
-      $this->_page_slugs[] = $this->slug;
-      $this->_depth++;
+    if (!empty($this->params->page_slugs)) {
+      if (!$this->exhibitPage) {
+        $page_slug = end($this->params->page_slugs);
+        $this->exhibitPage = get_record("ExhibitPage", ["slug" => $page_slug]);
+      }
     }
 
-    if ($this->_page_slug_2) {
-      $this->slug = $this->_page_slug_2;
-      $this->_page_slugs[] = $this->slug;
-      $this->_depth++;
-    }
-
-    if ($this->_page_slug_3) {
-      $this->slug = $this->_page_slug_3;
-      $this->_page_slugs[] = $this->slug;
-      $this->_depth++;
-    }
-
-    $this->_theme_options = $this->exhibit->getThemeOptions();
-    $this->exhibitPage = get_record("ExhibitPage", ["slug" => $this->slug]);
+    $this->theme_options = $this->exhibit->getThemeOptions();
 
     $this->view->addScriptPath(
       PUBLIC_THEME_DIR .
         "/" .
-        $this->_theme_options["theme_name"] .
+        $this->theme_options["theme_name"] .
         "/exhibit-microsite/views"
     );
 
@@ -74,7 +55,7 @@ class ExhibitMicrosite_ExhibitpageController extends
 
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
-      "exhbit" => $this->exhibit,
+      "exhibit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
     ]);
 
@@ -83,79 +64,46 @@ class ExhibitMicrosite_ExhibitpageController extends
 
   public function showAction()
   {
-    $this->_init();
+    $this->init();
+
+    $this->view->exhibitPage = $this->exhibitPage;
 
     echo $this->view->partial("exhibit-pages/show.php", [
+      "breadcrumb" => $this->breadcrumb,
+      "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
-      "page_slugs" => $this->_page_slugs,
-      "theme_options" => $this->_theme_options,
+      "params" => $this->params,
+      "route" => $this->route,
+      "item_route" => $this->itemRoute(),
+      "theme_options" => $this->theme_options,
       "view" => $this->view,
-      "breadcrumb" => $this->breadcrumb(),
-      "canonicalURL" => $this->microsite->canonicalURL($this->route),
     ]);
 
     exit();
   }
 
-  public function breadcrumbData()
+  /**
+   * Returns the route to use for item/s links
+   * @return string
+   */
+  public function itemRoute()
   {
-    $params = new ParamsHelper();
-    $data["landing"] = [
-      "url" => url(
-        ["action" => "show", "slug" => $this->exhibit->slug],
-        "ems_exhibitLanding"
-      ),
-      "title" => $this->exhibit->title,
-    ];
+    switch ($this->route) {
+      case "ems_exhibitPage3":
+        return "ems_show_item3";
+        break;
 
-    if ($this->_page_slug_1) {
-      $data["page_1"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->_page_slug_1,
-          ],
-          "ems_exhibitPage1"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_1])
-          ->title,
-      ];
-    }
+      case "ems_exhibitPage2":
+        return "ems_show_item2";
+        break;
 
-    if ($this->_page_slug_2) {
-      $data["page_2"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->_page_slug_1,
-            "page_slug_2" => $this->_page_slug_2,
-          ],
-          "ems_exhibitPage2"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_2])
-          ->title,
-      ];
-    }
+      case "ems_exhibitPage1":
+        return "ems_show_item1";
+        break;
 
-    if ($this->_page_slug_3) {
-      $data["page_3"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->_page_slug_1,
-            "page_slug_2" => $this->_page_slug_2,
-            "page_slug_3" => $this->_page_slug_3,
-          ],
-          "ems_exhibitPage3"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->_page_slug_3])
-          ->title,
-      ];
+      default:
+        return "ems_browse_items";
     }
-    return $data;
   }
 }

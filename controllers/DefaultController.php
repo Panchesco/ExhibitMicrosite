@@ -43,29 +43,42 @@ class ExhibitMicrosite_DefaultController extends
     $this->init();
 
     if ($this->exhibit->use_summary_page == 1) {
-      $this->view->exhibit = $this->exhibit;
-      $this->view->partial("default/show.php", [
-        "breadcrumb" => $this->breadcrumb,
-        "exhibit" => $this->exhibit,
-        "theme_options" => $this->theme_options,
-        "view" => $this->view,
-      ]);
+      return $this->summaryPage();
     } else {
-      $this->view->exhibit = $this->exhibit;
-
-      foreach ($this->exhibit->getPages() as $key => $page) {
-        print_r("<pre>");
-        print_r(get_object_vars($page));
-        print_r("<pre>");
+      $firstPage = $this->exhibit->getFirstTopPage();
+      if (null !== $firstPage) {
+        $this->_helper->redirector->gotoRoute(
+          [
+            "slug" => $this->exhibit->slug,
+            "page_slug_1" => $firstPage->slug,
+          ],
+          "exhibitShow"
+        );
       }
-
-      $this->view->partial("exhibit-pages/show.php", [
-        "exhibitPage" => get_record("ExhibitPage", $this->slug),
-        "breadcrumb" => $this->breadcrumb,
-        "exhibit" => $this->exhibit,
-        "theme_options" => $this->theme_options,
-        "view" => $this->view,
-      ]);
     }
+
+    $this->view->exhibit = $this->exhibit;
+
+    $this->view->partial("exhibit-pages/show.php", [
+      "exhibitPage" => get_record("ExhibitPage", $this->slug),
+      "breadcrumb" => $this->breadcrumb,
+      "exhibit" => $this->exhibit,
+      "theme_options" => $this->theme_options,
+      "view" => $this->view,
+    ]);
   }
-}
+
+  public function summaryPage()
+  {
+    $this->view->exhibit = $this->exhibit;
+
+    echo $this->view->partial("exhibit/summary.php", [
+      "breadcrumb" => "[breadcrump]",
+      "exhibit" => $this->exhibit,
+      "theme_options" => $this->theme_options,
+      "view" => $this->view,
+    ]);
+
+    exit();
+  }
+} // End ExhibitMicrosite_DefaultController
