@@ -28,6 +28,64 @@ class ExhibitMicrosite_IndexController extends
 
   public function browseAction()
   {
+    $rows = $this->_options();
+  }
+
+  public function editAction()
+  {
+    // Get the requested option.
+    $option = $this->_helper->db->findById();
+
+    // Get form values from the options record.
+    $values = @unserialize($option);
+    $formData["id"] = $option["id"];
+    $formData["exhibit_id"] = $values["exhibit_id"];
+    $formData["collection_id"] = $values["collection_id"];
+    $formData["current_user"] = current_user()->id;
+    $formData["inserted"] = isset($values["inserted"])
+      ? $values["inserted"]
+      : "";
+    $formData["updated"] = date("Y-m-d H:i:s");
+
+    $form = $this->_getForm($formData);
+
+    $this->view->form = $form;
+
+    $this->_processMicrositeExhibitForm($option, $form, "edit");
+  }
+
+  protected function _options()
+  {
+    $rows = [];
+    $db = get_db();
+    $sql = "SELECT * FROM `{$db->prefix}options` WHERE 1 AND name REGEXP 'exhibit_microsite\\[\[0-9]+\\]'";
+    $result = $db->getTable("Option")->fetchAll($sql);
+    if ($result) {
+      foreach ($result as $row) {
+        $values = $this->_browse_data($row);
+        $rows["option_id"] = $row["id"];
+        $rows[$values["slug"]] = $values;
+      }
+      ksort($rows);
+    }
+    return $rows;
+  }
+
+  protected function _browse_data($row)
+  {
+    $db = get_db();
+    $row["value"] = @unserialize($row["value"]);
+    $sql = "SELECT `title`,`slug` FROM {$db->prefix}exhibits WHERE `id` = '{$row["value"]["exhibit_id"]}'";
+    $exhibit = $db->getTable("Exhibit")->fetchRow($sql);
+    if (isset($exhibit["title"])) {
+      $row["exhibit"] = $exhibit;
+    }
+
+    return [
+      "option_id" => $row["id"],
+      "exhibit_title" => $row["exhibit"]["title"],
+      "slug" => $row["exhibit"]["slug"],
+    ];
   }
 
   public function addAction()
@@ -39,21 +97,17 @@ class ExhibitMicrosite_IndexController extends
     $this->_processMicrositeExhibitForm($option, $form, "add");
   }
 
-  protected function _getForm($microsite = null)
+  protected function _getForm($option = null)
   {
     $formOptions = ["type" => "option"];
-    if ($microsite) {
-      $formOptions["exhibit"] = $microsite["exhibit"];
-    }
-
     $form = new Omeka_Form_Admin($formOptions);
     $exhibits = $this->_exhibits();
     $collections = $this->_collections();
 
-    $form->addElementToEditGroup("select", "exhibit", [
+    $form->addElementToEditGroup("select", "exhibit_id", [
       "id" => "exhibit-microsite-exhibit",
       "class" => "exhibit-microsite-options",
-      "value" => "",
+      "value" => isset($option["exhibit_id"]) ? $option["exhibit_id"] : "",
       "data-record_type" => "exhibit",
       "label" => __("Exhibit"),
       "description" => __(
@@ -63,10 +117,14 @@ class ExhibitMicrosite_IndexController extends
       "multiOptions" => $exhibits,
     ]);
 
-    $form->addElementToEditGroup("multicheckbox", "collection", [
+    $form->addElementToEditGroup("multicheckbox", "collection_id", [
       "id" => "exhibit-microsite-collection",
       "class" => "exhibit-microsite-options",
+
       "multiOptions" => $collections,
+      "value" => isset($option["collection_id"])
+        ? $option["collection_id"]
+        : [],
       "data-record_type" => "collection",
       "label" => __("Collections"),
       "description" => __(
@@ -122,8 +180,19 @@ class ExhibitMicrosite_IndexController extends
     return $data;
   }
 
+  private function _process_option($option_name, $option)
+  {
+    set_option($option_name, $option);
+
+    if (get_option($option_name) == $option) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
-   * Process the ExhibitMicrosite edit and edit forms.
+   * Process the ExhibitMicrosite add and edit forms.
    */
   private function _processMicrositeExhibitForm($option, $form, $action)
   {
@@ -135,36 +204,46 @@ class ExhibitMicrosite_IndexController extends
         );
         return;
       }
+
       try {
         //$option->setPostData($_POST);
-        $exhibit_id = $_POST["exhibit"];
-
+        $exhibit_id = $_POST["exhibit_id"];
         $option->name = "exhibit_microsite[" . $exhibit_id . "]";
         $option->value = [
-          "exhibit" => $_POST["exhibit"],
-          "collection" => $_POST["collection"],
+          "exhibit_id" => $_POST["exhibit_id"],
+          "collection_id" => $_POST["collection_id"],
         ];
 
-        $option->value = serialize($option->value);
+        $data = @unserialize($option->value);
 
         if (get_option($option->name)) {
           $action = "edit";
+          $option->value["modified_by_user_id"] = current_user()->id;
+          $option->value["created_by_user_id"] = $data["created_by_user_id"];
+          $option->value["inserted"] = $data["inserted"];
+          $option->value["updated"] = date("Y-m-d H:i:s");
         } else {
           $action = "add";
+          $option->value["created_by_user_id"] = current_user()->id;
+          $option->value["created_by_user_id"] = current_user()->id;
+          $option->value["inserted"] = date("Y-m-d H:i:s");
+          $option->value["updated"] = date("Y-m-d H:i:s");
         }
 
-        set_option($option->name, $option->value);
+        $option->value = serialize($option->value);
 
-        if ("add" == $action) {
-          $this->_helper->flashMessenger(
-            __("The Exhbit Microsite has been added."),
-            "success"
-          );
-        } elseif ("edit" == $action) {
-          $this->_helper->flashMessenger(
-            __("The Exhibit Microsite has been edited."),
-            "success"
-          );
+        if ($this->_process_option($option->name, $option->value)) {
+          if ("add" == $action) {
+            $this->_helper->flashMessenger(
+              __("The Exhbit Microsite has been added."),
+              "success"
+            );
+          } elseif ("edit" == $action) {
+            $this->_helper->flashMessenger(
+              __("The Exhibit Microsite has been edited."),
+              "success"
+            );
+          }
         }
 
         $this->_helper->redirector("browse");

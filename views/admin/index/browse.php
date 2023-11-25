@@ -12,7 +12,7 @@ echo head($head);
       echo "current";
     } ?>">
         <a href="<?php echo html_escape(
-          url("exibit-microsite/index/browse?view=list")
+          url("exhibit-microsite/index/browse?view=list")
         ); ?>"><?php echo __("List View"); ?></a>
     </li>
 </ul>
