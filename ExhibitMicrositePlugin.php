@@ -53,7 +53,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
   public function hookConfigForm()
   {
-    include EXHIBIT_MICROSITE_PLUGIN_DIR . "/config_form.php";
+    require EXHIBIT_MICROSITE_PLUGIN_DIR . "/config_form.php";
   }
 
   public function hookPublicHead()
@@ -69,11 +69,13 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     $request = Zend_Controller_Front::getInstance()->getRequest();
     $module = $request->getModuleName();
     $controller = $request->getControllerName();
+
+    queue_js_file(["app"]);
     // Check if using Exhibits controller, and add the stylesheet for general display of exhibits
-    if ($module == "exhibit-builder" && $controller == "exhibits") {
+    if ($module == "exhibit-microsite" && $controller == "exhibits") {
 
       queue_css_file(["styles", "palettes"], "screen");
-      queue_js_file(["app", "palettes"]);
+      queue_js_file(["palettes"]);
 
       $view = get_view();
       $view->addScriptPath(

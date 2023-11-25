@@ -4,6 +4,5 @@
           "Exhibit Microsite"
         ); ?></label>
     </div>
-    <div class="inputs five columns omega">
-    </div>
+
 </div>
