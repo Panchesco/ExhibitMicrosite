@@ -26,6 +26,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     "admin_head",
     "public_head",
     "define_routes",
+    "after_delete_record",
   ];
   protected $_filters = [
     "exhibit_layouts",
@@ -59,6 +60,17 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   public function hookPublicHead()
   {
     //;
+  }
+
+  /**
+   * Delete the options record for a microsite if the exhibit
+   * it is associated with is deleted.
+   */
+  public function hookAfterDeleteRecord($args)
+  {
+    if ($args["record"]->record_type == "Exhibit") {
+      delete_option("exhibit_microsite[" . $args["record"]->record_id . "]");
+    }
   }
 
   /**
@@ -187,10 +199,15 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     $acl = $args["acl"];
 
     $indexResource = new Zend_Acl_Resource("ExhibitMicrosite_Index");
-
     $acl->add($indexResource);
 
-    $acl->allow(["super", "admin"], ["ExhibitMicrosite_Index"]);
+    $acl->allow(["super", "admin"], "ExhibitMicrosite_Index", [
+      "show",
+      "browse",
+      "add",
+      "edit",
+      "delete-confirm",
+    ]);
   }
 
   /**

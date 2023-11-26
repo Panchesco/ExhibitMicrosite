@@ -12,6 +12,10 @@
 class ExhibitMicrosite_IndexController extends
   Omeka_Controller_AbstractActionController
 {
+  protected $_autoCsrfProtection = true;
+
+  protected $_browseRecordsPerPage = self::RECORDS_PER_PAGE_SETTING;
+
   public function init()
   {
     // Set the model class so this controller can perform some functions,
@@ -28,11 +32,87 @@ class ExhibitMicrosite_IndexController extends
 
   public function browseAction()
   {
-    $rows = $this->_options();
+    $data = [];
+    $sorted = [];
+    $options = $this->_options();
+
+    // Set unserialized option values to data array.
+    foreach ($options as $key => $option) {
+      $values = @unserialize($option["value"]);
+      $exhibit = get_record_by_id("Exhibit", $values["exhibit_id"]);
+      $data[$key]["id"] = $option->id;
+      $data[$key]["name"] = $option->name;
+      $data[$key]["exhibit_id"] = $exhibit->id;
+      $data[$key]["title"] = $exhibit->title;
+      $data[$key]["exhibit_slug"] = $exhibit->slug;
+      $data[$key]["modified_by_username"] =
+        isset($values["modified_by_user_id"]) &&
+        !empty($values["modified_by_user_id"])
+          ? get_record_by_id("User", $values["modified_by_user_id"])->username
+          : "";
+      $data[$key]["updated"] =
+        isset($values["updated"]) & !empty($values["updated"])
+          ? $values["updated"]
+          : null;
+    }
+
+    $sort_field = isset($_GET["sort_field"])
+      ? htmlentities($_GET["sort_field"])
+      : "title";
+
+    $sort_dir = isset($_GET["sort_dir"])
+      ? htmlentities($_GET["sort_dir"])
+      : "a";
+
+    if ($sort_field == "updated") {
+      foreach ($data as $row) {
+        $sorted['"' . $row["updated"] . '"'] = $row;
+      }
+    } else {
+      foreach ($data as $row) {
+        $key = htmlentities($row["title"]);
+        $sorted['"' . $key . '"'] = $row;
+      }
+    }
+
+    if ($sort_dir == "d") {
+      krsort($sorted, SORT_STRING);
+    } else {
+      ksort($sorted, SORT_STRING);
+    }
+
+    $this->view->options = $sorted;
+  }
+
+  public function deleteAction()
+  {
+    $db = get_db();
+    $option = $db
+      ->getTable("Option")
+      ->fetchObject(
+        "SELECT * FROM {$db->prefix}options WHERE 1 AND id = {$this->getParam(
+          "id"
+        )}"
+      );
+
+    if ($option && $option->delete()) {
+      $this->_helper->flashMessenger(
+        __("The Exhibit Microsite has been deleted."),
+        "success"
+      );
+    } else {
+      $this->_helper->flashMessenger(
+        __("There was a problem and the Exhibit Microsite was not deleted."),
+        "error"
+      );
+    }
+    $this->_helper->redirector("browse");
+    return;
   }
 
   public function editAction()
   {
+    $data = [];
     // Get the requested option.
     $option = $this->_helper->db->findById();
 
@@ -56,35 +136,58 @@ class ExhibitMicrosite_IndexController extends
 
   protected function _options()
   {
-    $rows = [];
+    $data = [];
     $db = get_db();
-    $sql = "SELECT * FROM `{$db->prefix}options` WHERE 1 AND name REGEXP 'exhibit_microsite\\[\[0-9]+\\]'";
+    $sql = "SELECT id FROM `{$db->prefix}options` WHERE 1 AND name REGEXP 'exhibit_microsite\\[\[0-9]+\\]'";
     $result = $db->getTable("Option")->fetchAll($sql);
+
     if ($result) {
-      foreach ($result as $row) {
-        $values = $this->_browse_data($row);
-        $rows["option_id"] = $row["id"];
-        $rows[$values["slug"]] = $values;
+      foreach ($result as $key => $row) {
+        $data[] = get_record_by_id("Option", $row["id"]);
       }
-      ksort($rows);
     }
-    return $rows;
+    return $data;
   }
 
   protected function _browse_data($row)
   {
     $db = get_db();
+
     $row["value"] = @unserialize($row["value"]);
+    // Get the exhibit Title.
     $sql = "SELECT `title`,`slug` FROM {$db->prefix}exhibits WHERE `id` = '{$row["value"]["exhibit_id"]}'";
     $exhibit = $db->getTable("Exhibit")->fetchRow($sql);
     if (isset($exhibit["title"])) {
       $row["exhibit"] = $exhibit;
     }
-
     return [
       "option_id" => $row["id"],
       "exhibit_title" => $row["exhibit"]["title"],
       "slug" => $row["exhibit"]["slug"],
+      "created_by_user_id" => isset($row["value"]["created_by_user_id"])
+        ? $row["value"]["created_by_user_id"]
+        : "",
+      "created_by_username" =>
+        isset($row["value"]["created_by_user_id"]) &&
+        !empty($row["value"]["created_by_user_id"])
+          ? get_record_by_id("User", $row["value"]["created_by_user_id"])
+            ->username
+          : "",
+      "updated_by_user_id" => isset($row["value"]["updated_by_user_id"])
+        ? $row["updated_by_user_id"]
+        : "",
+      "updated_by_username" =>
+        isset($row["value"]["updated_by_user_id"]) &&
+        !empty($row["value"]["updated_by_user_id"])
+          ? get_record_by_id("User", $row["value"]["created_by_user_id"])
+            ->username
+          : "",
+      "inserted" => isset($row["value"]["inserted"])
+        ? $row["value"]["inserted"]
+        : "",
+      "updated" => isset($row["value"]["updated"])
+        ? $row["value"]["updated"]
+        : "",
     ];
   }
 
@@ -99,7 +202,7 @@ class ExhibitMicrosite_IndexController extends
 
   protected function _getForm($option = null)
   {
-    $formOptions = ["type" => "option"];
+    $formOptions = ["type" => "exhibit_microsite", "hasPublicPage" => false];
     $form = new Omeka_Form_Admin($formOptions);
     $exhibits = $this->_exhibits();
     $collections = $this->_collections();
@@ -128,7 +231,7 @@ class ExhibitMicrosite_IndexController extends
       "data-record_type" => "collection",
       "label" => __("Collections"),
       "description" => __(
-        "Select the collections that should be included in the microsite."
+        "Select the collections to be available in the microsite."
       ),
       "required" => true,
     ]);
@@ -204,9 +307,7 @@ class ExhibitMicrosite_IndexController extends
         );
         return;
       }
-
       try {
-        //$option->setPostData($_POST);
         $exhibit_id = $_POST["exhibit_id"];
         $option->name = "exhibit_microsite[" . $exhibit_id . "]";
         $option->value = [
@@ -222,12 +323,14 @@ class ExhibitMicrosite_IndexController extends
           $option->value["created_by_user_id"] = $data["created_by_user_id"];
           $option->value["inserted"] = $data["inserted"];
           $option->value["updated"] = date("Y-m-d H:i:s");
-        } else {
+        } elseif ("add" == "add") {
           $action = "add";
-          $option->value["created_by_user_id"] = current_user()->id;
-          $option->value["created_by_user_id"] = current_user()->id;
+          $option->value["modified_by_user_id"] = current_user()->id;
+          $option->value["updated_by_user_id"] = current_user()->id;
           $option->value["inserted"] = date("Y-m-d H:i:s");
           $option->value["updated"] = date("Y-m-d H:i:s");
+        } elseif ("delete" == $action) {
+          delete_option($option->name);
         }
 
         $option->value = serialize($option->value);
