@@ -6,6 +6,11 @@ echo head();
 </nav>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
+
+<?php echo $this->view->partial('exhibit-pages/projects-child-pages.php',[
+  "child_pages" => $child_pages,
+  "params" => $params
+]);?>
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php
 $layout = $block->getLayout();
@@ -25,6 +30,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "page_slugs" => $params->page_slugs,
   "slug" => $params->slug,
   "text" => $block->text,
+  "child_pages" => $child_pages,
 ]);
 ?>
 <?php endforeach; ?>

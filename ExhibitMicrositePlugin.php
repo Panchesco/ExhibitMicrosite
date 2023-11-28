@@ -84,7 +84,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
     queue_js_file(["app"]);
     // Check if using Exhibits controller, and add the stylesheet for general display of exhibits
-    if ($module == "exhibit-microsite" && $controller == "exhibits") {
+    if ($controller == "exhibits") {
 
       queue_css_file(["styles", "palettes"], "screen");
       queue_js_file(["palettes"]);
@@ -133,23 +133,23 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    */
   public function filterExhibitLayouts($layouts)
   {
-    $water["flex-text"] = [
+    $ems["flex-text"] = [
       "name" => "Bootstrap Flex Text Block",
       "description" => "A text block for display in a Bootstrap 5 Flex grid.",
     ];
 
-    $water["flex-file"] = [
+    $ems["flex-file"] = [
       "name" => "Bootstrap Flex File Block",
       "description" => "A file block for display in a Bootstrap 5 Flex grid.",
     ];
 
-    $water["flex-file-text"] = [
+    $ems["flex-file-text"] = [
       "name" => "Bootstrap Flex File with Text Block",
       "description" =>
         "A file with text block for display in a Bootstrap 5 Flex grid..",
     ];
 
-    return array_merge($water, $layouts);
+    return array_merge($ems, $layouts);
   }
 
   function hookDefineRoutes($args)
@@ -171,22 +171,6 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         "routes"
       )
     );
-  }
-
-  public function filterThemeOptions($options, $args)
-  {
-    $request = Zend_Controller_Front::getInstance()->getRequest();
-    $module = $request->getModuleName();
-
-    // if (Omeka_Context::getInstance()->getRequest()->getModuleName() == 'exhibit-builder' && function_exists('__v')) {
-    //     if ($exhibit = exhibit_builder_get_current_exhibit()) {
-    //         $exhibitThemeOptions = $exhibit->getThemeOptions();
-    //     }
-    // }
-    // if (!empty($exhibitThemeOptions)) {
-    //     return serialize($exhibitThemeOptions);
-    // }
-    return []; //$themeOptions;
   }
 
   /**
@@ -289,10 +273,25 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    */
   protected function _is_microsite()
   {
+    // Get the microsite IDs from the options table.
+    $ems = [];
+    $db = get_db();
+    $sql = "SELECT id,name,value FROM `{$db->prefix}options` WHERE 1 AND name REGEXP 'exhibit_microsite\\[\[0-9]+\\]'";
+    $rows = $db->getTable("Option")->fetchAll($sql);
+    if ($rows) {
+      foreach ($rows as $row) {
+        if (isset($row["name"])) {
+          $id = str_replace(["exhibit_microsite[", "]"], "", $row["name"]);
+          $exhibit = get_record_by_id("Exhibit", $id);
+          if ($exhibit) {
+            $ems[$exhibit->slug] = $exhibit->id;
+          }
+        }
+      }
+    }
     // We need to confirm the current request is a microsite before adding the routes.
-    $microsites = @unserialize(get_option("exhibit_microsite_exhibits"));
     $uri = htmlentities($_SERVER["REQUEST_URI"]);
-    foreach ($microsites as $slug => $exhibit_id) {
+    foreach ($ems as $slug => $exhibit_id) {
       if (strpos($uri, $slug, 0) !== false) {
         return true;
       }

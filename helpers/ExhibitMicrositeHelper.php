@@ -436,8 +436,13 @@ class ExhibitMicrositeHelper
   public function itemsBreadcrumbData()
   {
     if ($this->params->item_id || $this->params->file_id) {
+
+      $item = get_record_by_id("Item",$this->params->item_id);
+      set_current_record("item",$item);
       $this->breadcrumb_data[] = [
-        "title" => __("Items"),
+        "title" => metadata("item", "rich_title", [
+          "no_escape" => true,
+        ]),
         "url" => url(
           [
             "module" => "exhibit-microsite",
@@ -445,7 +450,7 @@ class ExhibitMicrositeHelper
             "action" => "browse",
             "slug" => $this->params->slug,
           ],
-          "ems_browse_items"
+          $this->route
         ),
       ];
     }

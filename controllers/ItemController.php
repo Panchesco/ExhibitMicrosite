@@ -26,6 +26,9 @@ class ExhibitMicrosite_ItemController extends
 
   protected function _init()
   {
+
+
+
     $this->view = get_view();
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
     $this->route = $this->getFrontController()
