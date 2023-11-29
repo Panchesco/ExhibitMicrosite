@@ -46,6 +46,7 @@ class ExhibitMicrosite_IndexController extends
       $data[$key]["exhibit_id"] = $exhibit->id;
       $data[$key]["title"] = $exhibit->title;
       $data[$key]["exhibit_slug"] = $exhibit->slug;
+      $data[$key]["collection_page_title"] = $exhibit->slug;
       $data[$key]["modified_by_username"] =
         isset($values["modified_by_user_id"]) &&
         !empty($values["modified_by_user_id"])
@@ -55,6 +56,11 @@ class ExhibitMicrosite_IndexController extends
         isset($values["updated"]) & !empty($values["updated"])
           ? $values["updated"]
           : null;
+      $data[$key]["collection_page_title"] =
+        isset($values["collection_page_title"]) &
+        !empty($values["collection_page_title"])
+          ? $values["collection_page_title"]
+          : __("Collection");
     }
 
     $sort_field = isset($_GET["sort_field"])
@@ -122,6 +128,7 @@ class ExhibitMicrosite_IndexController extends
     $formData["id"] = $option["id"];
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
+    $formData["collection_page_title"] = $values["collection_page_title"];
     $formData["current_user"] = current_user()->id;
     $formData["inserted"] = isset($values["inserted"])
       ? $values["inserted"]
@@ -237,6 +244,19 @@ class ExhibitMicrosite_IndexController extends
       "required" => true,
     ]);
 
+    $form->addElementToEditGroup("text", "collection_page_title", [
+      "id" => "exhibit-microsite-collection-page-title",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["collection_page_title"])
+        ? $option["collection_page_title"]
+        : __("Collection"),
+      "data-record_type" => "collection-page-title",
+      "label" => __("Collection Page Title"),
+      "description" => __(
+        "What title should appear on the Collection browse page?"
+      ),
+    ]);
+
     if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
       $form->addElement("sessionCsrfToken", "csrf_token");
     }
@@ -274,7 +294,6 @@ class ExhibitMicrosite_IndexController extends
     WHERE et.record_type = 'Collection'
     ORDER BY et.text ASC
     ";
-
 
     $rows = $db->getTable("Collection")->fetchAll($sql);
 
@@ -314,6 +333,9 @@ class ExhibitMicrosite_IndexController extends
         $option->value = [
           "exhibit_id" => $_POST["exhibit_id"],
           "collection_id" => $_POST["collection_id"],
+          "collection_page_title" => htmlentities(
+            $_POST["collection_page_title"]
+          ),
         ];
 
         $data = @unserialize($option->value);

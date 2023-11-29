@@ -4,12 +4,14 @@ echo head();
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
-<h1><?php echo $count > 1 ? __("Collections") : __("Collection"); ?></h1>
+<h1><?php echo isset($microsite_options["collection_page_title"])
+  ? $microsite_options["collection_page_title"]
+  : $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0 justify-content-between">
   <div class="filters col-lg-3">
     <?php if ($count > 1): ?>
     <div class="filter-block">
-    <h2><?php echo __("View by Collection"); ?></h2>
+    <h2><?php echo __("Filter by Collection"); ?></h2>
       <ul id="collections">
       <?php foreach ($collections_filter_data as $id => $row): ?>
          <li><label for="collection-<?php echo $row[
@@ -24,7 +26,7 @@ echo head();
     </div><!-- end .filter-block -->
     <?php endif; ?>
     <div class="filter-block">
-        <h2><?php echo __("View by Creator"); ?></h2>
+        <h2><?php echo __("Filter by Creator"); ?></h2>
           <ul id="creators">
           <?php foreach ($creators_filter_data as $key => $row): ?>
              <li><label for="creator-<?php echo $key; ?>"><input type="checkbox" id="creator-<?php echo $key; ?>"
@@ -36,7 +38,7 @@ echo head();
           </ul>
         </div><!-- end .filter-block -->
   </div>
-  <div class="col-lg-9">
+  <div class="col-lg-9 px-3">
    [items]
   </div>
 </div><!-- end .flex-blocks-wrapper -->
