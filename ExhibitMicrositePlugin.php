@@ -94,7 +94,8 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/shared/exhibit_layouts"
       );
 
-      $options["api"] = get_option("api_enable");
+      // Todo - These values need to be stored via the config form for the plugin.
+      // So users can edit.
       $options["palette"] = [
         "#8B0015",
         "#AB0520",
@@ -235,7 +236,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       if ($exhibit && $exhibit->theme) {
         // Save result in static for future calls
         $exhibitTheme = $exhibit->theme;
-        add_filter("theme_options", [$this, "microsite_theme_options"]);
+        add_filter("theme_options", "microsite_theme_options");
         return $exhibitTheme;
       }
     }
@@ -305,23 +306,23 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
    * @param string $themeOptions Serialized array of theme options
    * @param string $args Unused here
    */
-  function microsite_theme_options($themeOptions, $args)
-  {
-    $request = Zend_Controller_Front::getInstance()->getRequest();
-    try {
-      $exhibit = get_record("Exhibit", [
-        "public" => 1,
-        "slug" => $request->getParam("slug"),
-      ]);
-      if ($exhibit) {
-        $exhibitThemeOptions = $exhibit->getThemeOptions();
-        if (!empty($exhibitThemeOptions)) {
-          return serialize($exhibitThemeOptions);
-        }
-      }
-    } catch (Zend_Exception $e) {
-      // no view available
-    }
-    return $themeOptions;
-  }
+  // function microsite_theme_options($themeOptions, $args)
+  // {
+  //   $request = Zend_Controller_Front::getInstance()->getRequest();
+  //   try {
+  //     $exhibit = get_record("Exhibit", [
+  //       "public" => 1,
+  //       "slug" => $request->getParam("slug"),
+  //     ]);
+  //     if ($exhibit) {
+  //       $exhibitThemeOptions = $exhibit->getThemeOptions();
+  //       if (!empty($exhibitThemeOptions)) {
+  //         return serialize($exhibitThemeOptions);
+  //       }
+  //     }
+  //   } catch (Zend_Exception $e) {
+  //     // no view available
+  //   }
+  //   return $themeOptions;
+  // }
 } // End ExhbitMicrosite Class

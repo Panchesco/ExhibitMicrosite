@@ -1,5 +1,126 @@
 <?php
 
+
+
+/**
+ * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
+ *
+ * @param string $themeOptions Serialized array of theme options
+ */
+function microsite_theme_options($themeOptions)
+{
+  $request = Zend_Controller_Front::getInstance()->getRequest();
+  try {
+    $exhibit = get_record("Exhibit", [
+      "public" => 1,
+      "slug" => $request->getParam("slug"),
+    ]);
+    if ($exhibit) {
+      $exhibitThemeOptions = $exhibit->getThemeOptions();
+      if (!empty($exhibitThemeOptions)) {
+        return serialize($exhibitThemeOptions);
+      }
+    }
+  } catch (Zend_Exception $e) {
+    // no view available
+  }
+  return $themeOptions;
+}
+
+
+/**
+ * @description If $data is not a string,
+ *  then returned value will always be false.
+ *  Serialized data is always a string.
+ * @param string $data  Required Value to check
+ *  to see if was serialized.
+ * @param bool $strict Optional Whether to be strict
+ *  about the end of the string.
+ *  Default: true
+ * @return bool
+ * https://developer.wordpress.org/reference/functions/is_serialized/
+ */
+if (!function_exists("is_serialized")) {
+  function is_serialized($data, $strict = true)
+  {
+    // If it isn't a string, it isn't serialized.
+    if (!is_string($data)) {
+      return false;
+    }
+    $data = trim($data);
+    if ("N;" === $data) {
+      return true;
+    }
+    if (strlen($data) < 4) {
+      return false;
+    }
+    if (":" !== $data[1]) {
+      return false;
+    }
+    if ($strict) {
+      $lastc = substr($data, -1);
+      if (";" !== $lastc && "}" !== $lastc) {
+        return false;
+      }
+    } else {
+      $semicolon = strpos($data, ";");
+      $brace = strpos($data, "}");
+      // Either ; or } must exist.
+      if (false === $semicolon && false === $brace) {
+        return false;
+      }
+      // But neither must be in the first X characters.
+      if (false !== $semicolon && $semicolon < 3) {
+        return false;
+      }
+      if (false !== $brace && $brace < 4) {
+        return false;
+      }
+    }
+    $token = $data[0];
+    switch ($token) {
+      case "s":
+        if ($strict) {
+          if ('"' !== substr($data, -2, 1)) {
+            return false;
+          }
+        } elseif (!str_contains($data, '"')) {
+          return false;
+        }
+      // Or else fall through.
+      case "a":
+      case "O":
+      case "E":
+        return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
+      case "b":
+      case "i":
+      case "d":
+        $end = $strict ? '$' : "";
+        return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
+    }
+    return false;
+  }
+}
+
+/**
+ * @description Unserializes data only if it was serialized.
+ * @param string $data Required
+ * @return mixed Unserialized data can be any type.
+ * https://developer.wordpress.org/reference/functions/maybe_unserialize/
+ */
+if (!function_exists("maybe_unserialize")) {
+  function maybe_unserialize($data)
+  {
+    if (is_serialized($data)) {
+      // Don't attempt to unserialize data that wasn't serialized going in.
+      return @unserialize(trim($data));
+    }
+
+    return $data;
+  }
+}
+
+
 if (!function_exists("currentExhibitThemeOptions")) {
   function currentExhibitThemeOptions()
   {

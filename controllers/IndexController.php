@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Exhibit Microsite
  *
@@ -268,12 +269,12 @@ class ExhibitMicrosite_IndexController extends
   {
     $db = get_db();
     $sql = "
-    SELECT et.`id`,et.`text` FROM {$db->prefix}element_texts et
-    WHERE 1
-    AND et.record_type = 'Collection'
-    AND et.`element_id` = (SELECT id FROM {$db->prefix}elements e WHERE 1 AND e.`name` = 'Title' LIMIT 1 )
-    ORDER BY et.`text` ASC;
+    SELECT c.`id`,c.`public`,et.`record_type`,et.`text`,et.`html` FROM {$db->prefix}element_texts et
+    LEFT OUTER JOIN {$db->prefix}collections c ON et.record_id = c.id
+    WHERE et.record_type = 'Collection'
+    ORDER BY et.text ASC
     ";
+
 
     $rows = $db->getTable("Collection")->fetchAll($sql);
 

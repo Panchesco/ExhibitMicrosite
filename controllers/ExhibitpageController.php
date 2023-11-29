@@ -1,4 +1,5 @@
 <?php
+
 use ExhibitMicrosite\helpers\ParamsHelper;
 use ExhibitMicrosite\helpers\ExhibitMicrositeHelper;
 

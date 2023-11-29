@@ -4,6 +4,7 @@ use ExhibitMicrosite\Helpers\ParamsHelper;
 use Zend_Controller_Front;
 class ExhibitMicrositeHelper
 {
+  public $options;
   function __construct($config)
   {
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
@@ -108,6 +109,8 @@ class ExhibitMicrositeHelper
 
     // Set the breadcrumb data
     $this->setBreadcrumbData();
+
+    $this->options = $this->_setOptions();
   }
 
   function urlArray()
@@ -436,9 +439,8 @@ class ExhibitMicrositeHelper
   public function itemsBreadcrumbData()
   {
     if ($this->params->item_id || $this->params->file_id) {
-
-      $item = get_record_by_id("Item",$this->params->item_id);
-      set_current_record("item",$item);
+      $item = get_record_by_id("Item", $this->params->item_id);
+      set_current_record("item", $item);
       $this->breadcrumb_data[] = [
         "title" => metadata("item", "rich_title", [
           "no_escape" => true,
@@ -500,5 +502,102 @@ class ExhibitMicrositeHelper
     }
     $html .= "</ul>";
     return $html;
+  }
+
+  protected function _setOptions()
+  {
+    if (!$this->exhibit) {
+      if ($this->slug) {
+        $this->exhibit = get_record("Exhibit", [
+          "slug" => $this->params->slug,
+          "public" => 1,
+        ]);
+      } else {
+        return;
+      }
+    }
+
+    // Get the microsite options saved in the omeka options table.
+    $data = [];
+    $db = get_db();
+    $sql =
+      "SELECT `name`,`value` FROM `{$db->prefix}options` WHERE 1 AND `name` = 'exhibit_microsite[" .
+      $this->exhibit->id .
+      "]'";
+    $row = $db->getTable("Option")->fetchRow($sql);
+
+    // If the option row is found, format the options, including human friendly Collections info.
+    if ($row) {
+      $row = maybe_unserialize($row["value"]);
+      $row["collections"] = [];
+      $row["exhibit_id"] = isset($row["exhibit_id"])
+        ? $row["exhibit_id"]
+        : null;
+      $row["collection_id"] =
+        isset($row["collection_id"]) && is_array($row["collection_id"])
+          ? $row["collection_id"]
+          : [];
+      $ids = !empty($row["collection_id"])
+        ? " AND id IN(" . implode(",", $row["collection_id"]) . ")"
+        : "";
+
+      // Get the public Collections associated with the microsite exhibit.
+      $sql = "
+         SELECT et.record_id AS collection_id,et.text as title,et.html FROM `{$db->prefix}elements` e
+         LEFT OUTER JOIN `{$db->prefix}element_texts` et ON et.element_id = e.id
+         WHERE 1
+         AND e.name = 'Title'
+         AND et.record_type = 'Collection'
+         AND et.record_id IN (SELECT id FROM `{$db->prefix}collections` WHERE 1 {$ids} AND public = 1)
+         ORDER BY et.text ASC
+         ";
+
+      $rows = $db->getTable("Collection")->fetchAll($sql);
+      foreach ($rows as $collection) {
+        if ($collection["html"] == 1) {
+          $collection["title"] = strip_tags($collection["title"]);
+        }
+        $row["collections"][] = $collection;
+      }
+
+      return $row;
+    }
+    return;
+  }
+
+  public function itemsFilterData($element_name)
+  {
+    $element_name = strtolower($element_name);
+
+    if (isset($this->options["collection_id"])) {
+      if (
+        is_array($this->options["collection_id"]) &&
+        !empty($this->options["collection_id"])
+      ) {
+        $collection_clause =
+          " AND i.collection_id IN(" .
+          implode(",", $this->options["collection_id"]) .
+          ") ";
+      } else {
+        $collection_clause = "";
+      }
+    } else {
+      $collection_clause = "";
+    }
+
+    $db = get_db();
+    $sql = "
+     SELECT DISTINCT(et.text) AS {$element_name} FROM `{$db->prefix}elements` e
+     LEFT OUTER JOIN `{$db->prefix}element_texts` et ON et.element_id = e.id
+     LEFT OUTER JOIN `{$db->prefix}items` i on i.id = et.record_id
+     WHERE 1
+     AND e.name = '{$element_name}'
+     AND et.record_type = 'Item' {$collection_clause}
+     ORDER BY et.text ASC
+     ";
+
+    $rows = $db->getTable("ElementText")->fetchAll($sql);
+
+    return $rows;
   }
 } // End MicrositeHelper class.
