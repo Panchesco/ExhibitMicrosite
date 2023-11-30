@@ -61,6 +61,10 @@ class ExhibitMicrosite_IndexController extends
         !empty($values["collection_page_title"])
           ? $values["collection_page_title"]
           : __("Collection");
+      $data[$key]["per_page"] =
+        isset($values["per_page"]) & !empty($values["per_page"])
+          ? $values["per_page"]
+          : get_option("per_page_public");
     }
 
     $sort_field = isset($_GET["sort_field"])
@@ -129,6 +133,7 @@ class ExhibitMicrosite_IndexController extends
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
     $formData["collection_page_title"] = $values["collection_page_title"];
+    $formData["per_page"] = $values["per_page"];
     $formData["current_user"] = current_user()->id;
     $formData["inserted"] = isset($values["inserted"])
       ? $values["inserted"]
@@ -257,6 +262,19 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
+    $form->addElementToEditGroup("text", "per_page", [
+      "id" => "exhibit-microsite-per-page",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["per_page"])
+        ? $option["per_page"]
+        : get_option("per_page_public"),
+      "data-record_type" => "per-page",
+      "label" => __("Items Per Page"),
+      "description" => __(
+        "How many items should display on the collection page before paginating?"
+      ),
+    ]);
+
     if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
       $form->addElement("sessionCsrfToken", "csrf_token");
     }
@@ -336,6 +354,7 @@ class ExhibitMicrosite_IndexController extends
           "collection_page_title" => htmlentities(
             $_POST["collection_page_title"]
           ),
+          "per_page" => htmlentities($_POST["per_page"]),
         ];
 
         $data = @unserialize($option->value);

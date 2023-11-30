@@ -59,6 +59,10 @@ class ExhibitMicrosite_CollectionController extends
   public function browseAction()
   {
     $this->init();
+
+    $creators_filter_data = $this->microsite->itemsFilterData("Creator");
+    $item_types_filter_data = $this->microsite->itemTypesFilterData();
+
     $this->view->exhibitPage = $this->exhibitPage;
     echo $this->view->partial("collection/browse.php", [
       "breadcrumb" => $this->breadcrumb,
@@ -71,10 +75,24 @@ class ExhibitMicrosite_CollectionController extends
       "collections_filter_data" => $this->microsite->options["collections"],
       "route" => $this->route,
       "theme_options" => $this->theme_options,
-      "creators_filter_data" => $this->microsite->itemsFilterData("Creator"),
+      "creators_filter_data" => $creators_filter_data,
+      "item_types_filter_data" => $item_types_filter_data,
+      "items" => $this->collectionItems(),
       "view" => $this->view,
     ]);
 
     exit();
   }
-}
+
+  public function collectionItems($filters = [])
+  {
+    $db = get_db();
+    return get_records(
+      "Item",
+      [
+        "collection" => $this->microsite->options["collection_id"],
+      ],
+      0
+    );
+  }
+} // End CollectionController class

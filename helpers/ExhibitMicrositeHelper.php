@@ -565,6 +565,11 @@ class ExhibitMicrositeHelper
     return;
   }
 
+  /**
+   * Returns array of Dublin Core element_name values for
+   * the current microsite collections
+   * @return array
+   */
   public function itemsFilterData($element_name)
   {
     $element_name = strtolower($element_name);
@@ -587,17 +592,81 @@ class ExhibitMicrositeHelper
 
     $db = get_db();
     $sql = "
-     SELECT DISTINCT(et.text) AS {$element_name} FROM `{$db->prefix}elements` e
+     SELECT DISTINCT(et.`text`) AS {$element_name} FROM `{$db->prefix}elements` e
      LEFT OUTER JOIN `{$db->prefix}element_texts` et ON et.element_id = e.id
-     LEFT OUTER JOIN `{$db->prefix}items` i on i.id = et.record_id
+     LEFT OUTER JOIN `{$db->prefix}items` i on i.`id` = et.record_id
      WHERE 1
-     AND e.name = '{$element_name}'
-     AND et.record_type = 'Item' {$collection_clause}
-     ORDER BY et.text ASC
+     AND e.`name` = '{$element_name}'
+     AND et.`record_type` = 'Item' {$collection_clause}
+     ORDER BY et.`text` ASC
      ";
 
     $rows = $db->getTable("ElementText")->fetchAll($sql);
 
     return $rows;
+  }
+
+  /**
+   * Returns array of item_type_id => name
+   * pairs for items in the current collections
+   * @return array
+   */
+  public function itemTypesFilterData()
+  {
+    $data = [];
+    $db = get_db();
+
+    $collections_clause = $this->columnInSql(
+      "i.collection_id",
+      $this->options["collection_id"]
+    );
+    $sql = "
+      SELECT it.id AS item_type_id,it.name AS item_type FROM {$db->prefix}item_types it
+      LEFT OUTER JOIN {$db->prefix}items i ON i.item_type_id = it.id
+      WHERE 1 
+      AND i.public = 1
+      ";
+    $sql .= $collections_clause;
+    $sql .= "
+      GROUP BY (it.id)
+      ORDER BY it.name ASC
+      ";
+    return $db->getTable("ElementTypes")->fetchAll($sql);
+  }
+
+  /**
+   * Format a db.column IN(array of values) sql
+   * @param string $column db column name
+   * @param array $data array of values
+   * @return string
+   */
+  public function columnInSql($column, $data)
+  {
+    if (!empty($data)) {
+      return " AND {$column} IN(" . implode(",", $data) . ") ";
+    }
+    return "";
+  }
+
+  /**
+   * Format a db.column IN(array of values) sql
+   * @param string $column db column name
+   * @param array $data array of values
+   * @return string
+   */
+  public function elementId($name, $element_set_name = "Dublin Core")
+  {
+    $db = get_db();
+    $sql = "
+    SELECT `id` FROM {$db->prefix}elements
+    WHERE 1 AND {$db->prefix}elements.name = '{$name}'
+    AND {$db->prefix}elements.element_set_id = (SELECT `id` FROM {$db->prefix}element_sets WHERE `name` = '{$element_set_name}'  LIMIT 1 )
+    ";
+
+    $row = $db->getTable("Element")->fetchRow($sql);
+    if ($row) {
+      return $row["id"];
+    }
+    return null;
   }
 } // End MicrositeHelper class.

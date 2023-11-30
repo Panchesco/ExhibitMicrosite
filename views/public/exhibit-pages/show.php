@@ -1,6 +1,5 @@
 <?php
-echo head();
-?>
+echo head(); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
