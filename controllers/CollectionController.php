@@ -9,6 +9,8 @@ class ExhibitMicrosite_CollectionController extends
   public $exhibit;
   public $exhibitPage;
   public $microsite_options;
+  public $start = 0;
+  public $offset = 3;
   public function init()
   {
     // Set the model class so this controller can perform some functions,
@@ -22,6 +24,16 @@ class ExhibitMicrosite_CollectionController extends
       ->getCurrentRouteName();
 
     $this->params = new ParamsHelper();
+
+    // Set pagination props.
+    // if (isset($this->params->page_number)) {
+    //   $num = $this->params->page_number - 1;
+    //   if ($num >= 0) {
+    //     $this->start = $num;
+    //   }
+    // } else {
+    //   $this->start = 0;
+    // }
 
     if (!$this->exhibit) {
       $this->exhibit = $this->_helper->db
@@ -60,6 +72,10 @@ class ExhibitMicrosite_CollectionController extends
   {
     $this->init();
 
+    echo $this->params->page_number . "<br>";
+    echo $this->microsite->index . "<br>";
+    echo $this->microsite->offset . "<br>";
+
     $creators_filter_data = $this->microsite->itemsFilterData("Creator");
     $item_types_filter_data = $this->microsite->itemTypesFilterData();
 
@@ -71,7 +87,6 @@ class ExhibitMicrosite_CollectionController extends
       "exhibitPage" => $this->exhibitPage,
       "params" => $this->params,
       "microsite_options" => $this->microsite->options,
-      "count" => count($this->microsite->options["collection_id"]),
       "collections_filter_data" => $this->microsite->options["collections"],
       "route" => $this->route,
       "theme_options" => $this->theme_options,
@@ -79,20 +94,63 @@ class ExhibitMicrosite_CollectionController extends
       "item_types_filter_data" => $item_types_filter_data,
       "items" => $this->collectionItems(),
       "view" => $this->view,
+      "total_results" => "",
+      "items_count" => "",
     ]);
-
     exit();
   }
 
-  public function collectionItems($filters = [])
+  public function collectionItems()
   {
-    $db = get_db();
-    return get_records(
-      "Item",
-      [
-        "collection" => $this->microsite->options["collection_id"],
-      ],
-      0
-    );
+    $item_ids = $this->collectionItemIds();
+    $item_ids = implode(",", $item_ids);
+    if (!empty($item_ids)) {
+      return get_records(
+        "Item",
+        [
+          "range" => $item_ids,
+          "collection" => $this->microsite->options["collection_id"],
+        ],
+        0
+      );
+    }
+    return [];
+  }
+
+  /**
+   * Get items for the page meeting the filter criteria.
+   * @return array of item_ids
+   */
+  public function collectionItemIds($filters = [])
+  {
+    $data = [];
+    if (!empty($this->microsite->options["collection_id"])) {
+      $db = get_db();
+      $sql =
+        "
+    SELECT `id` FROM {$db->prefix}items 
+    WHERE 1 
+    AND `public` = 1
+    " .
+        $this->microsite->columnInSql(
+          "collection_id",
+          $this->microsite->options["collection_id"]
+        ) .
+        "
+    LIMIT " .
+        $this->start .
+        "," .
+        $this->offset .
+        "";
+
+      print_r("<pre>");
+      print_r($sql);
+      print_r("</pre>");
+
+      $rows = $db->getTable("Item")->fetchAll($sql);
+
+      return array_column($rows, "id");
+    }
+    return $data;
   }
 } // End CollectionController class

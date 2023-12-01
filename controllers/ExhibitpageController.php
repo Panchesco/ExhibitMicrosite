@@ -65,15 +65,13 @@ class ExhibitMicrosite_ExhibitpageController extends
 
   public function showAction()
   {
-
     $this->init();
 
     $this->view->exhibitPage = $this->exhibitPage;
 
     // Branch for projects page handling.
-    if( $this->exhibitPage->slug == "projects") {
-
-    echo $this->view->partial("exhibit-pages/projects.php", [
+    if ($this->exhibitPage->slug == "collections") {
+      echo $this->view->partial("exhibit-pages/collections.php", [
         "breadcrumb" => $this->breadcrumb,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
@@ -86,7 +84,7 @@ class ExhibitMicrosite_ExhibitpageController extends
         "view" => $this->view,
       ]);
     } else {
-    echo $this->view->partial("exhibit-pages/show.php", [
+      echo $this->view->partial("exhibit-pages/show.php", [
         "breadcrumb" => $this->breadcrumb,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
@@ -98,24 +96,24 @@ class ExhibitMicrosite_ExhibitpageController extends
         "view" => $this->view,
       ]);
     }
-
     exit();
   }
 
   /**
-  * Returns the first image file object associated with an exhibit page.
-  * @param object Omeka $exhibitPage object
-  * @return $object
-  */
-  public function exhibitPageFirstFileImage($exhibitPage){
-    foreach($exhibitPage->ExhibitPageBlocks as $block) {
+   * Returns the first image file object associated with an exhibit page.
+   * @param object Omeka $exhibitPage object
+   * @return $object
+   */
+  public function exhibitPageFirstFileImage($exhibitPage)
+  {
+    foreach ($exhibitPage->ExhibitPageBlocks as $block) {
       $attachments = $block->getAttachments();
-       foreach($attachments as $attachment) {
-         $file = $attachment->getFile();
-         if($file && strpos($file->mime_type,'image')!== false) {
-           return $file;
-         }
-       }
+      foreach ($attachments as $attachment) {
+        $file = $attachment->getFile();
+        if ($file && strpos($file->mime_type, "image") !== false) {
+          return $file;
+        }
+      }
     }
     return null;
   }

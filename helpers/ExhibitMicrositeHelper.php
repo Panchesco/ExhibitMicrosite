@@ -5,6 +5,9 @@ use Zend_Controller_Front;
 class ExhibitMicrositeHelper
 {
   public $options;
+  public $index;
+  public $offset;
+  public $per_page;
   function __construct($config)
   {
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
@@ -93,24 +96,61 @@ class ExhibitMicrositeHelper
       $this->collection = $config["collection"];
     }
 
-    // Get page number if there is one.
-    if (!isset($config["page_number"])) {
-      if ($this->params->page_number) {
-        $this->page_number = $this->params->page_number;
-      } else {
-        $this->page_number = 1;
-      }
-    } else {
-      $this->page_number = $config["page_number"];
-    }
-
     // Get the exhibit theme options.
     $this->theme_options = $this->exhibit->theme_options;
 
+    $this->options = $this->_setOptions();
     // Set the breadcrumb data
     $this->setBreadcrumbData();
+    $this->_setPerPage();
+    $this->_setIndex();
+    $this->_setOffset();
+  }
 
-    $this->options = $this->_setOptions();
+  /**
+   * Set the db index integer for query limit clause
+   * from the current page number.
+   */
+  protected function _setIndex()
+  {
+    if ($this->params->page_number) {
+      if ($this->params->page_number > 0) {
+        $this->index = $this->params->page_number - 1;
+      } else {
+        $this->index = 0;
+      }
+    } else {
+      $this->index = 0;
+    }
+  }
+
+  /**
+   * Set the db offset integer for query limit clause
+   * from the current index value.
+   */
+  protected function _setOffset()
+  {
+    if (!$this->index || $this->index == 0) {
+      $this->offset = $this->per_page;
+    } else {
+      $this->offset = $this->index * $this->per_page;
+    }
+  }
+
+  /**
+   * Set the per page option from the saved microsite options
+   * or, if that hasn't been set, use the default Omeka setting.
+   */
+  protected function _setPerPage()
+  {
+    if (
+      !isset($this->options["per_page"]) ||
+      empty($this->options["per_page"])
+    ) {
+      $this->per_page = get_option("per_page_public");
+    } else {
+      $this->per_page = $this->options["per_page"];
+    }
   }
 
   function urlArray()
@@ -331,6 +371,31 @@ class ExhibitMicrositeHelper
         break;
       // Collection
 
+      case "ems_collection":
+        $url = url(
+          [
+            "action" => "show",
+            "controller" => "collection",
+            "slug" => $this->params->slug,
+            "collection_id" => $this->params->collection_id,
+          ],
+          "ems_collection"
+        );
+        break;
+
+      case "ems_collection_item":
+        $url = url(
+          [
+            "action" => "show",
+            "controller" => "item",
+            "slug" => $this->params->slug,
+            "collection_id" => $this->params->collection_id,
+            "item_id" => $this->params->item_id,
+          ],
+          "ems_show_item"
+        );
+        break;
+
       // Microsite Landing Page
       default:
         $url = url(
@@ -361,6 +426,8 @@ class ExhibitMicrositeHelper
     $this->exhibitPagesBreadcrumbData();
 
     $this->itemsBreadcrumbData();
+
+    $this->collectionsBreadcrumbData();
   } // end function
 
   public function exhbitBreadcrumbData()
@@ -401,20 +468,22 @@ class ExhibitMicrositeHelper
     }
 
     if ($this->params->page_slug_2) {
-      $this->breadcrumb_data[] = [
-        "title" => $this->exhibitPages[1]->title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "exhibitpage",
-            "action" => "show",
-            "slug" => $this->params->slug,
-            "page_slug_1" => $this->params->page_slug_1,
-            "page_slug_2" => $this->params->page_slug_2,
-          ],
-          "ems_exhibitPage2"
-        ),
-      ];
+      if (isset($this->exhibitPages[1]->title)) {
+        $this->breadcrumb_data[] = [
+          "title" => $this->exhibitPages[1]->title,
+          "url" => url(
+            [
+              "module" => "exhibit-microsite",
+              "controller" => "exhibitpage",
+              "action" => "show",
+              "slug" => $this->params->slug,
+              "page_slug_1" => $this->params->page_slug_1,
+              "page_slug_2" => $this->params->page_slug_2,
+            ],
+            "ems_exhibitPage2"
+          ),
+        ];
+      }
     }
 
     if ($this->params->page_slug_3) {
@@ -478,7 +547,71 @@ class ExhibitMicrositeHelper
         ),
       ];
     }
-  }
+  } // End itemsBreadcrumbData method
+
+  public function collectionsBreadcrumbData()
+  {
+    $this->breadcrumb_data = [];
+
+    // Exhibit Landing Page.
+    if (in_array($this->route, ["ems_collection", "ems_collection_item"])) {
+      $this->breadcrumb_data[] = [
+        "title" => $this->exhibit->title,
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "default",
+            "action" => "show",
+            "slug" => $this->params->slug,
+          ],
+          "ems_exhibitLanding"
+        ),
+      ];
+
+      // Collection Landing Page
+      $this->breadcrumb_data[] = [
+        "title" => $this->options["collection_page_title"],
+        "url" => url(
+          [
+            "module" => "exhibit-microsite",
+            "controller" => "collection",
+            "action" => "browse",
+            "slug" => $this->params->slug,
+          ],
+          "ems_collection"
+        ),
+      ];
+
+      // Item metadata page.
+      if ($this->params->item_id) {
+        $item = get_record_by_id("Item", $this->params->item_id);
+        set_current_record("item", $item);
+        if (metadata("item", "rich_title")) {
+          $title = metadata("item", "rich_title");
+        } else {
+          $title = null;
+        }
+        $this->breadcrumb_data[] = [
+          "title" => $title,
+          "url" => url(
+            [
+              "module" => "exhibit-microsite",
+              "controller" => "collection",
+              "action" => "browse",
+              "slug" => $this->params->slug,
+              "collection_id" => $this->params->collection_id,
+              "item_id" => $this->params->item_id,
+            ],
+            "ems_collection"
+          ),
+        ];
+      }
+
+      // print_r("<pre>");
+      // print_r($this->options);
+      // print_r("</pre>");
+    }
+  } // End collectionsBreadcrumbData method
 
   /**
    * Returns HTML

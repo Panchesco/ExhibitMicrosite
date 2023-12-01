@@ -1,16 +1,15 @@
 <?php
-echo head();
-?>
+echo head(); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 
-<?php echo $this->view->partial('exhibit-pages/projects-child-pages.php',[
+<?php echo $this->view->partial("exhibit-pages/collections-child-pages.php", [
   "child_pages" => $child_pages,
-  "params" => $params
-]);?>
+  "params" => $params,
+]); ?>
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php
 $layout = $block->getLayout();

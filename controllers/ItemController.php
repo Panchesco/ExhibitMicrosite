@@ -26,9 +26,6 @@ class ExhibitMicrosite_ItemController extends
 
   protected function _init()
   {
-
-
-
     $this->view = get_view();
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
     $this->route = $this->getFrontController()
@@ -144,6 +141,7 @@ class ExhibitMicrosite_ItemController extends
       "slug" => $params->slug,
       "thumb_links_base" => $this->thumb_links_base,
       "theme_options" => $this->microsite->exhibit->getThemeOptions(),
+      "microsite" => $this->microsite,
       "view" => $this->view,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "collection_title" => metadata($collection, "rich_title", [

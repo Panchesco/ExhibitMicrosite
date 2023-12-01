@@ -1,4 +1,5 @@
 <?php
+set_current_record("Item", $item);
 echo head([
   "title" => metadata("item", ["Dublin Core", "Title"]),
   "bodyclass" => "items show",
@@ -12,20 +13,32 @@ if (
 }
 
 $citation = "[citation]";
+$item_title = trim(
+  metadata("item", "rich_title", [
+    "no_escape" => true,
+  ])
+);
+
+$h1 = $item_title;
+if (
+  isset($file_info["display_title"]) &&
+  trim($file_info["display_title"]) != $item_title
+) {
+  $file_title = trim($file_info["display_title"]);
+} else {
+  $file_title = "";
+}
+
+if ($file_title && $file_title) {
+  $h1 .= trim($microsite->options["titles_separator"]) . " " . $file_title;
+}
 ?>
-
-
 <div class="row g-0">
   <nav id="breadcrumb" class="col-span-12">
 <?php echo $breadcrumb; ?>
   </nav>
   <div class="col-span-12">
-    <h1><?php echo metadata("item", "rich_title", [
-      "no_escape" => true,
-    ]); ?>
-    <?php echo $file_info["display_title"]
-      ? " / " . $file_info["display_title"]
-      : ""; ?></h1>
+    <h1><?php echo $h1; ?></h1>
   </div><!-- end col-span-12 -->
   <div class="stage-and-thumbs-wrapper">
   <div id="stage" class="stage>

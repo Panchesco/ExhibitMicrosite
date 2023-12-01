@@ -47,6 +47,7 @@ class ExhibitMicrosite_IndexController extends
       $data[$key]["title"] = $exhibit->title;
       $data[$key]["exhibit_slug"] = $exhibit->slug;
       $data[$key]["collection_page_title"] = $exhibit->slug;
+      $data[$key]["titles_separator"] = $option->titles_separator;
       $data[$key]["modified_by_username"] =
         isset($values["modified_by_user_id"]) &&
         !empty($values["modified_by_user_id"])
@@ -133,6 +134,9 @@ class ExhibitMicrosite_IndexController extends
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
     $formData["collection_page_title"] = $values["collection_page_title"];
+    $formData["titles_separator"] = isset($values["titles_separator"])
+      ? $values["titles_separator"]
+      : "";
     $formData["per_page"] = $values["per_page"];
     $formData["current_user"] = current_user()->id;
     $formData["inserted"] = isset($values["inserted"])
@@ -265,13 +269,27 @@ class ExhibitMicrosite_IndexController extends
     $form->addElementToEditGroup("text", "per_page", [
       "id" => "exhibit-microsite-per-page",
       "class" => "exhibit-microsite-options",
-      "value" => isset($option["per_page"])
-        ? $option["per_page"]
-        : get_option("per_page_public"),
+      "value" => isset($option["per_page"]) ? $option["per_page"] : "",
       "data-record_type" => "per-page",
-      "label" => __("Items Per Page"),
+      "label" => __(
+        "Items Per Page. Leave blank to use the current value of %d as saved in the Omeka installation's Appearance  - Settings.",
+        get_option("per_page_public")
+      ),
       "description" => __(
         "How many items should display on the collection page before paginating?"
+      ),
+    ]);
+
+    $form->addElementToEditGroup("text", "titles_separator", [
+      "id" => "exhibit-microsite-collection-titles-separator",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["titles_separator"])
+        ? $option["titles_separator"]
+        : "",
+      "data-record_type" => "titles-separator",
+      "label" => __("Titles Separator"),
+      "description" => __(
+        "What separator should be used between titles (e.g. Item Title : File Title) when items have more than one file?"
       ),
     ]);
 
@@ -354,6 +372,7 @@ class ExhibitMicrosite_IndexController extends
           "collection_page_title" => htmlentities(
             $_POST["collection_page_title"]
           ),
+          "titles_separator" => htmlentities($_POST["titles_separator"]),
           "per_page" => htmlentities($_POST["per_page"]),
         ];
 
