@@ -6,8 +6,9 @@ class ExhibitMicrositeHelper
 {
   public $options;
   public $index;
-  public $offset;
   public $per_page;
+  public $total_rows;
+  public $total_pages;
   function __construct($config)
   {
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
@@ -104,7 +105,6 @@ class ExhibitMicrositeHelper
     $this->setBreadcrumbData();
     $this->_setPerPage();
     $this->_setIndex();
-    $this->_setOffset();
   }
 
   /**
@@ -115,25 +115,12 @@ class ExhibitMicrositeHelper
   {
     if ($this->params->page_number) {
       if ($this->params->page_number > 0) {
-        $this->index = $this->params->page_number - 1;
+        $this->index = ($this->params->page_number - 1) * $this->per_page;
       } else {
         $this->index = 0;
       }
     } else {
       $this->index = 0;
-    }
-  }
-
-  /**
-   * Set the db offset integer for query limit clause
-   * from the current index value.
-   */
-  protected function _setOffset()
-  {
-    if (!$this->index || $this->index == 0) {
-      $this->offset = $this->per_page;
-    } else {
-      $this->offset = $this->index * $this->per_page;
     }
   }
 
@@ -151,6 +138,16 @@ class ExhibitMicrositeHelper
     } else {
       $this->per_page = $this->options["per_page"];
     }
+  }
+
+  /**
+   * Return a count of how many pages exist for the current total results
+   * @param $total_rows integer
+   * @return integer
+   */
+  public function setTotalPages($total_rows)
+  {
+    $this->total_pages = ceil(intval($total_rows) / intval($this->per_page));
   }
 
   function urlArray()
@@ -756,7 +753,7 @@ class ExhibitMicrositeHelper
     $sql = "
       SELECT it.id AS item_type_id,it.name AS item_type FROM {$db->prefix}item_types it
       LEFT OUTER JOIN {$db->prefix}items i ON i.item_type_id = it.id
-      WHERE 1 
+      WHERE 1
       AND i.public = 1
       ";
     $sql .= $collections_clause;
@@ -782,6 +779,17 @@ class ExhibitMicrositeHelper
   }
 
   /**
+   * Create the limit clause for a query.
+   * @param $index integer
+   * @param $offest integer
+   * @return string.
+   */
+  public function limitSql($index = 0, $offset = 999999)
+  {
+    return " LIMIT {$index},{$offset}";
+  }
+
+  /**
    * Format a db.column IN(array of values) sql
    * @param string $column db column name
    * @param array $data array of values
@@ -801,5 +809,60 @@ class ExhibitMicrositeHelper
       return $row["id"];
     }
     return null;
+  }
+
+  /**
+   * Returns an array of data for creating pagination links.
+   * @params array [current => current_page_number, max => total pages]
+   * https://www.zacfukuda.com/blog/pagination-algorithm
+   */
+  public function paginate()
+  {
+    if (!isset($this->params->page_number) || !isset($this->total_pages)) {
+      return null;
+    }
+
+    $current = $this->params->page_number;
+    $max = $this->total_pages;
+    echo "current: " . $current . "<br>";
+    echo "max: " . $max . "<br>";
+
+    $prev = $current == 1 ? null : $current - 1;
+    $next = $current == $max ? null : $current + 1;
+    $items = [1];
+
+    if ($current === 1 && $max === 1) {
+      return [
+        "current" => $current,
+        "prev" => $prev,
+        "next" => $next,
+        "items" => $items,
+      ];
+    }
+    if ($current > 4) {
+      array_push($items, "…");
+    }
+
+    $r = 2;
+    $r1 = $current - $r;
+    $r2 = $current + $r;
+
+    for ($i = $r1 > 2 ? $r1 : 2; $i <= min($max, $r2); $i++) {
+      array_push($items, $i);
+    }
+
+    if ($r2 + 1 < $max) {
+      array_push($items, "…");
+    }
+    if ($r2 < $max) {
+      array_push($items, $max);
+    }
+
+    return [
+      "current" => $current,
+      "prev" => $prev,
+      "next" => $next,
+      "items" => $items,
+    ];
   }
 } // End MicrositeHelper class.

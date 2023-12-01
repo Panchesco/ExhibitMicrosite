@@ -62,7 +62,7 @@ echo head();
        metadata("Item", ["Dublin Core", "Creator"])
      ); ?>">
        <div class="collection-item">
-         
+
           <?php $item_url = url(
             [
               "action" => "show",
@@ -83,7 +83,7 @@ echo head();
                <?php if ($item->Files && count($item->Files) > 1): ?>
                <div class="plus">+<?php echo count($item->Files) -
                  1; ?></div><?php endif; ?>
-               
+
              </div><!-- end .image-wrapper -->
               <figcaption>
                 <?php echo metadata("Item", "rich_title"); ?>
@@ -92,10 +92,18 @@ echo head();
           <a class="item-link" href="<?php echo $item_url; ?>"><span class="visually-hidden"><?php echo __(
   "View this item"
 ); ?></span></a>
-          </div><!-- end .item-wrapper --> 
+          </div><!-- end .item-wrapper -->
     </div><!-- end .collection-item-wrapper -->
   <?php endforeach; ?>
     </div>
+    <?php if ($total_pages > 1): ?>
+    <?php echo $this->view->partial("sitewide/pagination.php", [
+      "pagination" => $pagination,
+      "route" => $route,
+      "action" => "browse",
+      "controller" => "browsecollection",
+    ]); ?>
+    <?php endif; ?>
   </div>
 </div><!-- end .flex-blocks-wrapper -->
 

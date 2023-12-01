@@ -3,14 +3,15 @@
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 
-class ExhibitMicrosite_CollectionController extends
+class ExhibitMicrosite_BrowseCollectionController extends
   Omeka_Controller_AbstractActionController
 {
   public $exhibit;
   public $exhibitPage;
   public $microsite_options;
-  public $start = 0;
-  public $offset = 3;
+  public $total_results;
+  public $total_page_results;
+
   public function init()
   {
     // Set the model class so this controller can perform some functions,
@@ -24,16 +25,6 @@ class ExhibitMicrosite_CollectionController extends
       ->getCurrentRouteName();
 
     $this->params = new ParamsHelper();
-
-    // Set pagination props.
-    // if (isset($this->params->page_number)) {
-    //   $num = $this->params->page_number - 1;
-    //   if ($num >= 0) {
-    //     $this->start = $num;
-    //   }
-    // } else {
-    //   $this->start = 0;
-    // }
 
     if (!$this->exhibit) {
       $this->exhibit = $this->_helper->db
@@ -65,16 +56,16 @@ class ExhibitMicrosite_CollectionController extends
       "exhibit" => $this->exhibit,
     ]);
 
+    $this->set_total_results();
+    $this->set_total_page_results();
+    $this->microsite->setTotalPages($this->total_results);
+
     $this->breadcrumb = $this->microsite->breadcrumbHTML();
   }
 
   public function browseAction()
   {
     $this->init();
-
-    echo $this->params->page_number . "<br>";
-    echo $this->microsite->index . "<br>";
-    echo $this->microsite->offset . "<br>";
 
     $creators_filter_data = $this->microsite->itemsFilterData("Creator");
     $item_types_filter_data = $this->microsite->itemTypesFilterData();
@@ -94,58 +85,75 @@ class ExhibitMicrosite_CollectionController extends
       "item_types_filter_data" => $item_types_filter_data,
       "items" => $this->collectionItems(),
       "view" => $this->view,
-      "total_results" => "",
-      "items_count" => "",
+      "total_pages" => $this->microsite->total_pages,
+      "pagination" => $this->microsite->paginate(),
     ]);
     exit();
   }
 
   public function collectionItems()
   {
-    $item_ids = $this->collectionItemIds();
+    $limit = $this->microsite->limitSql(
+      $this->microsite->index,
+      $this->microsite->per_page
+    );
+
+    // Get the current page results.
+    $item_ids = $this->collectionItemIds($limit);
+    // Create a string from the result array.
     $item_ids = implode(",", $item_ids);
+
     if (!empty($item_ids)) {
-      return get_records(
-        "Item",
-        [
-          "range" => $item_ids,
-          "collection" => $this->microsite->options["collection_id"],
-        ],
-        0
-      );
+      return get_records("Item", [
+        "range" => "$item_ids",
+        "collection" => $this->microsite->options["collection_id"],
+      ]);
     }
     return [];
+  }
+
+  /**
+   * Set the total number of results found.
+   */
+  public function set_total_results()
+  {
+    $this->total_results = count($this->collectionItemIds());
+    return;
+  }
+
+  /**
+   * Set the number of results for the current page.
+   */
+  public function set_total_page_results()
+  {
+    $index = $this->microsite->index;
+    $offset = $this->microsite->per_page;
+    $this->total_page_results = count(
+      $this->collectionItemIds(" LIMIT {$index},{$offset}")
+    );
   }
 
   /**
    * Get items for the page meeting the filter criteria.
    * @return array of item_ids
    */
-  public function collectionItemIds($filters = [])
+  public function collectionItemIds($limit = "", $filters = [])
   {
     $data = [];
     if (!empty($this->microsite->options["collection_id"])) {
       $db = get_db();
       $sql =
         "
-    SELECT `id` FROM {$db->prefix}items 
-    WHERE 1 
+    SELECT `id` FROM {$db->prefix}items
+    WHERE 1
     AND `public` = 1
     " .
         $this->microsite->columnInSql(
           "collection_id",
           $this->microsite->options["collection_id"]
-        ) .
-        "
-    LIMIT " .
-        $this->start .
-        "," .
-        $this->offset .
-        "";
+        );
 
-      print_r("<pre>");
-      print_r($sql);
-      print_r("</pre>");
+      $sql .= $limit;
 
       $rows = $db->getTable("Item")->fetchAll($sql);
 
