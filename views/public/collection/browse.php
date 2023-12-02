@@ -34,8 +34,14 @@ if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
 <?php if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
   //$csrf = new Omeka_Form_Element_SessionCsrfToken();
 } ?>
-<button name="filters[action]" type="submit" value="clear">Clear</button>
-<button name="filters[action]" type="submit" value="set">Set</button>
+<div class="filter-button-wrapper">
+  <button class="btn btn-dark" name="filters[action]" type="submit" value="clear"><?php echo __(
+    "Clear Filters"
+  ); ?></button>
+  <button class="btn btn-sage " name="filters[action]" type="submit" value="set"><?php echo __(
+    "Set Filters"
+  ); ?></button>
+</div>
 </div>
   <div id="collection" class="col-lg-9 px-3">
     <div class="row" data-masonry='{"percentPosition": true }'>
@@ -66,7 +72,6 @@ if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
                <?php if ($item->Files && count($item->Files) > 1): ?>
                <div class="plus">+<?php echo count($item->Files) -
                  1; ?></div><?php endif; ?>
-
              </div><!-- end .image-wrapper -->
               <figcaption>
                 <?php echo metadata("Item", "rich_title"); ?>

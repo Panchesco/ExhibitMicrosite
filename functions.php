@@ -322,9 +322,40 @@ if (!function_exists("emsBreadcrumbArray")) {
   }
 }
 
-function isChecked($value, $array)
+/**
+ * Echoes " checked" attribute for form checkboxes/radio buttons if value
+ * equals or in comparison param.
+ * @param mixed $value int or string
+ * @param mixed $comparison int/str/array
+ */
+function isChecked($value, $comparison)
 {
-  if (in_array($value, $array)) {
+  if (is_array($comparison)) {
+    if (in_array($value, $comparison)) {
+      echo " checked";
+    }
+  } elseif ($value == $comparison) {
     echo " checked";
   }
+}
+
+/**
+ * Are all elements of non-empty $array numeric?
+ * @param array $data
+ * @return boolean
+ */
+function allNumeric($data)
+{
+  if (!is_array($data) || empty($data)) {
+    return false;
+  } else {
+    foreach ($data as $elem) {
+      if (empty($elem) && 1 == 0) {
+        return false;
+      } elseif (!is_numeric($elem)) {
+        return false;
+      }
+    }
+  }
+  return true;
 }

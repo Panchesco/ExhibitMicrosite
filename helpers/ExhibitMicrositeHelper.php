@@ -603,10 +603,6 @@ class ExhibitMicrositeHelper
           ),
         ];
       }
-
-      // print_r("<pre>");
-      // print_r($this->options);
-      // print_r("</pre>");
     }
   } // End collectionsBreadcrumbData method
 

@@ -165,6 +165,13 @@ class ExhibitMicrosite_BrowseCollectionController extends
           $this->microsite->options["collection_id"]
         );
 
+      $sql .= $this->_collectionFilterSelect(
+        "{$db->prefix}items.collection_id"
+      );
+      $sql .= $this->_collectionCreatorFilterSelect("{$db->prefix}items.id");
+
+      $sql .= $this->_itemTypeFilterSelect("{$db->prefix}items.item_type_id");
+
       $sql .= $limit;
 
       $rows = $db->getTable("Item")->fetchAll($sql);
@@ -172,5 +179,79 @@ class ExhibitMicrosite_BrowseCollectionController extends
       return array_column($rows, "id");
     }
     return $data;
+  }
+
+  /**
+   * Returns a clause to filter query by collection ids saved to session.
+   * @param string $column column name to use in query.
+   * @return string
+   */
+  protected function _collectionFilterSelect($column)
+  {
+    if (isset($_SESSION["filters"]["collection"])) {
+      if (!allNumeric($_SESSION["filters"]["collection"])) {
+        return "";
+      }
+      $ids = implode(",", $_SESSION["filters"]["collection"]);
+      return " AND {$column} IN({$ids})";
+    }
+    return "";
+  }
+
+  /**
+   * Returns a clause to filter query by collection creators saved to o session.
+   * @param string $column column name to use in query.
+   * @return string
+   */
+  protected function _collectionCreatorFilterSelect($column)
+  {
+    $ids = $this->_creatorItemIds();
+    if (!empty($ids)) {
+      $ids = implode(",", $ids);
+      return " AND {$column} IN({$ids})";
+    }
+    return "";
+  }
+
+  /**
+   * Returns an array of item ids that have been assigned the creator found in
+   * the submitted filters.
+   * @return array
+   */
+  protected function _creatorItemIds()
+  {
+    if (isset($_SESSION["filters"]["creator"])) {
+      if (!allNumeric($_SESSION["filters"]["creator"])) {
+        return "";
+      }
+      $ids = implode(",", $_SESSION["filters"]["creator"]);
+
+      $db = get_db();
+      $sql = "SELECT `record_id` FROM `{$db->prefix}element_texts`
+              WHERE 1
+              AND `record_type` = 'Item'
+              AND `text` IN(SELECT text FROM `{$db->prefix}element_texts` WHERE `id` IN ({$ids}))
+              ORDER BY `text` ASC
+              ";
+      $rows = $db->getTable("ElementText")->fetchAll($sql);
+      return array_column($rows, "record_id");
+    }
+  }
+
+  /**
+   * Returns a clause to filter query by item_type ids saved to session.
+   * @param string $column column name to use in query.
+   * @return string
+   */
+  protected function _itemTypeFilterSelect($column)
+  {
+    if (isset($_SESSION["filters"]["item_type"])) {
+      if (!allNumeric($_SESSION["filters"]["item_type"])) {
+        return "";
+      }
+      $ids = implode(",", $_SESSION["filters"]["item_type"]);
+      return " AND {$column} IN({$ids})";
+    }
+    return "";
   }
 } // End CollectionController class
