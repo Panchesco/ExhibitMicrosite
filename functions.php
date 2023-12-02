@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
  *
@@ -26,7 +24,6 @@ function microsite_theme_options($themeOptions)
   }
   return $themeOptions;
 }
-
 
 /**
  * @description If $data is not a string,
@@ -119,7 +116,6 @@ if (!function_exists("maybe_unserialize")) {
     return $data;
   }
 }
-
 
 if (!function_exists("currentExhibitThemeOptions")) {
   function currentExhibitThemeOptions()
@@ -323,5 +319,12 @@ if (!function_exists("emsBreadcrumbArray")) {
       ];
     }
     return $data;
+  }
+}
+
+function isChecked($value, $array)
+{
+  if (in_array($value, $array)) {
+    echo " checked";
   }
 }

@@ -47,6 +47,8 @@ class ExhibitMicrosite_IndexController extends
       $data[$key]["title"] = $exhibit->title;
       $data[$key]["exhibit_slug"] = $exhibit->slug;
       $data[$key]["collection_page_title"] = $exhibit->slug;
+      $data[$key]["layout_preference"] = $option->layout_preference;
+      $data[$key]["palette"] = html_entity_decode($option->palette);
       $data[$key]["titles_separator"] = $option->titles_separator;
       $data[$key]["modified_by_username"] =
         isset($values["modified_by_user_id"]) &&
@@ -66,6 +68,12 @@ class ExhibitMicrosite_IndexController extends
         isset($values["per_page"]) & !empty($values["per_page"])
           ? $values["per_page"]
           : get_option("per_page_public");
+
+      $data[$key]["layout_preference"] =
+        isset($values["layout_preference"]) &
+        !empty($values["layout_preference"])
+          ? $values["layout_preference"]
+          : "Masonry";
     }
 
     $sort_field = isset($_GET["sort_field"])
@@ -134,6 +142,12 @@ class ExhibitMicrosite_IndexController extends
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
     $formData["collection_page_title"] = $values["collection_page_title"];
+    $formData["layout_preference"] = isset($values["layout_preference"])
+      ? $values["layout_preference"]
+      : "bootstrap-grid";
+    $formData["palette"] = isset($values["palette"])
+      ? $values["palette"]
+      : "#8B0015,#AB0520,#9D5A20,#EBD999,#F4EDE5,#4A634E,#001c48,#0c234b,#1E5288,#E2E9EB,#222222,#212529,#343A40,#495057,#6C757D,#ADB5BD,#CED4DA,#DEE2E6,#E9ECEF,#F8F9FA,#FFFFFF,";
     $formData["titles_separator"] = isset($values["titles_separator"])
       ? $values["titles_separator"]
       : "";
@@ -272,7 +286,7 @@ class ExhibitMicrosite_IndexController extends
       "value" => isset($option["per_page"]) ? $option["per_page"] : "",
       "data-record_type" => "per-page",
       "label" => __(
-        "Items Per Page. Leave blank to use the current value of %d as saved in the Omeka installation's Appearance  - Settings.",
+        "Items Per Page. Leave blank to use the current Omeka installation's Appearance  - Settings value of %d.",
         get_option("per_page_public")
       ),
       "description" => __(
@@ -291,6 +305,36 @@ class ExhibitMicrosite_IndexController extends
       "description" => __(
         "What separator should be used between titles (e.g. Item Title : File Title) when items have more than one file?"
       ),
+    ]);
+
+    $form->addElementToEditGroup("select", "layout_preference", [
+      "id" => "exhibit-microsite-layout-preference",
+      "class" => "exhibit-microsite-options",
+      "multiOptions" => [
+        "bootstrap-grid" => "Bootstrap Grid Columns",
+        "masonry" => "Masonry",
+      ],
+      "value" => isset($option["layout_preference"])
+        ? $option["layout_preference"]
+        : "bootstrap-grid",
+      "data-record_type" => "layout_preference",
+      "label" => __("Layout Preference"),
+      "description" => __(
+        "Would you like to layout page blocks using Masonry or Bootstrap Grid?"
+      ),
+      "required" => true,
+    ]);
+
+    $form->addElementToEditGroup("text", "palette", [
+      "id" => "exhibit-microsite-palette",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["palette"]) ? $option["palette"] : "",
+      "data-record_type" => "palette",
+      "label" => __("Palette"),
+      "description" => __(
+        "Enter a comma separated list of hex values to use in block palettes."
+      ),
+      "required" => false,
     ]);
 
     if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
@@ -374,6 +418,8 @@ class ExhibitMicrosite_IndexController extends
           ),
           "titles_separator" => htmlentities($_POST["titles_separator"]),
           "per_page" => htmlentities($_POST["per_page"]),
+          "layout_preference" => htmlentities($_POST["layout_preference"]),
+          "palette" => htmlentities($_POST["palette"]),
         ];
 
         $data = @unserialize($option->value);

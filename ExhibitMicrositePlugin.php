@@ -17,15 +17,16 @@ require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
 
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
+  public $options;
   protected $_hooks = [
     "install",
     "config",
     "config_form",
     "define_acl",
     "uninstall",
-    "admin_head",
     "public_head",
     "define_routes",
+    "admin_head",
     "after_delete_record",
   ];
   protected $_filters = [
@@ -119,7 +120,6 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         "#F8F9FA",
         "#FFFFFF",
       ];
-      $options["collection_ids"] = [];
       $json = json_encode($options, JSON_PRETTY_PRINT);
       ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
     }
@@ -281,6 +281,8 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     $rows = $db->getTable("Option")->fetchAll($sql);
     if ($rows) {
       foreach ($rows as $row) {
+        $this->options = maybe_unserialize($row["value"]);
+
         if (isset($row["name"])) {
           $id = str_replace(["exhibit_microsite[", "]"], "", $row["name"]);
           $exhibit = get_record_by_id("Exhibit", $id);
@@ -299,30 +301,4 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     }
     return false;
   }
-
-  /**
-   * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
-   *
-   * @param string $themeOptions Serialized array of theme options
-   * @param string $args Unused here
-   */
-  // function microsite_theme_options($themeOptions, $args)
-  // {
-  //   $request = Zend_Controller_Front::getInstance()->getRequest();
-  //   try {
-  //     $exhibit = get_record("Exhibit", [
-  //       "public" => 1,
-  //       "slug" => $request->getParam("slug"),
-  //     ]);
-  //     if ($exhibit) {
-  //       $exhibitThemeOptions = $exhibit->getThemeOptions();
-  //       if (!empty($exhibitThemeOptions)) {
-  //         return serialize($exhibitThemeOptions);
-  //       }
-  //     }
-  //   } catch (Zend_Exception $e) {
-  //     // no view available
-  //   }
-  //   return $themeOptions;
-  // }
 } // End ExhbitMicrosite Class

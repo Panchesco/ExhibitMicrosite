@@ -722,12 +722,13 @@ class ExhibitMicrositeHelper
 
     $db = get_db();
     $sql = "
-     SELECT DISTINCT(et.`text`) AS {$element_name} FROM `{$db->prefix}elements` e
+     SELECT et.`id`,et.`text` AS {$element_name} FROM `{$db->prefix}elements` e
      LEFT OUTER JOIN `{$db->prefix}element_texts` et ON et.element_id = e.id
      LEFT OUTER JOIN `{$db->prefix}items` i on i.`id` = et.record_id
      WHERE 1
      AND e.`name` = '{$element_name}'
      AND et.`record_type` = 'Item' {$collection_clause}
+     GROUP BY et.text
      ORDER BY et.`text` ASC
      ";
 
@@ -824,8 +825,6 @@ class ExhibitMicrositeHelper
 
     $current = $this->params->page_number;
     $max = $this->total_pages;
-    echo "current: " . $current . "<br>";
-    echo "max: " . $max . "<br>";
 
     $prev = $current == 1 ? null : $current - 1;
     $next = $current == $max ? null : $current + 1;

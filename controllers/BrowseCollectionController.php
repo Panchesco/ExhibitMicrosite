@@ -14,6 +14,18 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
   public function init()
   {
+    if (!isset($_SESSION)) {
+      session_start();
+    }
+
+    if (isset($_POST["filters"])) {
+      if ($_POST["filters"]["action"] == "set") {
+        $_SESSION["filters"] = $_POST["filters"];
+      } elseif ($_POST["filters"]["action"] == "clear") {
+        unset($_SESSION["filters"]);
+      }
+    }
+
     // Set the model class so this controller can perform some functions,
     // such as $this->findById()
     $this->_helper->db->setDefaultModelName("Collection");
