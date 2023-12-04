@@ -70,7 +70,7 @@ echo head();
   ); ?></button>
 </div>
 </div>
-  <div id="collection" class="col-lg-9 px-3 py-3">
+  <div id="collection" class="col-lg-9 px-3">
     <h2 class="sr-only"><?php echo __("Items"); ?></h2>
     <?php if (count($items) == 0): ?>
 <p><?php echo __(

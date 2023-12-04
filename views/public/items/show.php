@@ -1,4 +1,5 @@
-<?php
+<?php echo __FILE__;
+echo $route;
 set_current_record("Item", $item);
 echo head([
   "title" => metadata("item", ["Dublin Core", "Title"]),

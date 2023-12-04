@@ -50,7 +50,8 @@ if (isset($options["flex_direction"])) {
 }
 
 $class = $block->layout;
-$class .= " col-12 col-lg-" . $options["col_span"];
+$class .= " col-12 col-lg-";
+$class .= isset($options["col_span"]) ? $options["col_span"] : "";
 $class .= " " . $align_self; // Bootstrap class declarations for text div.
 
 if (isset($options["block_padding_x"]) && !empty($options["block_padding_x"])) {

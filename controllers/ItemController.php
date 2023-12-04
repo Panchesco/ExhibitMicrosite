@@ -100,7 +100,7 @@ class ExhibitMicrosite_ItemController extends
     }
 
     if (!$params->page_slugs || !is_array($params->page_slugs)) {
-      $base .= "/items";
+      $base .= "/item";
       $base .= "/" . $params->item_id;
       return $base;
     }
@@ -111,7 +111,7 @@ class ExhibitMicrosite_ItemController extends
     foreach ($params->page_slugs as $param) {
       $base .= "/" . $param;
     }
-    $base .= "/items";
+    $base .= "/item";
     $base .= "/" . $params->item_id;
     return $base;
   }

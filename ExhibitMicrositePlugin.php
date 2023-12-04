@@ -146,7 +146,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     ];
 
     $ems["flex-gallery"] = [
-      "name" => "Gallery",
+      "name" => "Flex Slider Gallery",
       "description" => "Slider gallery with square thumbnails",
     ];
 
