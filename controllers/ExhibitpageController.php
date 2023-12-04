@@ -71,7 +71,7 @@ class ExhibitMicrosite_ExhibitpageController extends
 
     // Branch for projects page handling.
     if ($this->exhibitPage->slug == "collections") {
-      echo $this->view->partial("exhibit-pages/collections.php", [
+      echo $this->view->partial("exhibit-pages/index.php", [
         "breadcrumb" => $this->breadcrumb,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,

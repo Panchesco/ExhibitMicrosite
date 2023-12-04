@@ -8,8 +8,8 @@ if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
   define("EXHIBIT_MICROSITE_PLUGIN_DIR", dirname(__FILE__));
 }
 
-require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitFunctions.php";
-require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitPageFunctions.php";
+//require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitFunctions.php";
+//require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitPageFunctions.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
@@ -20,11 +20,9 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   public $options;
   protected $_hooks = [
     "install",
-    "config",
     "config_form",
     "define_acl",
     "uninstall",
-    "public_head",
     "define_routes",
     "admin_head",
     "after_delete_record",
@@ -34,7 +32,13 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     "public_theme_name",
     "admin_navigation_main",
     "item_citation",
+    "public_navigation_admin_bar",
   ];
+
+  public function filterPublicNavigationAdminBar($args)
+  {
+    return $args;
+  }
 
   protected function hookInstall()
   {
@@ -47,20 +51,11 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 
   public function hookConfig($args)
   {
-    set_option(
-      "microsite_exhibit_exhibits",
-      $_POST["microsite_exhibit_exhibits"]
-    );
   }
 
   public function hookConfigForm()
   {
     require EXHIBIT_MICROSITE_PLUGIN_DIR . "/config_form.php";
-  }
-
-  public function hookPublicHead()
-  {
-    //;
   }
 
   /**
@@ -148,6 +143,11 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       "name" => "Bootstrap Flex File with Text Block",
       "description" =>
         "A file with text block for display in a Bootstrap 5 Flex grid..",
+    ];
+
+    $ems["flex-gallery"] = [
+      "name" => "Bootstrap Carousel Style Gallery",
+      "description" => "Bootstrap Carousel Style Gallery",
     ];
 
     return array_merge($ems, $layouts);

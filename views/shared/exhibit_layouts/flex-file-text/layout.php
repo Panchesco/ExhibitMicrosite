@@ -40,6 +40,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
            "page_slug_3" => $page_slug_3,
            "action" => "show",
            "item_id" => $attachment->Item->id,
+           "collection_id" => $attachment->Item->collection_id,
          ],
          $item_route
        ); ?>

@@ -6,7 +6,7 @@ echo head(); ?>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 
-<?php echo $this->view->partial("exhibit-pages/collections-child-pages.php", [
+<?php echo $this->view->partial("exhibit-pages/index-listing.php", [
   "child_pages" => $child_pages,
   "params" => $params,
 ]); ?>

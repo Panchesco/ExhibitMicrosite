@@ -1,9 +1,13 @@
 <?php echo __FILE__;
+/**
+ *
+ * NOTE: If a native Exhibit Builder default Gallery Block is rending, and you're seeing a
+ * Warning : Undefined array key “imgAttributes”
+ * message: https://forum.omeka.org/t/gallery-block-error-message-undefined-array-key/16146
+ *
+ * Wrap for non-ems blocks:
+ */
 echo head();
-
-if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
-  echo "class exists";
-}
 ?>
  <form name="filters" method="POST" action="<?php echo url(
    [
@@ -19,7 +23,30 @@ if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
 <h1><?php echo isset($microsite_options["collection_page_title"])
   ? $microsite_options["collection_page_title"]
   : $exhibitPage->title; ?></h1>
-
+  <?php if ($params->page_number == 1): ?>
+  <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
+  <?php foreach ($exhibitPage->ExhibitPageBlocks as $block):
+    $layout = $block->getLayout();
+    $options = $block->getOptions();
+    $attachments = $block->getAttachments();
+    set_current_record("exhibit", $exhibit, true);
+    echo get_view()->partial($layout->getViewPartial(), [
+      "attachments" => $attachments,
+      "block" => $block,
+      "exhibit" => $exhibit,
+      "exhibitPage" => $exhibitPage,
+      "item_route" => "ems_collection_item",
+      "options" => $options,
+      "page_slug_1" => $params->page_slug_1,
+      "page_slug_2" => $params->page_slug_2,
+      "page_slug_3" => $params->page_slug_3,
+      "page_slugs" => $params->page_slugs,
+      "slug" => $params->slug,
+      "text" => $block->text,
+    ]);
+  endforeach; ?>
+  </div><!-- end .flex-blocks-wrapper -->
+  <?php endif; ?>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0 justify-content-between">
   <div class="filters col-lg-3">
 <?php echo $this->view->partial("collection/filters/collection-id.php", [
@@ -43,7 +70,14 @@ if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
   ); ?></button>
 </div>
 </div>
-  <div id="collection" class="col-lg-9 px-3">
+  <div id="collection" class="col-lg-9 px-3 py-3">
+    <h2 class="sr-only"><?php echo __("Items"); ?></h2>
+    <?php if (count($items) == 0): ?>
+<p><?php echo __(
+  "Nothing was found in the collection using the current filter set. Please try clearing the filters or using a different combination of them."
+); ?>
+    <?php else: ?>
+      <p><?php echo $result_set_string; ?></p>
     <div class="row" data-masonry='{"percentPosition": true }'>
    <?php foreach ($items as $item): ?>
      <?php set_current_record("item", $item); ?>
@@ -93,6 +127,7 @@ if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
     ]); ?>
     <?php endif; ?>
   </div>
+  <?php endif; ?>
 </div><!-- end .flex-blocks-wrapper -->
 </form>
 <?php echo foot(); ?>

@@ -7,18 +7,33 @@
  * @param string $formStem this is the ExhibitBuilder block formstem
  * @param array $options options saved with the block in an exhibit page record.
  */
- $options['justify_content'] = (isset($options['justify_content'])) ? $options['justify_content'] : "justify-content-start";
-?>
+$options["justify_content"] = isset($options["justify_content"])
+  ? $options["justify_content"]
+  : "justify-content-start"; ?>
 <div class="'justify-content'">
-  <?php echo $this->formLabel( $formStem . "[options][justify_content]", __("How
-  should this block justify with relation to others in a row?") ); ?>
+  <?php echo $this->formLabel(
+    $formStem . "[options][justify_content]",
+    __("How
+  should this block justify with relation to others in a row?")
+  ); ?>
   <div>
     <?php // Omeka version at time of plugin dev, does not support formNumber, so formSelect it is...
-echo $this->formSelect( $formStem . "[options][justify_content]",
-    @$options["justify_content"],"justify-content-start",["" => __("Do not
-    set"), "justify-content-start" => "Start","justify-content-center" =>
-    "Center", "justify-content-end" => "End","justify-content-aroun" => "Space
-    Around","justify-content-between" => "Space Between",
-    "justify-content-evenly" => "Space Evenly"] ); ?>
+
+echo $this->formSelect(
+      $formStem . "[options][justify_content]",
+      @$options["justify_content"],
+      "justify-content-start",
+      [
+        "" => __("Do not
+    set"),
+        "justify-content-start" => "Start",
+        "justify-content-center" => "Center",
+        "justify-content-end" => "End",
+        "justify-content-around" => "Space
+    Around",
+        "justify-content-between" => "Space Between",
+        "justify-content-evenly" => "Space Evenly",
+      ]
+    ); ?>
   </div>
 </div>

@@ -47,7 +47,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
     if (!$this->exhibitPage) {
       $this->exhibitPage = $this->_helper->db
         ->getTable("ExhibitPage")
-        ->findBySlug("collection", ["exhibit_id" => $this->exhibit->id]);
+        ->findBySlug("browse", ["exhibit_id" => $this->exhibit->id]);
     }
 
     $this->theme_options = $this->exhibit->getThemeOptions();
@@ -98,9 +98,44 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "items" => $this->collectionItems(),
       "view" => $this->view,
       "total_pages" => $this->microsite->total_pages,
+      "result_set_string" => $this->result_set_string(),
+      "per_page" => $this->microsite->per_page,
       "pagination" => $this->microsite->paginate(),
     ]);
     exit();
+  }
+
+  public function result_set_string()
+  {
+    // Set the start value.
+    if ($this->params->page_number == 1) {
+      $start = 1;
+    } else {
+      if (
+        $this->total_results <
+        $this->microsite->per_page * $this->params->page_number
+      ) {
+        $multiplier = $this->params->page_number - 1;
+        $start = $multiplier * $this->microsite->per_page + 1;
+      } else {
+        $start = ($this->params->page_number - 1) * $this->microsite->per_page;
+        $start++;
+      }
+    }
+
+    // Set the end value.
+    if ($this->params->page_number == $this->microsite->total_pages) {
+      $end = $this->total_results;
+    } else {
+      $end = $this->params->page_number * $this->microsite->per_page;
+    }
+
+    return __(
+      "Browsing items %d - %d of the %d found.",
+      $start,
+      $end,
+      $this->total_results
+    );
   }
 
   public function collectionItems()

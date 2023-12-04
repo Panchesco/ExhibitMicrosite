@@ -1,105 +1,60 @@
+</div><!-- break from grid for gallery layout -->
+
 <?php
 $files = [];
-$first = SCWaterBlockFirstFile($attachments, $block_id);
-$class = $block->layout;
-$attachments = $block->getAttachments();
-$items = [];
-$files = [];
-$gallery = [];
 $captions = [];
-$file_urls = [];
-$item_links = [];
-
-// We need information for the gallery items and thumbnails.
 foreach ($attachments as $key => $row) {
-  $items[] = get_record_by_id("Item", $row->item_id);
-  $item_links[] = "/items/show/" . $row->item_id;
   $files[] = get_record_by_id("File", $row->file_id);
   $captions[] = $row->caption;
-  $file_urls[] = file_display_url($files[$key], "fullsize");
-  $gallery[] = [
-    "square_thumbnail" => item_image("square_thumbnail", [], 0, $items[$key]),
-    "thumbnail" => item_image("thumbnail", [], 0, $items[$key]),
-    "fullsize" => item_image("fullsize", [], 0, $items[$key]),
-  ];
 }
-
-$gallery_container_background_color = isset(
-  $options["gallery_container_background_color"]
-)
-  ? "bg-" . str_replace("#", "", $options["gallery_container_background_color"])
-  : "bg-transparent";
-
-$gallery_file_size = isset($options["gallery_file_size"])
-  ? $options["gallery_file_size"]
-  : "fullsize";
 ?>
-<div class="container">
-<div class="<?php echo $class; ?>">
-<?php if ($options["gallery_layout"] == "full_width"): ?>
-  <div class="col-12">
-    <div id="gallery-<?php echo $block->id; ?>" class="gallery">
-    <div class="stage">
-      <div class="items-wrapper">
-      <?php foreach ($gallery as $key => $row): ?>
-        <div class="gallery-item">
-          <a href="<?php echo $item_links[$key]; ?>"><?php echo $row[
-  "thumbnail"
-]; ?></a>
- </div><!-- . end .gallery-item -->
-      <?php endforeach;
-  // end attachments loop
-  ?>
 
+<!---- Begin gallery layout -->
+<div id="block-<?php echo $block->id; ?>" class="ems-gallery">
+  <div  class="ems-gallery-inner-wrapper bg-grey-300">
+    <div class="ems-gallery-inner">
+      <?php foreach ($files as $key => $file): ?>
+      <div class="ems-gallery-item-wrapper<?php if (
+        $key == 0
+      ): ?> active<?php endif; ?>">
+        <div class="ems-gallery-item">
+          <div class="ems-image-wrapper" style="height: 600px;">
+            <?php echo file_image("thumbnail", ["class" => "h-100"], $file); ?>
+            </div>
+            <div class="ems-gallery-item-caption">
+               <?php echo $captions[$key]; ?>
+          </div><!-- end .gallery-item-caption -->
+        </div><!-- end ems-gallery-item -->
+      </div><!-- end ems-gallery-item-wrapper -->
+      <?php endforeach; ?>
+    </div><!-- end ems-gallery-inner -->
+  <button class="ems-gallery-prev" type="button">
+    <span class="ems-galllery-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="ems-gallery-next" type="button">
+    <span class="ems-gallery-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div><!-- end bg-grey-300 -->
 
-  </div><!-- end .items  -->
-
-          <div class="prev">
-            <a href="#prev"
-              ><span class="material-symbols-outlined">
-                chevron_left
-              </span></a
-            >
-          </div>
-          <div class="next">
-            <a href="#next"
-              ><span class="material-symbols-outlined"
-                >chevron_right</span
-              ></a
-            >
-          </div>
-
-        <!-- end .prev-next -->
-        <!-- end .items-wrapper -->
-      </div><!-- end .items-wrapper -->
-    </div><!-- end .stage -->
-    <div class="captions-container">
-      <div class="captions-wrapper">
-          <?php foreach ($attachments as $attachment): ?>
-            <div class="caption-wrapper">
-            <div class="caption">
-            <?php echo $attachment->caption; ?>
-            </div><!-- end .caption-wrapper -->
-            </div><!-- end .caption -->
-          <?php endforeach; ?>
-      </div>
-      <!-- end .captions-wrapper -->
-    </div>
-    <!-- end .captions-container -->
-      <div class="thumbs-wrapper">
-<?php foreach ($gallery as $key => $row): ?>
-        <a class="thumb" href="<?php echo $file_urls[$key]; ?>"><?php echo $row[
-  "square_thumbnail"
-]; ?></a>
+<div id="block-<?php echo $block->id; ?>-thumbnails" class="ems-gallery-thumbnails d-flex flex-wrap">
+<?php foreach ($files as $key => $file): ?>
+  <a class="<?php if (
+    $key == 0
+  ): ?>active<?php endif; ?>" href="#" onclick="javascript:void(0);"> <?php echo file_image(
+  "square_thumbnail",
+  ["class" => "h-100"],
+  $file
+); ?></a>
 <?php endforeach; ?>
-    </div><!-- end .thumbs-wrapper -->
-    </div><!-- end .gallery -->
-  </div><!-- end .col-12 -->
-  <?php if (!empty($text)): ?><div class="col-12 py-4">
-    <?php echo $text; ?>
-  </div><?php endif; ?>
-</div><!-- end .container -->
-<?php endif;
-// end gallery_layout branch
-?>
-<!-- end gallery layout -->
+</div><!-- end ems-gallery-thumbnails -->
+</div><!-- end .ems-gallery -->
+
+
+<!-- resume regular handling -->
+<div class="flex-blocks-wrapper d-flex flex-wrap g-0">
+
+<!-- Wrap the rest of the page in another container to center all the content. -->
+
+
