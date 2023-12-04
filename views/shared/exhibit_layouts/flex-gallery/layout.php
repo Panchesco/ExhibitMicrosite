@@ -18,7 +18,7 @@ foreach ($attachments as $key => $row) {
         $key == 0
       ): ?> active<?php endif; ?>">
         <div class="ems-gallery-item">
-          <div class="ems-image-wrapper" style="height: 600px;">
+          <div class="ems-image-wrapper">
             <?php echo file_image("thumbnail", ["class" => "h-100"], $file); ?>
             </div>
             <div class="ems-gallery-item-caption">

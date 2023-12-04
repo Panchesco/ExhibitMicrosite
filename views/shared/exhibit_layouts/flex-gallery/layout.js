@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.setThumbnails();
       this.setThumbsHandler();
       this.resetSlide();
+      this.getFullSize();
     }
 
     itemsPositionData() {
@@ -84,6 +85,25 @@ document.addEventListener("DOMContentLoaded", () => {
           this.galleryItems[index].getBoundingClientRect().width) /
           2 +
         "px";
+    }
+
+    getFullSize() {
+      this.galleryItems.forEach((item, i) => {
+        const img = document.createElement("img");
+        img.addEventListener("load", () => {
+          this.galleryItems[i]
+            .querySelector("img")
+            .setAttribute("src", img.src);
+
+          this.galleryItems[i]
+            .querySelector(".ems-gallery-item")
+            .classList.add("fade-in");
+          console.log("loaded");
+        });
+
+        const sml = item.querySelector("img");
+        img.src = sml.src.replace("thumbnails", "fullsize");
+      });
     }
 
     resetSlide() {
