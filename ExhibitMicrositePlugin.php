@@ -146,8 +146,8 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     ];
 
     $ems["flex-gallery"] = [
-      "name" => "Bootstrap Carousel Style Gallery",
-      "description" => "Bootstrap Carousel Style Gallery",
+      "name" => "Gallery",
+      "description" => "Slider gallery with square thumbnails",
     ];
 
     return array_merge($ems, $layouts);

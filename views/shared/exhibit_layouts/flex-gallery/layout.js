@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("ready");
-
   class emsGallery {
     constructor(gallery) {
       this.gallery = document.getElementById(gallery.id);
@@ -19,16 +17,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     init() {
       this.setThumbnails();
+      console.log(this.thumbnails.length);
       this.setThumbsHandler();
       this.resetSlide();
       this.getFullSize();
+      this.setActiveIndex();
+      this.nextButtonHandler();
+      this.prevButtonHandler();
+    }
+
+    setActiveIndex() {
+      if (this.thumbnails.length > 0) {
+        this.activeIndex = 0;
+      }
+    }
+
+    prevButtonHandler() {
+      this.prevBtn = this.gallery.querySelector(".ems-gallery-prev");
+      this.prevBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (this.activeIndex > 0) {
+          this.activeIndex--;
+        } else {
+          this.activeIndex = this.thumbnails.length - 1;
+        }
+        this.updateActive();
+        this.moveToZero();
+      });
+    }
+
+    nextButtonHandler() {
+      this.nextBtn = this.gallery.querySelector(".ems-gallery-next");
+      this.nextBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (this.activeIndex < this.thumbnails.length - 1) {
+          this.activeIndex++;
+        } else {
+          this.activeIndex = 0;
+        }
+        this.updateActive();
+        this.moveToZero();
+      });
     }
 
     itemsPositionData() {
       this.positions = [];
 
       let v = 0;
-      console.log(this.galleryWidth);
+
       let left = parseInt(this.galleryWidth);
 
       this.galleryItems.forEach((item, i) => {
@@ -37,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         this.positions[i] = { zero: v, left: left };
         v += item.getBoundingClientRect().width;
       });
-      console.log(this.positions);
     }
 
     setThumbnails() {
@@ -51,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.thumbnails[i].addEventListener("click", (e) => {
           e.preventDefault();
           this.activePosition = this.positions[i].left;
+          this.activeIndex = i;
           this.updateActive(i);
           this.resetSlide();
           this.moveToZero(i);
@@ -58,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    updateActive(index) {
+    updateActive(index = this.activeIndex) {
       // calculate how much to translateX the active gallery item
       this.thumbnails.forEach((thumb, i) => {
         thumb.classList.remove("active");
@@ -66,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.thumbnails[index].classList.add("active");
     }
 
-    moveToZero(index) {
+    moveToZero(index = this.activeIndex) {
       return new Promise((resolve) => {
         const x = -1 * this.positions[index].zero;
         this.galleryInner.setAttribute(
@@ -79,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    moveToMiddle(index) {
+    moveToMiddle(index = this.activeIndex) {
       this.galleryInner.style.paddingLeft =
         (this.gallery.getBoundingClientRect().width -
           this.galleryItems[index].getBoundingClientRect().width) /
@@ -98,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
           this.galleryItems[i]
             .querySelector(".ems-gallery-item")
             .classList.add("fade-in");
-          console.log("loaded");
         });
 
         const sml = item.querySelector("img");
@@ -129,7 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let c = 0;
         this.galleryItems.forEach((item, i) => {
           const starter = document.createElement("img");
-          //console.log(thumb);
           starter.addEventListener("load", (e) => {
             this.galleryItems[i].center =
               item.getBoundingClientRect().width / 2;

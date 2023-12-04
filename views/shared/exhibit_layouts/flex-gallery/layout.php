@@ -11,8 +11,8 @@ foreach ($attachments as $key => $row) {
 
 <!---- Begin gallery layout -->
 <div id="block-<?php echo $block->id; ?>" class="ems-gallery">
-  <div  class="ems-gallery-inner-wrapper bg-grey-300">
-    <div class="ems-gallery-inner">
+  <div  class="ems-gallery-inner-wrapper bg-grey-300 r">
+    <div class="ems-gallery-inner d-flex align-items-center">
       <?php foreach ($files as $key => $file): ?>
       <div class="ems-gallery-item-wrapper<?php if (
         $key == 0
@@ -24,12 +24,24 @@ foreach ($attachments as $key => $row) {
             <div class="ems-gallery-item-caption">
                <?php echo $captions[$key]; ?>
           </div><!-- end .gallery-item-caption -->
+          <a class="view-file" href="<?php echo url(
+            [
+              "action" => "show",
+              "controller" => "item",
+              "slug" => $exhibit->slug,
+              "item_id" => $file->item_id,
+              "file_id" => $file->id,
+            ],
+            "ems_show_file"
+          ); ?>"><span class="visually-hidden"><?php echo __(
+  "View File"
+); ?></span></a>
         </div><!-- end ems-gallery-item -->
       </div><!-- end ems-gallery-item-wrapper -->
       <?php endforeach; ?>
     </div><!-- end ems-gallery-inner -->
   <button class="ems-gallery-prev" type="button">
-    <span class="ems-galllery-prev-icon" aria-hidden="true"></span>
+    <span class="ems-gallery-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
   <button class="ems-gallery-next" type="button">
@@ -50,8 +62,11 @@ foreach ($attachments as $key => $row) {
 <?php endforeach; ?>
 </div><!-- end ems-gallery-thumbnails -->
 </div><!-- end .ems-gallery -->
-
-
+<div class="d-flex flex-row">
+  <div class="g-0 pt-3">
+  <?php echo $block->text; ?>
+  </div>
+</div>
 <!-- resume regular handling -->
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 
