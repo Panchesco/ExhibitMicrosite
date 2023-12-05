@@ -68,6 +68,7 @@ class ExhibitMicrosite_ItemController extends
         $this->active_file = null;
       }
     }
+
     if ($this->active_file) {
       $title = metadata($this->active_file, "rich_title", [
         "no_escape" => true,
@@ -100,6 +101,7 @@ class ExhibitMicrosite_ItemController extends
           "original_filename" => "",
         ],
     ];
+
     $this->breadcrumb = new BreadcrumbHelper($config);
   }
 

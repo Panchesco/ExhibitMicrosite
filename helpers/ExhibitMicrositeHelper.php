@@ -4,14 +4,21 @@ use ExhibitMicrosite\Helpers\ParamsHelper;
 use Zend_Controller_Front;
 class ExhibitMicrositeHelper
 {
+  public $action;
+  public $controller;
   public $options;
   public $index;
   public $per_page;
   public $total_rows;
   public $total_pages;
+  public $refUri;
   function __construct($config)
   {
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
+    $this->action = isset($config["action"]) ? $config["action"] : "show";
+    $this->controller = isset($config["controller"])
+      ? $config["controller"]
+      : "default";
 
     // Set the route here, passed from the controller using this helper.
     $this->route = isset($config["route"])
@@ -19,6 +26,10 @@ class ExhibitMicrositeHelper
       : "ems_exhibitLanding";
 
     $this->params = new ParamsHelper();
+
+    $this->setRefUri();
+
+    //echo $this->refUri;
 
     // Make sure we have the current exhibit.
     if (!isset($config["exhibit"])) {
@@ -859,5 +870,40 @@ class ExhibitMicrositeHelper
       "next" => $next,
       "items" => $items,
     ];
+  }
+
+  /**
+   * Sets the current URL from the current route so we can pass that to pages linking
+   * to items and files, objects that may have more than one possible URL.
+   */
+  public function setRefUri()
+  {
+    $data["action"] = $this->action;
+    $data["controller"] = $this->controller;
+    if ($this->params->slug) {
+      $data["slug"] = $this->params->slug;
+    }
+    if ($this->params->page_slug_1) {
+      $data["page_slug_1"] = $this->params->page_slug_1;
+    }
+    if ($this->params->page_slug_2) {
+      $data["page_slug_2"] = $this->params->page_slug_2;
+    }
+    if ($this->params->page_slug_3) {
+      $data["page_slug_2"] = $this->params->page_slug_3;
+    }
+
+    if ($this->params->collection_id) {
+      $data["collection_id"] = $this->params->collection_id;
+    }
+
+    if ($this->params->item_id) {
+      $data["item_id"] = $this->params->item_id;
+    }
+
+    if ($this->params->file_id) {
+      $data["file_id"] = $this->params->file_id;
+    }
+    $this->refUri = url($data, $this->route);
   }
 } // End MicrositeHelper class.

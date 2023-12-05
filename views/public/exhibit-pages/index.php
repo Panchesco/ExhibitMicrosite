@@ -1,5 +1,6 @@
-<?php
-echo head(); ?>
+<?php echo __FILE__;
+echo head(["bodyclass" => "collections"]);
+?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
@@ -9,6 +10,7 @@ echo head(); ?>
 <?php echo $this->view->partial("exhibit-pages/index-listing.php", [
   "child_pages" => $child_pages,
   "params" => $params,
+  "refUri" => $refUri,
 ]); ?>
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php
@@ -30,6 +32,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "slug" => $params->slug,
   "text" => $block->text,
   "child_pages" => $child_pages,
+  "refUri" => $refUri,
 ]);
 ?>
 <?php endforeach; ?>

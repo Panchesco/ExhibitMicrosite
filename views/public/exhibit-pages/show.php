@@ -1,4 +1,4 @@
-<?php echo __FILE__;
+<?php echo __FILE__ . "<br>" . $refUri;
 echo head();
 
 /**
@@ -34,6 +34,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "page_slugs" => $params->page_slugs,
   "slug" => $params->slug,
   "text" => $block->text,
+  "refUri" => $refUri,
 ]);
 ?>
 <?php endforeach; ?>

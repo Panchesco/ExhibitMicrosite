@@ -61,7 +61,7 @@ if ($file_title && $file_title) {
     <a class="<?php if (
       $file->id == $active_file->id
     ): ?>active<?php endif; ?>" href="<?php echo $thumb_links_base .
-  "/" .
+  "/file/" .
   $file->id; ?>"><?php echo file_image("square_thumbnail", [
   "class" => "lazy",
 ]); ?></a>

@@ -86,6 +86,7 @@ class ExhibitMicrosite_ExhibitpageController extends
         "item_route" => $this->itemRoute(),
         "theme_options" => $this->theme_options,
         "view" => $this->view,
+        "refUri" => $this->microsite->refUri,
       ]);
     } else {
       echo $this->view->partial("exhibit-pages/show.php", [
@@ -98,6 +99,7 @@ class ExhibitMicrosite_ExhibitpageController extends
         "item_route" => $this->itemRoute(),
         "theme_options" => $this->theme_options,
         "view" => $this->view,
+        "refUri" => $this->microsite->refUri,
       ]);
     }
     exit();

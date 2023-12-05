@@ -20,9 +20,13 @@ echo head([
 
 <div id="exhibit-content" class="row ">
 <div class="col col-lg-12">
-<nav id="breadcrumb"><?php echo $breadcrumb; ?>
+<nav id="breadcrumb">
+  <?php echo $breadcrumb; ?>
 </nav>
+<div class="row justify-content-around">
+<div class="col-lg-8">
 <h1><?php echo metadata("exhibit", "title"); ?></h1>
+
 <?php if (
   $exhibitDescription = metadata("exhibit", "description", [
     "no_escape" => true,
@@ -32,6 +36,8 @@ echo head([
     <?php echo $exhibitDescription; ?>
 </div>
 <?php endif; ?>
+  </div><!-- end col-lg-8 -->
+</div><!-- end .row -->
 
 <?php if ($exhibitCredits = metadata("exhibit", "credits")): ?>
 <div class="exhibit-credits">

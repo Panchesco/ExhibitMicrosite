@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     init() {
       this.setThumbnails();
-      console.log(this.thumbnails.length);
       this.setThumbsHandler();
       this.resetSlide();
       this.getFullSize();

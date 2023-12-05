@@ -1,18 +1,4 @@
-<?php
-/**
- * The following vars are available:
- * $options
- * $text
- * $block
- * $block_id
- * $exhibit_id
- * $exhibit_title
- * $exhibit_slug
- * $exhibit_page_title
- * $exhibit_page_short_title
- * $exhibit_page_slug
- * $attachments
- */
+<?php echo __FILE__ . "<p>refUri: " . $refUri . "</p>";
 
 $files = [];
 $captions = [];
@@ -21,6 +7,7 @@ $item_urls = [];
 $plus = [];
 $block_items = [];
 $item;
+$refUri = isset($refUri) ? $refUri : current_url();
 $attachments = $block->getAttachments();
 
 // $attachment->Item->Files
@@ -32,18 +19,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
 <?php foreach ($attachments as $key => $attachment):
   if ($attachment->Item && isset($attachment->Item->Files[0])): ?>
        <div class="item-wrapper<?php echo $item_flex_values; ?>"<?php echo $inline_styles; ?>>
-       <?php $item_url = url(
-         [
-           "slug" => $exhibit->slug,
-           "page_slug_1" => $page_slug_1,
-           "page_slug_2" => $page_slug_2,
-           "page_slug_3" => $page_slug_3,
-           "action" => "show",
-           "item_id" => $attachment->Item->id,
-           "collection_id" => $attachment->Item->collection_id,
-         ],
-         $item_route
-       ); ?>
+       <?php $item_url = $refUri . "/item/" . $attachment->Item->id; ?>
        <figure>
           <div class="image-wrapper">
             <?php echo item_image(
