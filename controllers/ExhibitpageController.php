@@ -2,6 +2,7 @@
 
 use ExhibitMicrosite\helpers\ParamsHelper;
 use ExhibitMicrosite\helpers\ExhibitMicrositeHelper;
+use ExhibitMicrosite\helpers\BreadcrumbHelper;
 
 class ExhibitMicrosite_ExhibitpageController extends
   Omeka_Controller_AbstractActionController
@@ -60,7 +61,10 @@ class ExhibitMicrosite_ExhibitpageController extends
       "exhibitPage" => $this->exhibitPage,
     ]);
 
-    $this->breadcrumb = $this->microsite->breadcrumbHTML();
+    $this->breadcrumb = new BreadcrumbHelper([
+      "exhibit" => $this->exhibit,
+      "route" => $this->route,
+    ]);
   }
 
   public function showAction()
@@ -72,7 +76,7 @@ class ExhibitMicrosite_ExhibitpageController extends
     // Branch for projects page handling.
     if ($this->exhibitPage->slug == "collections") {
       echo $this->view->partial("exhibit-pages/index.php", [
-        "breadcrumb" => $this->breadcrumb,
+        "breadcrumb" => $this->breadcrumb->html,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
         "exhibitPage" => $this->exhibitPage,
@@ -85,7 +89,7 @@ class ExhibitMicrosite_ExhibitpageController extends
       ]);
     } else {
       echo $this->view->partial("exhibit-pages/show.php", [
-        "breadcrumb" => $this->breadcrumb,
+        "breadcrumb" => $this->breadcrumb->html,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
         "exhibitPage" => $this->exhibitPage,

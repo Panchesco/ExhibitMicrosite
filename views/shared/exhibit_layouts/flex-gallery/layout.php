@@ -1,5 +1,4 @@
 </div><!-- break from grid for gallery layout -->
-
 <?php
 $files = [];
 $captions = [];
@@ -7,12 +6,9 @@ foreach ($attachments as $key => $row) {
   $files[] = get_record_by_id("File", $row->file_id);
   $captions[] = $row->caption;
 }
-
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/public/option-defaults.php";
 ?>
-
-
 <!---- Begin gallery layout -->
 <div id="block-<?php echo $block->id; ?>" class="ems-gallery">
   <div  class="ems-gallery-inner-wrapper"<?php echo $inline_styles; ?>>
@@ -22,7 +18,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
         $key == 0
       ): ?> active<?php endif; ?>">
         <div class="ems-gallery-item">
-          <div class="ems-image-wrapper">
+          <div class="ems-image-wrapper"<?php echo $gallery_item_inline_styles; ?>>
             <?php echo file_image("thumbnail", ["class" => "h-100"], $file); ?>
             </div>
             <div class="ems-gallery-item-caption">
@@ -54,7 +50,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
   </button>
 </div><!-- end bg-grey-300 -->
 
-<div id="block-<?php echo $block->id; ?>-thumbnails" class="ems-gallery-thumbnails d-flex flex-wrap">
+<div id="block-<?php echo $block->id; ?>-thumbnails" class="ems-gallery-thumbnails d-flex flex-wrap"<?php echo $thumbnails_background_inline; ?>>
 <?php foreach ($files as $key => $file): ?>
   <a class="<?php if ($key == 0): ?>active<?php endif; ?>" href="<?php echo url(
   [
@@ -73,11 +69,13 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
 <?php endforeach; ?>
 </div><!-- end ems-gallery-thumbnails -->
 </div><!-- end .ems-gallery -->
-<div class="d-flex flex-row<?php echo $text_div_class; ?>"<?php echo $flex_file_text_inline_styles; ?>>
+<?php if (!empty(trim($block->text))): ?>
+<div class="d-flex flex-row <?php echo $text_div_class; ?>"<?php echo $flex_file_text_inline_styles; ?>>
   <div class="g-0<?php echo $item_flex_file_text_values; ?>">
   <?php echo $block->text; ?>
   </div>
 </div>
+<?php endif; ?>
 <!-- resume regular handling -->
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 

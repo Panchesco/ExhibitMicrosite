@@ -1,5 +1,4 @@
 <?php
-
 // Set default colors and determine if there are inline color styles.
 $inlines = [];
 if (!isset($options["backgroundColor"])) {
@@ -132,3 +131,29 @@ $item_flex_file_text_values = trim($item_flex_file_text_values);
 $item_flex_file_text_values = !empty($item_flex_file_text_values)
   ? " " . $item_flex_file_text_values
   : "";
+
+// Flex Gallery Items Height Override with inline styles.
+if (isset($options["gallery_item_height"])) {
+  $options["gallery_item_height"] = str_replace(
+    "px",
+    "",
+    $options["gallery_item_height"]
+  );
+  $gallery_item_inline_styles =
+    ' style="height:' . $options["gallery_item_height"] . 'px;";';
+} else {
+  $gallery_item_inline_styles = "";
+}
+
+// Flex Gallery thumbnails background color inline styles.
+$thumbnails_background_inline = "";
+if (isset($options["backgroundColor"])) {
+  if (isset($options["thumbnails_background"])) {
+    if ($options["thumbnails_background"] == 1) {
+      $thumbnails_background_inline =
+        ' style="background-color:' .
+        $options["backgroundColor"] .
+        ';padding: 1rem"';
+    }
+  }
+}

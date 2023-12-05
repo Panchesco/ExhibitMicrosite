@@ -25,6 +25,10 @@ if ($options["color"] == "inherit") {
     ? $options["color_picker"]
     : "#222222";
 }
+
+$options["thumbnails_background"] = isset($options["thumbnails_background"])
+  ? $options["thumbnails_background"]
+  : 0;
 ?>
 <div class="palettes-preview-wrapper" data-formstem="<?php echo $formStem; ?>" data-block="<?php echo $block->id; ?>">
   <div class="palettes-col">
@@ -110,3 +114,24 @@ if ($options["color"] == "inherit") {
   </div>
 </div>
 <!-- end .palettes-preview-wrapper -->
+
+<div>
+  <?php echo $this->formLabel(
+    $formStem . "[options][thumbnails_background]",
+    __(
+      "If you selected a background color for the stage, would you like to use it with the thumbnails also?"
+    )
+  ); ?>
+  
+  <?php // Omeka version at time of plugin dev, does not support formNumber, so formSelect it is...
+
+echo $this->formRadio(
+    $formStem . "[options][thumbnails_background]",
+    @$options["thumbnails_background"],
+    0,
+    [
+      0 => __("No"),
+      1 => __("Yes"),
+    ]
+  ); ?>
+</div>

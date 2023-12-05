@@ -4,8 +4,8 @@ echo head();
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rendering, and you're seeing a
- * Warning : Undefined array key “imgAttributes”
- * message: https://forum.omeka.org/t/gallery-block-error-message-undefined-array-key/16146
+ * Warning : Undefined array key “imgAttributes”, it's an Omeka Bug:
+ * https://forum.omeka.org/t/gallery-block-error-message-undefined-array-key/16146
  *
  * Wrap for non-ems blocks:
  */

@@ -2,6 +2,7 @@
 
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
+use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 
 class ExhibitMicrosite_DefaultController extends
   Omeka_Controller_AbstractActionController
@@ -35,7 +36,8 @@ class ExhibitMicrosite_DefaultController extends
       "route" => $this->route,
       "exhibit" => $this->exhibit,
     ]);
-    $this->breadcrumb = $this->microsite->breadcrumbHTML();
+
+    $this->breadcrumb = new BreadcrumbHelper(["exhibit" => $this->exhibit]);
   }
 
   public function showAction()
@@ -60,8 +62,8 @@ class ExhibitMicrosite_DefaultController extends
     $this->view->exhibit = $this->exhibit;
 
     $this->view->partial("exhibit-pages/show.php", [
+      "breadcrumb" => $this->breadcrumb->html,
       "exhibitPage" => get_record("ExhibitPage", $this->slug),
-      "breadcrumb" => $this->breadcrumb,
       "exhibit" => $this->exhibit,
       "theme_options" => $this->theme_options,
       "view" => $this->view,
@@ -73,7 +75,7 @@ class ExhibitMicrosite_DefaultController extends
     $this->view->exhibit = $this->exhibit;
 
     echo $this->view->partial("exhibit/summary.php", [
-      "breadcrumb" => "[breadcrump]",
+      "breadcrumb" => $this->breadcrumb->html,
       "exhibit" => $this->exhibit,
       "theme_options" => $this->theme_options,
       "view" => $this->view,

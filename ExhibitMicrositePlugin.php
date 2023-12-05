@@ -14,6 +14,7 @@ require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/helpers/ExhibitMicrositeHelper.php";
+require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/BreadcrumbHelper.php";
 
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -130,17 +131,17 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   public function filterExhibitLayouts($layouts)
   {
     $ems["flex-text"] = [
-      "name" => "Bootstrap Flex Text Block",
+      "name" => "Flex Text Block",
       "description" => "A text block for display in a Bootstrap 5 Flex grid.",
     ];
 
     $ems["flex-file"] = [
-      "name" => "Bootstrap Flex File Block",
+      "name" => "Flex File Block",
       "description" => "A file block for display in a Bootstrap 5 Flex grid.",
     ];
 
     $ems["flex-file-text"] = [
-      "name" => "Bootstrap Flex File with Text Block",
+      "name" => "Flex File with Text Block",
       "description" =>
         "A file with text block for display in a Bootstrap 5 Flex grid..",
     ];

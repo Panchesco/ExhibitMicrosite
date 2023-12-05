@@ -20,9 +20,7 @@ echo head([
 
 <div id="exhibit-content" class="row ">
 <div class="col col-lg-12">
-<nav id="breadcrumb"><?php
-//echo $breadcrumb;
-?>
+<nav id="breadcrumb"><?php echo $breadcrumb; ?>
 </nav>
 <h1><?php echo metadata("exhibit", "title"); ?></h1>
 <?php if (

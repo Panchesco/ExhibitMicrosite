@@ -2,6 +2,7 @@
 
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
+use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 
 class ExhibitMicrosite_ItemController extends
   Omeka_Controller_AbstractActionController
@@ -51,7 +52,7 @@ class ExhibitMicrosite_ItemController extends
 
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
-      "exhbit" => $this->exhibit,
+      "exhibit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
     ]);
 
@@ -83,6 +84,23 @@ class ExhibitMicrosite_ItemController extends
     $this->thumb_links_base = $this->thumbLinksBase();
 
     $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views");
+
+    // Set some config values to pass to the breadcrumb helper.
+    $config = [
+      "exhibit" => $this->exhibit,
+      "exhibitPage" => $this->exhibitPage,
+      "item" => $this->item,
+      "route" => $this->route,
+      "file_info" => $this->active_file
+        ? $this->file_info
+        : [
+          "id" => 0,
+          "title" => "",
+          "display_title" => "",
+          "original_filename" => "",
+        ],
+    ];
+    $this->breadcrumb = new BreadcrumbHelper($config);
   }
 
   public function fileInfo()
@@ -127,7 +145,7 @@ class ExhibitMicrosite_ItemController extends
 
     echo $this->view->partial("items/show.php", [
       "active_file" => $this->active_file,
-      "breadcrumb" => $this->microsite->breadcrumbHTML(),
+      "breadcrumb" => $this->breadcrumb->html,
       "collection" => $collection,
       "collection_id" => $collection->id,
       "route" => $this->route,

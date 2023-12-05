@@ -23,10 +23,12 @@ $options = $block->getOptions();
 
 
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/gallery-stage-palettes.php";
+  "/includes/layout-options/admin/flex-gallery-palettes.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/admin/flex-file-text-colors.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/admin/padding.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/flex-gallery-items.php";
 ?>
 </div><!-- end .layout-options -->
