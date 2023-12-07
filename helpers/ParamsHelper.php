@@ -5,6 +5,7 @@ class ParamsHelper
 {
   public $page_slugs;
   public $paramsArray;
+  public $depth;
   function __construct()
   {
     $request = Zend_Controller_Front::getInstance()->getRequest();
@@ -17,6 +18,7 @@ class ParamsHelper
     $this->page_slug_3 = $request->getParam("page_slug_3");
     $this->page_number = $request->getParam("page_number");
     $this->slug = $request->getParam("slug");
+    $this->depth = $request->getParam("depth");
 
     if ($this->page_slug_1) {
       $this->page_slugs[] = $this->page_slug_1;

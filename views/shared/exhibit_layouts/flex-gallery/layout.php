@@ -1,6 +1,5 @@
 </div><!-- break from grid for gallery layout -->
 <?php
-echo __FILE__ . "<p>refUri: " . $refUri . "</p>";
 $files = [];
 $captions = [];
 foreach ($attachments as $key => $row) {
@@ -51,16 +50,9 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
 <h2><?php echo __("Gallery Items"); ?></h2>
 <div id="block-<?php echo $block->id; ?>-thumbnails" class="ems-gallery-thumbnails d-flex flex-wrap"<?php echo $thumbnails_background_inline; ?>>
 <?php foreach ($files as $key => $file): ?>
-  <a class="<?php if ($key == 0): ?>active<?php endif; ?>" href="<?php echo url(
-  [
-    "action" => "show",
-    "controller" => "item",
-    "slug" => $exhibit->slug,
-    "item_id" => $file->item_id,
-    "file_id" => $file->id,
-  ],
-  "ems_show_file"
-); ?>" onclick="javascript:void(0);"> <?php echo file_image(
+  <a class="<?php if (
+    $key == 0
+  ): ?>active<?php endif; ?>" href="<?php echo $refUri; ?>" onclick="javascript:void(0);"> <?php echo file_image(
   "square_thumbnail",
   ["class" => "h-100"],
   $file

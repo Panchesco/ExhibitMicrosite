@@ -1,6 +1,5 @@
-<?php echo __FILE__ . "<br>" . $refUri;
+<?php
 echo head();
-
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rendering, and you're seeing a
@@ -34,6 +33,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "page_slugs" => $params->page_slugs,
   "slug" => $params->slug,
   "text" => $block->text,
+  "params" => $params,
   "refUri" => $refUri,
 ]);
 ?>

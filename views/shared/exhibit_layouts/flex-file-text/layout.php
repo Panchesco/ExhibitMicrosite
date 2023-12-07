@@ -1,18 +1,4 @@
 <?php
-/**
- * The following vars are available:
- * $options
- * $text
- * $block
- * $block_id
- * $exhibit_id
- * $exhibit_title
- * $exhibit_slug
- * $exhibit_page_title
- * $exhibit_page_short_title
- * $exhibit_page_slug
- * $attachments
- */
 
 $files = [];
 $captions = [];

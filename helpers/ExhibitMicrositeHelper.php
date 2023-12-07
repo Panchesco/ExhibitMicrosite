@@ -111,8 +111,7 @@ class ExhibitMicrositeHelper
     $this->theme_options = $this->exhibit->theme_options;
 
     $this->options = $this->_setOptions();
-    // Set the breadcrumb data
-    $this->setBreadcrumbData();
+
     $this->_setPerPage();
     $this->_setIndex();
     $this->setRefUri();
@@ -272,59 +271,6 @@ class ExhibitMicrositeHelper
         break;
 
       // Microsite Exhibit Pages Show Item
-      case "ems_show_item1":
-        $url = url(
-          [
-            "action" => "show",
-            "controller" => "item",
-            "slug" => $this->params->slug,
-            "item_id" => $this->params->item_id,
-          ],
-          "ems_show_item"
-        );
-        break;
-
-      case "ems_show_item2":
-        $url = url(
-          [
-            "action" => "show",
-            "controller" => "item",
-            "slug" => $this->params->slug,
-            "item_id" => $this->params->item_id,
-          ],
-          "ems_show_item"
-        );
-        break;
-
-      case "ems_show_item3":
-        $url = url(
-          [
-            "action" => "show",
-            "controller" => "item",
-            "slug" => $this->params->slug,
-            "item_id" => $this->params->item_id,
-          ],
-          "ems_show_item"
-        );
-        break;
-
-      // Microsite Show Item Page
-      case "ems_show_item":
-        $url = url(
-          [
-            "action" => "show",
-            "controller" => "item",
-            "slug" => $this->params->slug,
-            "item_id" => $this->params->item_id,
-          ],
-          $route
-        );
-        break;
-
-      //TODO:
-      // Files
-
-      // Microsite Exhibit Pages Show Item
       case "ems_show_file1":
         $url = url(
           [
@@ -334,7 +280,7 @@ class ExhibitMicrositeHelper
             "item_id" => $this->params->item_id,
             "file_id" => $this->params->file_id,
           ],
-          "ems_show_file1"
+          $route
         );
         break;
 
@@ -347,7 +293,7 @@ class ExhibitMicrositeHelper
             "item_id" => $this->params->item_id,
             "file_id" => $this->params->file_id,
           ],
-          "ems_show_file2"
+          $route
         );
         break;
 
@@ -360,7 +306,7 @@ class ExhibitMicrositeHelper
             "item_id" => $this->params->item_id,
             "file_id" => $this->params->file_id,
           ],
-          "ems_show_file3"
+          $route
         );
         break;
 
@@ -374,7 +320,7 @@ class ExhibitMicrositeHelper
             "item_id" => $this->params->item_id,
             "file_id" => $this->params->file_id,
           ],
-          "ems_show_file"
+          "ems_show_file" . $params->depth
         );
         break;
       // Collection
@@ -400,7 +346,7 @@ class ExhibitMicrositeHelper
             "collection_id" => $this->params->collection_id,
             "item_id" => $this->params->item_id,
           ],
-          "ems_show_item"
+          $route
         );
         break;
 
@@ -418,227 +364,6 @@ class ExhibitMicrositeHelper
     }
 
     return WEB_ROOT . $url;
-  }
-
-  /**
-   * Returns an array titles and urls
-   * for the current page breadcrumb trail.
-   * @return array.
-   */
-  public function setBreadcrumbData()
-  {
-    $this->breadcrumb_data = [];
-
-    $this->exhbitBreadcrumbData();
-
-    $this->exhibitPagesBreadcrumbData();
-
-    $this->itemsBreadcrumbData();
-
-    $this->collectionsBreadcrumbData();
-  } // end function
-
-  public function exhbitBreadcrumbData()
-  {
-    $this->breadcrumb_data = [];
-    if ($this->params->slug) {
-      $this->breadcrumb_data[] = [
-        "title" => $this->exhibit->title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "default",
-            "action" => "show",
-            "slug" => $this->params->slug,
-          ],
-          "ems_exhibitLanding"
-        ),
-      ];
-    }
-  }
-
-  public function exhibitPagesBreadcrumbData()
-  {
-    if ($this->params->page_slug_1) {
-      $this->breadcrumb_data[] = [
-        "title" => $this->exhibitPages[0]->title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "exhibitpage",
-            "action" => "show",
-            "slug" => $this->params->slug,
-            "page_slug_1" => $this->params->page_slug_1,
-          ],
-          "ems_exhibitPage1"
-        ),
-      ];
-    }
-
-    if ($this->params->page_slug_2) {
-      if (isset($this->exhibitPages[1]->title)) {
-        $this->breadcrumb_data[] = [
-          "title" => $this->exhibitPages[1]->title,
-          "url" => url(
-            [
-              "module" => "exhibit-microsite",
-              "controller" => "exhibitpage",
-              "action" => "show",
-              "slug" => $this->params->slug,
-              "page_slug_1" => $this->params->page_slug_1,
-              "page_slug_2" => $this->params->page_slug_2,
-            ],
-            "ems_exhibitPage2"
-          ),
-        ];
-      }
-    }
-
-    if ($this->params->page_slug_3) {
-      $this->breadcrumb_data[] = [
-        "title" => $this->exhibitPages[2]->title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "exhibitpage",
-            "action" => "show",
-            "slug" => $this->params->slug,
-            "page_slug_1" => $this->params->page_slug_1,
-            "page_slug_2" => $this->params->page_slug_2,
-            "page_slug_3" => $this->params->page_slug_3,
-          ],
-          "ems_exhibitPage3"
-        ),
-      ];
-    }
-  }
-
-  public function itemsBreadcrumbData()
-  {
-    if ($this->params->item_id || $this->params->file_id) {
-      $item = get_record_by_id("Item", $this->params->item_id);
-      set_current_record("item", $item);
-      $this->breadcrumb_data[] = [
-        "title" => metadata("item", "rich_title", [
-          "no_escape" => true,
-        ]),
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "item",
-            "action" => "browse",
-            "slug" => $this->params->slug,
-          ],
-          $this->route
-        ),
-      ];
-    }
-
-    $item = get_record_by_id("Item", $this->params->item_id);
-    if (element_exists("Dublin Core", "rich_title")) {
-      $title = metadata($item, "rich_title");
-    } else {
-      $title = null;
-    }
-
-    if ($title) {
-      $this->breadcrumb_data[] = [
-        "title" => $title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "item",
-            "action" => "browse",
-            "slug" => $this->params->slug,
-          ],
-          "ems_browse_items"
-        ),
-      ];
-    }
-  } // End itemsBreadcrumbData method
-
-  public function collectionsBreadcrumbData()
-  {
-    $this->breadcrumb_data = [];
-
-    // Exhibit Landing Page.
-    if (in_array($this->route, ["ems_collection", "ems_collection_item"])) {
-      $this->breadcrumb_data[] = [
-        "title" => $this->exhibit->title,
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "default",
-            "action" => "show",
-            "slug" => $this->params->slug,
-          ],
-          "ems_exhibitLanding"
-        ),
-      ];
-
-      // Collection Landing Page
-      $this->breadcrumb_data[] = [
-        "title" => $this->options["collection_page_title"],
-        "url" => url(
-          [
-            "module" => "exhibit-microsite",
-            "controller" => "collection",
-            "action" => "browse",
-            "slug" => $this->params->slug,
-          ],
-          "ems_collection"
-        ),
-      ];
-
-      // Item metadata page.
-      if ($this->params->item_id) {
-        $item = get_record_by_id("Item", $this->params->item_id);
-        set_current_record("item", $item);
-        if (metadata("item", "rich_title")) {
-          $title = metadata("item", "rich_title");
-        } else {
-          $title = null;
-        }
-        $this->breadcrumb_data[] = [
-          "title" => $title,
-          "url" => url(
-            [
-              "module" => "exhibit-microsite",
-              "controller" => "collection",
-              "action" => "browse",
-              "slug" => $this->params->slug,
-              "collection_id" => $this->params->collection_id,
-              "item_id" => $this->params->item_id,
-            ],
-            "ems_collection"
-          ),
-        ];
-      }
-    }
-  } // End collectionsBreadcrumbData method
-
-  /**
-   * Returns HTML
-   * for the current page breadcrumb trail.
-   * @return array.
-   */
-  public function breadcrumbHTML()
-  {
-    $html = "<ul>";
-    foreach ($this->breadcrumb_data as $segment) {
-      if ($segment != end($this->breadcrumb_data)) {
-        $html .=
-          '<li><a href="' .
-          $segment["url"] .
-          '">' .
-          $segment["title"] .
-          "</a></li>";
-      } else {
-        $html .= "<li>" . $segment["title"] . "</li>";
-      }
-    }
-    $html .= "</ul>";
-    return $html;
   }
 
   protected function _setOptions()

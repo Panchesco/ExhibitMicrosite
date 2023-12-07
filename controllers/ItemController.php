@@ -22,6 +22,7 @@ class ExhibitMicrosite_ItemController extends
   public $active_file;
   public $file_info;
   public $files;
+  public $params;
 
   protected $_request;
 
@@ -33,20 +34,20 @@ class ExhibitMicrosite_ItemController extends
       ->getRouter()
       ->getCurrentRouteName();
 
-    $params = new ParamsHelper();
+    $this->params = new ParamsHelper();
 
-    if (!$this->exhibit && $params->slug) {
+    if (!$this->exhibit && $this->params->slug) {
       $this->exhibit = get_record("Exhibit", [
         "public" => 1,
-        "slug" => $params->slug,
+        "slug" => $this->params->slug,
       ]);
     }
 
-    if (!$this->exhibitPage && $params->page_slugs) {
+    if (!$this->exhibitPage && $this->params->page_slugs) {
       $this->exhibitPage = get_record("ExhibitPage", [
         "public" => 1,
         "exhibit_id" => $this->exhibit->id,
-        "slug" => array_pop($params->page_slugs),
+        "slug" => array_pop($this->params->page_slugs),
       ]);
     }
 
@@ -56,13 +57,13 @@ class ExhibitMicrosite_ItemController extends
       "exhibitPage" => $this->exhibitPage,
     ]);
 
-    if (!$this->item && $params->item_id) {
-      $this->item = get_record_by_id("Item", $params->item_id);
+    if (!$this->item && $this->params->item_id) {
+      $this->item = get_record_by_id("Item", $this->params->item_id);
       $this->files = $this->item->getFiles();
       if ($this->files) {
-        $this->active_file = !$params->file_id
+        $this->active_file = !$this->params->file_id
           ? $this->files[0]
-          : get_record_by_id("File", $params->file_id);
+          : get_record_by_id("File", $this->params->file_id);
       } else {
         $this->files = [];
         $this->active_file = null;
@@ -112,27 +113,27 @@ class ExhibitMicrosite_ItemController extends
 
   public function thumbLinksBase()
   {
-    $params = new ParamsHelper();
+    $this->params = new ParamsHelper();
     $base = WEB_ROOT . "/exhibits/show";
 
-    if ($params->slug) {
-      $base .= "/" . $params->slug;
+    if ($this->params->slug) {
+      $base .= "/" . $this->params->slug;
     }
 
-    if (!$params->page_slugs || !is_array($params->page_slugs)) {
+    if (!$this->params->page_slugs || !is_array($this->params->page_slugs)) {
       $base .= "/item";
-      $base .= "/" . $params->item_id;
+      $base .= "/" . $this->params->item_id;
       return $base;
     }
 
     foreach ($this->page_slugs as $slug) {
       $base .= "/" . $slug;
     }
-    foreach ($params->page_slugs as $param) {
+    foreach ($this->params->page_slugs as $param) {
       $base .= "/" . $param;
     }
     $base .= "/item";
-    $base .= "/" . $params->item_id;
+    $base .= "/" . $this->params->item_id;
     return $base;
   }
 
@@ -140,7 +141,7 @@ class ExhibitMicrosite_ItemController extends
   {
     $this->_init();
 
-    $params = new ParamsHelper();
+    $this->params = new ParamsHelper();
     $collection = $this->item->getCollection();
 
     $this->view->item = $this->item;
@@ -157,12 +158,13 @@ class ExhibitMicrosite_ItemController extends
       "item" => $this->item,
       "item_id" => $this->item_id,
       "file_info" => $this->file_info,
-      "page_slugs" => $params->page_slugs,
-      "slug" => $params->slug,
+      "page_slugs" => $this->params->page_slugs,
+      "slug" => $this->params->slug,
       "thumb_links_base" => $this->thumb_links_base,
       "theme_options" => $this->microsite->exhibit->getThemeOptions(),
       "microsite" => $this->microsite,
       "view" => $this->view,
+      "params" => $this->params,
       "refUri" => $this->microsite->refUri,
       "prevData" => $this->breadcrumb->prevData,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
@@ -172,9 +174,5 @@ class ExhibitMicrosite_ItemController extends
     ]);
 
     exit();
-  }
-
-  public function browseAction()
-  {
   }
 } // End ExhibitMicrosite_ItemController;

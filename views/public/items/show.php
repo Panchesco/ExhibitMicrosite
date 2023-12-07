@@ -1,5 +1,4 @@
-<?php echo __FILE__;
-echo $route;
+<?php
 set_current_record("Item", $item);
 echo head([
   "title" => metadata("item", ["Dublin Core", "Title"]),
@@ -88,8 +87,15 @@ if ($file_title && $file_title) {
       <h2 class="underlined"><?php echo __("Collection"); ?></h2>
         <div id="collection" class="element">
           <div class="element-text"><a href="
-          <?php echo $this->microsite->refUri .
-            "/item/"; ?>><?php echo $collection_title; ?>"></a>
+          <?php echo url(
+            [
+              "action" => "browse",
+              "controller" => "item",
+              "slug" => $params->slug,
+            ],
+            "ems_collection",
+            ["collection" => $collection->id]
+          ); ?>"><?php echo $collection_title; ?></a>
                 </div>
         </div>
      <?php endif; ?>
@@ -181,12 +187,11 @@ if ($file_title && $file_title) {
          </div>
      </div>
   </div><!-- end #dublin-core -->
-</div>
-<?php echo $route; ?>
-<?php echo $prevData["uri"]; ?>
-<p>Return to <a href="<?php echo $prevData["uri"]; ?>">
-<?php echo $prevData["title"]; ?></a>
+<p><a class="return-to" href="<?php echo $prevData["uri"]; ?>"><?php echo __(
+  "Return to %s",
+  $prevData["title"]
+); ?></a>
 </p>
- <?php echo foot(); ?>
+<?php echo foot(); ?>
 
 

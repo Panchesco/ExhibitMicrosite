@@ -1,5 +1,4 @@
-<?php echo __FILE__;
-
+<?php
 // This needs to work both on the ExhibitPage and in the global nav.
 // In the global nav we'll need to get the ExhibitPage object if we're not on the Projects page.
 $exhibitPage = isset($exhibitPage)

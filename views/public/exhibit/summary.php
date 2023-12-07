@@ -1,11 +1,8 @@
 
-<?php
-echo __FILE__;
-echo head([
+<?php echo head([
   "title" => metadata("exhibit", "title"),
   "bodyclass" => "exhibits summary",
-]);
-?>
+]); ?>
 
   <?php
   $pageTree = exhibit_builder_page_tree();

@@ -2,6 +2,7 @@
 
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
+use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 
 class ExhibitMicrosite_BrowseCollectionController extends
   Omeka_Controller_AbstractActionController
@@ -23,6 +24,17 @@ class ExhibitMicrosite_BrowseCollectionController extends
         $_SESSION["filters"] = $_POST["filters"];
       } elseif ($_POST["filters"]["action"] == "clear") {
         unset($_SESSION["filters"]);
+      }
+    }
+
+    /**
+     * If the user has come to this page via a link with the collection_id
+     * query param, update the session filter variables.
+     * Only do this if the id is numeric.
+     */
+    if (isset($_GET["collection"])) {
+      if (is_numeric($_GET["collection"])) {
+        $_SESSION["filters"]["collection"][] = $_GET["collection"];
       }
     }
 
@@ -50,6 +62,11 @@ class ExhibitMicrosite_BrowseCollectionController extends
         ->findBySlug("browse", ["exhibit_id" => $this->exhibit->id]);
     }
 
+    $this->breadcrumb = new BreadcrumbHelper([
+      "route" => $this->route,
+      "exhibit" => $this->exhibit,
+    ]);
+
     $this->theme_options = $this->exhibit->getThemeOptions();
 
     $this->view->addScriptPath(
@@ -71,8 +88,6 @@ class ExhibitMicrosite_BrowseCollectionController extends
     $this->set_total_results();
     $this->set_total_page_results();
     $this->microsite->setTotalPages($this->total_results);
-
-    $this->breadcrumb = $this->microsite->breadcrumbHTML();
   }
 
   public function browseAction()
@@ -84,7 +99,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
     $this->view->exhibitPage = $this->exhibitPage;
     echo $this->view->partial("collection/browse.php", [
-      "breadcrumb" => $this->breadcrumb,
+      "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
@@ -101,6 +116,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "result_set_string" => $this->result_set_string(),
       "per_page" => $this->microsite->per_page,
       "pagination" => $this->microsite->paginate(),
+      "refUri" => $this->microsite->refUri,
+      "prevData" => $this->breadcrumb->prevData,
     ]);
     exit();
   }

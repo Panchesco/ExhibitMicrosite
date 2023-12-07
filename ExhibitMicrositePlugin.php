@@ -91,8 +91,8 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/shared/exhibit_layouts"
       );
 
-      // Todo - These values need to be stored via the config form for the plugin.
-      // So users can edit.
+      // Todo - These values need to be stored via the config form for the plugin,
+      // so users can edit.
       $options["palette"] = [
         "#8B0015",
         "#AB0520",

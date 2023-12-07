@@ -1,12 +1,10 @@
-<?php echo __FILE__;
-echo head(["bodyclass" => "collections"]);
-?>
+<?php
+echo head(["bodyclass" => "collections"]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
-<?php echo "RefURI:" . $refUri; ?>
 <?php echo $this->view->partial("exhibit-pages/index-listing.php", [
   "child_pages" => $child_pages,
   "params" => $params,
