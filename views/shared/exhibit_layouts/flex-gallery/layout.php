@@ -29,7 +29,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
           <a class="view-file" href="<?php echo $refUri .
             "/item/" .
             $file->item_id .
-            "/" .
+            "/file/" .
             $file->id; ?>"><span class="visually-hidden"><?php echo __(
   "View File"
 ); ?></span></a>

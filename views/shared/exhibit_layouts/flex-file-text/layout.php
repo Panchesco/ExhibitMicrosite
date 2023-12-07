@@ -32,18 +32,12 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
 <?php foreach ($attachments as $key => $attachment):
   if ($attachment->Item && isset($attachment->Item->Files[0])): ?>
        <div class="item-wrapper<?php echo $item_flex_values; ?>"<?php echo $inline_styles; ?>>
-       <?php $item_url = url(
-         [
-           "slug" => $exhibit->slug,
-           "page_slug_1" => $page_slug_1,
-           "page_slug_2" => $page_slug_2,
-           "page_slug_3" => $page_slug_3,
-           "action" => "show",
-           "item_id" => $attachment->Item->id,
-           "collection_id" => $attachment->Item->collection_id,
-         ],
-         $item_route
-       ); ?>
+       <?php $item_url =
+         $refUri .
+         "/item/" .
+         $attachment->Item->id .
+         "/file/" .
+         $attachment->Item->Files[0]->id; ?>
        <figure>
           <div class="image-wrapper">
             <?php echo item_image(

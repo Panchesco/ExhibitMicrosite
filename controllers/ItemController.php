@@ -163,6 +163,8 @@ class ExhibitMicrosite_ItemController extends
       "theme_options" => $this->microsite->exhibit->getThemeOptions(),
       "microsite" => $this->microsite,
       "view" => $this->view,
+      "refUri" => $this->microsite->refUri,
+      "prevData" => $this->breadcrumb->prevData,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "collection_title" => metadata($collection, "rich_title", [
         "no_escape" => true,

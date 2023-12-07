@@ -37,20 +37,19 @@ class BreadcrumbHelper
     }
 
     $this->emsExhibitLanding();
-
     $this->nonSummaryPage();
-
     $this->emsExhibitPage1();
-
     $this->emsExhibitPage2();
-
     $this->emsExhibitPage3();
-
     $this->emsShowItem();
-    // $this->setEmsShowItem2();
-    // $this->setEmsShowItem3();
+    $this->emsShowItem1();
+    $this->emsShowItem2();
+    $this->emsShowItem3();
     $this->emsShowFile();
-
+    $this->emsShowFile1();
+    $this->emsShowFile2();
+    $this->emsShowFile3();
+    $this->setPrevUri();
     $this->html();
   }
 
@@ -210,56 +209,58 @@ class BreadcrumbHelper
     }
   }
 
-  //   public function emsShowItem2()
-  //   {
-  //     if (
-  //       $this->params->page_slug_2 &&
-  //       $this->params->item_id &&
-  //       isset($this->config["item"])
-  //     ) {
-  //       set_current_record("item", $this->config["item"]);
-  //       $this->data[] = [
-  //         "title" => metadata("Item", "rich_title"),
-  //         "slug" => $this->exhibit->slug,
-  //         "url" => url(
-  //           [
-  //             "action" => "show",
-  //             "controller" => "item",
-  //             "slug" => $this->params->slug,
-  //             "page_slug_1" => $this->params->page_slug_1,
-  //             "page_slug_2" => $this->params->page_slug_2,
-  //             "item_id" => $this->params->item_id,
-  //           ],
-  //           "ems_show_item1"
-  //         ),
-  //       ];
-  //     }
-  //   }
-  //
-  //   public function emsShowItem3()
-  //   {
-  //     if (
-  //       $this->params->page_slug_3 &&
-  //       $this->params->item_id &&
-  //       isset($this->config["item"])
-  //     ) {
-  //       set_current_record("item", $this->config["item"]);
-  //       $this->data[] = [
-  //         "title" => metadata("Item", "rich_title"),
-  //         "slug" => $this->exhibit->slug,
-  //         "url" => url(
-  //           [
-  //             "action" => "show",
-  //             "controller" => "item",
-  //             "slug" => $this->params->slug,
-  //             "page_slug_1" => $this->params->page_slug_3,
-  //             "item_id" => $this->params->item_id,
-  //           ],
-  //           "ems_show_item1"
-  //         ),
-  //       ];
-  //     }
-  //   }
+  public function emsShowItem2()
+  {
+    if (
+      $this->params->page_slug_2 &&
+      $this->params->item_id &&
+      isset($this->config["item"])
+    ) {
+      set_current_record("item", $this->config["item"]);
+      $this->data[] = [
+        "title" => metadata("Item", "rich_title"),
+        "slug" => $this->exhibit->slug,
+        "url" => url(
+          [
+            "action" => "show",
+            "controller" => "item",
+            "slug" => $this->params->slug,
+            "page_slug_1" => $this->params->page_slug_1,
+            "page_slug_2" => $this->params->page_slug_2,
+            "item_id" => $this->params->item_id,
+          ],
+          "ems_show_item2"
+        ),
+      ];
+    }
+  }
+
+  public function emsShowItem3()
+  {
+    if (
+      $this->params->page_slug_3 &&
+      $this->params->item_id &&
+      isset($this->config["item"])
+    ) {
+      set_current_record("item", $this->config["item"]);
+      $this->data[] = [
+        "title" => metadata("Item", "rich_title"),
+        "slug" => $this->exhibit->slug,
+        "url" => url(
+          [
+            "action" => "show",
+            "controller" => "item",
+            "slug" => $this->params->slug,
+            "page_slug_1" => $this->params->page_slug_1,
+            "page_slug_2" => $this->params->page_slug_2,
+            "page_slug_3" => $this->params->page_slug_3,
+            "item_id" => $this->params->item_id,
+          ],
+          "ems_show_item3"
+        ),
+      ];
+    }
+  }
 
   public function emsShowFile()
   {
@@ -301,6 +302,256 @@ class BreadcrumbHelper
           ),
         ];
       }
+    }
+  }
+
+  public function emsShowFile1()
+  {
+    // Only add the file item to the breadcrumb if the display title is not empty.
+    if (
+      isset($this->config["file_info"]["display_title"]) &&
+      !empty($this->config["file_info"]["display_title"])
+    ) {
+      if (
+        $this->params->item_id &&
+        isset($this->config["item"]) &&
+        $this->params->file_id
+      ) {
+        set_current_record("item", $this->config["item"]);
+        $this->data[] = [
+          "title" => $this->config["file_info"]["display_title"],
+          "slug" => $this->exhibit->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "item",
+              "slug" => $this->params->slug,
+              "page_slug_1" => $this->params->page_slug_1
+                ? $this->params->page_slug_1
+                : "",
+              "page_slug_2" => $this->params->page_slug_2
+                ? $this->params->page_slug_2
+                : "",
+              "page_slug_3" => $this->params->page_slug_3
+                ? $this->params->page_slug_3
+                : "",
+              "collection_id" => $this->params->collection_id
+                ? $this->params->collection_id
+                : "",
+              "item_id" => $this->params->item_id,
+              "file_id" => $this->params->file_id,
+            ],
+            "ems_show_item1"
+          ),
+        ];
+      }
+    }
+  }
+
+  public function emsShowFile2()
+  {
+    // Only add the file item to the breadcrumb if the display title is not empty.
+    if (
+      isset($this->config["file_info"]["display_title"]) &&
+      !empty($this->config["file_info"]["display_title"])
+    ) {
+      if (
+        $this->params->item_id &&
+        isset($this->config["item"]) &&
+        $this->params->file_id
+      ) {
+        set_current_record("item", $this->config["item"]);
+        $this->data[] = [
+          "title" => $this->config["file_info"]["display_title"],
+          "slug" => $this->exhibit->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "item",
+              "slug" => $this->params->slug,
+              "page_slug_1" => $this->params->page_slug_1
+                ? $this->params->page_slug_1
+                : "",
+              "page_slug_2" => $this->params->page_slug_2
+                ? $this->params->page_slug_2
+                : "",
+              "page_slug_3" => $this->params->page_slug_3
+                ? $this->params->page_slug_3
+                : "",
+              "collection_id" => $this->params->collection_id
+                ? $this->params->collection_id
+                : "",
+              "item_id" => $this->params->item_id,
+              "file_id" => $this->params->file_id,
+            ],
+            "ems_show_item1"
+          ),
+        ];
+      }
+    }
+  }
+
+  public function emsShowFile3()
+  {
+    // Only add the file item to the breadcrumb if the display title is not empty.
+    if (
+      isset($this->config["file_info"]["display_title"]) &&
+      !empty($this->config["file_info"]["display_title"])
+    ) {
+      if (
+        $this->params->item_id &&
+        isset($this->config["item"]) &&
+        $this->params->file_id
+      ) {
+        set_current_record("item", $this->config["item"]);
+        $this->data[] = [
+          "title" => $this->config["file_info"]["display_title"],
+          "slug" => $this->exhibit->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "item",
+              "slug" => $this->params->slug,
+              "page_slug_1" => $this->params->page_slug_1
+                ? $this->params->page_slug_1
+                : "",
+              "page_slug_2" => $this->params->page_slug_2
+                ? $this->params->page_slug_2
+                : "",
+              "page_slug_3" => $this->params->page_slug_3
+                ? $this->params->page_slug_3
+                : "",
+              "collection_id" => $this->params->collection_id
+                ? $this->params->collection_id
+                : "",
+              "item_id" => $this->params->item_id,
+              "file_id" => $this->params->file_id,
+            ],
+            "ems_show_item1"
+          ),
+        ];
+      }
+    }
+  }
+
+  /**
+   * Sets the previous URL from the current route so we can pass that to pages linking
+   * to items and files, objects that may have more than one possible URL.
+   */
+  public function setPrevUri()
+  {
+    $data = [];
+    $title = "";
+
+    if ($this->route == "ems_exhibitLanding") {
+      $data["action"] = "show";
+      $data["controller"] = "default";
+      $route = "ems_exhibitLanding";
+      $data["slug"] = $this->params->slug;
+      $title = $this->config["exhibit"]->title;
+    }
+
+    if ($this->route == "ems_exhibitPage1") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitLanding";
+      $data["slug"] = $this->params->slug;
+      $title = $this->exhibit->title;
+    }
+
+    if ($this->route == "ems_exhibitPage2") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage1";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $title = $this->exhibitPage_2->title;
+    }
+
+    if ($this->route == "ems_exhibitPage3") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage2";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["page_slug_2"] = $this->params->page_slug_2;
+      $title = $this->exhibitPage_2->title;
+    }
+
+    if ($this->route == "ems_show_file3") {
+      $data["action"] = "show";
+      $data["controller"] = "item";
+      $route = "ems_exhibitPage3";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["page_slug_2"] = $this->params->page_slug_2;
+      $data["page_slug_3"] = $this->params->page_slug_3;
+      $data["item_id"] = $this->params->item_id;
+      $title = $this->exhibitPage_3->title;
+    }
+
+    if ($this->route == "ems_show_file2") {
+      $data["action"] = "show";
+      $data["controller"] = "item";
+      $route = "ems_exhibitPage2";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["page_slug_2"] = $this->params->page_slug_2;
+      $data["item_id"] = $this->params->item_id;
+      $title = $this->exhibitPage_2->title;
+    }
+
+    if ($this->route == "ems_show_file1") {
+      $data["action"] = "show";
+      $data["controller"] = "item";
+      $route = "ems_exhibitPage1";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["item_id"] = $this->params->item_id;
+      $title = $this->exhibitPage1->title;
+    }
+
+    if ($this->route == "ems_show_item3") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage3";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["page_slug_2"] = $this->params->page_slug_2;
+      $data["page_slug_3"] = $this->params->page_slug_3;
+      $title = $this->exhibitPage3->title;
+    }
+
+    if ($this->route == "ems_show_item2") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage2";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $data["page_slug_2"] = $this->params->page_slug_2;
+    }
+
+    if ($this->route == "ems_show_item1") {
+      $data["action"] = "show";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage1";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $title = $this->exhibitPage_1->title;
+    }
+
+    if ($this->route == "ems_collection_item") {
+      $data["action"] = "browse";
+      $data["controller"] = "exhibitpage";
+      $route = "ems_exhibitPage1";
+      $data["slug"] = $this->params->slug;
+      $data["page_slug_1"] = $this->params->page_slug_1;
+      $title = $this->exhibitPage_1->title;
+    }
+
+    if (!empty($data)) {
+      $this->prevData["uri"] = url($data, $route);
+      $this->prevData["title"] = $title;
     }
   }
 

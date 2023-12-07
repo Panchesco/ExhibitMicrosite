@@ -13,7 +13,6 @@ if (
   $item_canvas_inline = ' style="{$theme_options["item_canvas_color"]}"';
 }
 
-$citation = "[citation]";
 $item_title = trim(
   metadata("item", "rich_title", [
     "no_escape" => true,
@@ -88,15 +87,10 @@ if ($file_title && $file_title) {
     <?php if (metadata("item", "Collection Name")): ?>
       <h2 class="underlined"><?php echo __("Collection"); ?></h2>
         <div id="collection" class="element">
-          <div class="element-text"><a href="<?php echo url(
-            [
-              "action" => "show",
-              "controller" => "collection",
-              "slug" => $slug,
-              "collection_id" => $collection_id,
-            ],
-            "ems_collection"
-          ); ?>"><?php echo $collection_title; ?></a></div>
+          <div class="element-text"><a href="
+          <?php echo $this->microsite->refUri .
+            "/item/"; ?>><?php echo $collection_title; ?>"></a>
+                </div>
         </div>
      <?php endif; ?>
 
@@ -188,6 +182,11 @@ if ($file_title && $file_title) {
      </div>
   </div><!-- end #dublin-core -->
 </div>
+<?php echo $route; ?>
+<?php echo $prevData["uri"]; ?>
+<p>Return to <a href="<?php echo $prevData["uri"]; ?>">
+<?php echo $prevData["title"]; ?></a>
+</p>
  <?php echo foot(); ?>
 
 

@@ -14,6 +14,7 @@ class ExhibitMicrositeHelper
   public $refUri;
   function __construct($config)
   {
+    $this->config = $config;
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
     $this->action = isset($config["action"]) ? $config["action"] : "show";
     $this->controller = isset($config["controller"])
@@ -26,8 +27,6 @@ class ExhibitMicrositeHelper
       : "ems_exhibitLanding";
 
     $this->params = new ParamsHelper();
-
-    $this->setRefUri();
 
     //echo $this->refUri;
 
@@ -116,6 +115,7 @@ class ExhibitMicrositeHelper
     $this->setBreadcrumbData();
     $this->_setPerPage();
     $this->_setIndex();
+    $this->setRefUri();
   }
 
   /**
@@ -890,7 +890,7 @@ class ExhibitMicrositeHelper
       $data["page_slug_2"] = $this->params->page_slug_2;
     }
     if ($this->params->page_slug_3) {
-      $data["page_slug_2"] = $this->params->page_slug_3;
+      $data["page_slug_3"] = $this->params->page_slug_3;
     }
 
     if ($this->params->collection_id) {
