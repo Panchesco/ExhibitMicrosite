@@ -91,6 +91,10 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/shared/exhibit_layouts"
       );
 
+      if (in_array($request->getParam("action"), ["add-page", "edit-page"])) {
+        $this->_emsDomObject();
+      }
+
       // Todo - These values need to be stored via the config form for the plugin,
       // so users can edit.
       $options["palette"] = [
@@ -118,6 +122,74 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       ];
       $json = json_encode($options, JSON_PRETTY_PRINT);
       ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
+    }
+  }
+
+  protected function _emsDomObject()
+  {
+    $exhibit_id = false;
+    $request = Zend_Controller_Front::getInstance()->getRequest();
+    // If we're adding a page, get the exhibit_id from the
+    // params.
+    if ($request->getParam("action") == "add-page") {
+      if (
+        $request->getParam("controller") == "exhibits" &&
+        $request->getParam("id")
+      ) {
+        $exhibit_id = $request->getParam("id");
+      } // If we're editing an exhibit page, get the exhibit id from the exhibit page.
+    } else {
+      if (
+        $request->getParam("controller") == "exhibits" &&
+        $request->getParam("id")
+      ) {
+        $exhibitPage = get_record_by_id(
+          "ExhibitPage",
+          $request->getParam("id")
+        );
+        $exhibit_id = $exhibitPage->exhibit_id;
+      }
+    }
+
+    if ($exhibit_id) {
+      $options = $this->_getExhibitOptions($exhibit_id);
+      $palette = $this->_emsPalette($options);
+    }
+  }
+
+  protected function _emsPalette($options)
+  {
+    $data = [];
+    if (isset($options["palette"])) {
+      $values = explode(",", $options["palette"]);
+      foreach ($values as $key => $hex) {
+        if (preg_match("/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/", $hex)) {
+          $data[] = $hex;
+        }
+      }
+
+      print_r("<pre>");
+      print_r($data);
+      print_r("</pre>");
+    }
+  }
+
+  protected function _getExhibitOptions($exhibit_id)
+  {
+    // Get the ExhibitMicrosite options.
+    if (is_numeric($exhibit_id)) {
+      $db = get_db();
+
+      $sql =
+        "SELECT `value` FROM {$db->prefix}options WHERE 1 
+        AND `name` = 'exhibit_microsite[" .
+        $exhibit_id .
+        "]' 
+        LIMIT 1
+        ";
+
+      $row = $db->getTable("Option")->fetchRow($sql);
+      return maybe_unserialize($row["value"]);
     }
   }
 
