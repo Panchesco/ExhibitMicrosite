@@ -1,4 +1,4 @@
-<?php echo __FILE__;
+<?php
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rending, and you're seeing a
@@ -7,8 +7,7 @@
  *
  * Wrap for non-ems blocks:
  */
-echo head();
-?>
+echo head(["bodyclass" => "browse"]); ?>
  <form name="filters" method="POST" action="<?php echo url(
    [
      "action" => "browse",
@@ -47,7 +46,19 @@ echo head();
       "prevData" => $prevData,
     ]);
   endforeach; ?>
+  </div>
   <?php endif; ?>
+
+  <div class="col-lg-8">
+    <?php if (count($items) == 0): ?>
+    <p><?php echo __(
+      "Nothing was found in the collection using the current filter set. Please try clearing the filters or using a different combination of them."
+    ); ?></p>
+        <?php else: ?>
+          <p><?php echo $result_set_string; ?></p>
+  <?php endif; ?>
+  </div>
+  <?php if ($filters_set): ?>
   <?php echo $this->view->partial("collection/filters/active-filters.php", [
     "active_filters" => $active_filters,
     "filters_set" => $filters_set,
@@ -55,18 +66,8 @@ echo head();
     "creator_filter_data" => $creator_filter_data,
     "item_type_filter_data" => $item_type_filter_data,
   ]); ?>
- <div class="col-lg-8">
-    <?php if (count($items) == 0): ?>
-    <p><?php echo __(
-      "Nothing was found in the collection using the current filter set. Please try clearing the filters or using a different combination of them."
-    ); ?>
-        <?php else: ?>
-          <p><?php echo $result_set_string; ?></p>
   <?php endif; ?>
-  </div>
-
-  </div><!-- end .flex-blocks-wrapper -->
-<div class="flex-blocks-wrapper d-flex flex-row flex-wrap g-0 justify-content-between">
+<div class="flex-blocks-wrapper d-flex flex-row flex-wrap  justify-content-between">
   <div class="filters col-12 order-2 col-lg-3 order-lg-1">
 <?php echo $this->view->partial("collection/filters/collection-id.php", [
   "collection_filter_data" => $collection_filter_data,
@@ -77,9 +78,6 @@ echo head();
 <?php echo $this->view->partial("collection/filters/item-types.php", [
   "item_type_filter_data" => $item_type_filter_data,
 ]); ?>
-<?php if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
-  //$csrf = new Omeka_Form_Element_SessionCsrfToken();
-} ?>
 <div class="filter-button-wrapper">
   <button class="btn btn-sage " name="filters[action]" type="submit" value="set"><?php echo __(
     "Set Filters"
@@ -87,16 +85,13 @@ echo head();
   <button class="btn btn-dark" name="filters[action]" type="submit" value="clear"><?php echo __(
     "Clear Filters"
   ); ?></button>
-</div>
+  </div>
 </div>
   <div class="col-12 order-1 order-lg-2 col-lg-9 px-3">
-    <h2 class="sr-only"><?php echo __("Items"); ?></h2>
-    <div class="masonry-grid row">
+      <div class="row masonry-grid">
    <?php foreach ($items as $item): ?>
      <?php set_current_record("item", $item); ?>
-     <div class="collection-item-wrapper col-12 col-md-6 col-lg-4" data-creator="<?php echo urlencode(
-       metadata("Item", ["Dublin Core", "Creator"])
-     ); ?>">
+     <div class="collection-item-wrapper col-12 col-md-6 col-lg-4">
        <div class="collection-item">
           <?php $item_url = url(
             [
@@ -109,12 +104,7 @@ echo head();
           ); ?>
           <figure>
              <div class="image-wrapper">
-               <?php echo item_image(
-                 "thumbnail",
-                 ["class" => "lazy"],
-                 0,
-                 $item
-               ); ?>
+               <?php echo item_image("fullsize", ["class" => ""], 0, $item); ?>
                <?php if ($item->Files && count($item->Files) > 1): ?>
                <div class="plus">+<?php echo count($item->Files) -
                  1; ?></div><?php endif; ?>
@@ -129,7 +119,14 @@ echo head();
           </div><!-- end .item-wrapper -->
     </div><!-- end .collection-item-wrapper -->
   <?php endforeach; ?>
-    </div>
+  </div>
+
+
+    </div><!-- end .row -->
+
+</div><!-- end .flex-blocks-wrapper -->
+<div class="row justify-content-end ">
+  <div class="col-lg-8">
     <?php if ($total_pages > 1): ?>
     <?php echo $this->view->partial("sitewide/pagination.php", [
       "pagination" => $pagination,
@@ -138,8 +135,8 @@ echo head();
       "controller" => "browsecollection",
     ]); ?>
     <?php endif; ?>
-  </div>
-</div><!-- end .flex-blocks-wrapper -->
+  </div><!-- end .col-lg-8 -->
+</div><!-- end .row -->
 </form>
 
 

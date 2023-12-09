@@ -15,7 +15,7 @@
           "item_type_id"
         ]; ?>"><input data-label="<?php echo $row[
   "item_type"
-]; ?> " type="checkbox" id="item_type-<?php echo $row["item_type_id"]; ?>"
+]; ?> " type="checkbox" id="item-type-<?php echo $row["item_type_id"]; ?>"
       name="filters[item_type][]"
       value="<?php echo $row["item_type_id"]; ?>"<?php isChecked(
   $row["item_type_id"],
