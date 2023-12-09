@@ -1,4 +1,4 @@
-<?php
+<?php echo __FILE__;
 set_current_record("Item", $item);
 echo head([
   "title" => metadata("item", ["Dublin Core", "Title"]),
@@ -40,12 +40,14 @@ if ($file_title && $file_title) {
     <h1><?php echo $h1; ?></h1>
   </div><!-- end col-span-12 -->
   <div class="stage-and-thumbs-wrapper">
-  <div id="stage" class="stage>
+  <div id="stage" class="stage">
     <figure>
-      <div class="image-wrapper">
+      <div class="image-wrapper" >
       <?php echo file_image(
         "thumbnail",
-        ["class" => "lazy thumbnail"],
+        [
+          "class" => "lazy thumbnail",
+        ],
         $active_file
       ); ?></div><!-- end .image-wrapper -->
     </figure>

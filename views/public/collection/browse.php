@@ -1,13 +1,14 @@
-<?php
+<?php echo __FILE__;
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rending, and you're seeing a
- * Warning : Undefined array key “imgAttributes”
- * message: https://forum.omeka.org/t/gallery-block-error-message-undefined-array-key/16146
+ * Warning : Undefined array key “imgAttributes" message, this is an Omeka bug:
+ * https://forum.omeka.org/t/gallery-block-error-message-undefined-array-key/16146
  *
  * Wrap for non-ems blocks:
  */
-echo head(); ?>
+echo head();
+?>
  <form name="filters" method="POST" action="<?php echo url(
    [
      "action" => "browse",
@@ -30,7 +31,6 @@ echo head(); ?>
     $attachments = $block->getAttachments();
     set_current_record("exhibit", $exhibit, true);
     echo get_view()->partial($layout->getViewPartial(), [
-      "attachments" => $attachments,
       "block" => $block,
       "exhibit" => $exhibit,
       "exhibitPage" => $exhibitPage,
@@ -47,8 +47,15 @@ echo head(); ?>
       "prevData" => $prevData,
     ]);
   endforeach; ?>
-  
-  <div class="col-lg-8">
+  <?php endif; ?>
+  <?php echo $this->view->partial("collection/filters/active-filters.php", [
+    "active_filters" => $active_filters,
+    "filters_set" => $filters_set,
+    "collection_filter_data" => $collection_filter_data,
+    "creator_filter_data" => $creator_filter_data,
+    "item_type_filter_data" => $item_type_filter_data,
+  ]); ?>
+ <div class="col-lg-8">
     <?php if (count($items) == 0): ?>
     <p><?php echo __(
       "Nothing was found in the collection using the current filter set. Please try clearing the filters or using a different combination of them."
@@ -57,37 +64,37 @@ echo head(); ?>
           <p><?php echo $result_set_string; ?></p>
   <?php endif; ?>
   </div>
+
   </div><!-- end .flex-blocks-wrapper -->
-  <?php endif; ?>
-<div class="flex-blocks-wrapper d-flex flex-wrap g-0 justify-content-between">
-  <div class="filters col-lg-3">
+<div class="flex-blocks-wrapper d-flex flex-row flex-wrap g-0 justify-content-between">
+  <div class="filters col-12 order-2 col-lg-3 order-lg-1">
 <?php echo $this->view->partial("collection/filters/collection-id.php", [
-  "collections_filter_data" => $collections_filter_data,
+  "collection_filter_data" => $collection_filter_data,
 ]); ?>
-<?php echo $this->view->partial("collection/filters/creators.php", [
-  "creators_filter_data" => $creators_filter_data,
+<?php echo $this->view->partial("collection/filters/creator.php", [
+  "creator_filter_data" => $creator_filter_data,
 ]); ?>
 <?php echo $this->view->partial("collection/filters/item-types.php", [
-  "item_types_filter_data" => $item_types_filter_data,
+  "item_type_filter_data" => $item_type_filter_data,
 ]); ?>
 <?php if (class_exists("Omeka_Form_Element_SessionCsrfToken")) {
   //$csrf = new Omeka_Form_Element_SessionCsrfToken();
 } ?>
 <div class="filter-button-wrapper">
-  <button class="btn btn-dark" name="filters[action]" type="submit" value="clear"><?php echo __(
-    "Clear Filters"
-  ); ?></button>
   <button class="btn btn-sage " name="filters[action]" type="submit" value="set"><?php echo __(
     "Set Filters"
   ); ?></button>
+  <button class="btn btn-dark" name="filters[action]" type="submit" value="clear"><?php echo __(
+    "Clear Filters"
+  ); ?></button>
 </div>
 </div>
-  <div id="collection" class="col-lg-9 px-3">
+  <div class="col-12 order-1 order-lg-2 col-lg-9 px-3">
     <h2 class="sr-only"><?php echo __("Items"); ?></h2>
-    <div class="row" data-masonry='{"percentPosition": true }'>
+    <div class="masonry-grid row">
    <?php foreach ($items as $item): ?>
      <?php set_current_record("item", $item); ?>
-     <div class="collection-item-wrapper" data-creator="<?php echo urlencode(
+     <div class="collection-item-wrapper col-12 col-md-6 col-lg-4" data-creator="<?php echo urlencode(
        metadata("Item", ["Dublin Core", "Creator"])
      ); ?>">
        <div class="collection-item">
@@ -134,4 +141,7 @@ echo head(); ?>
   </div>
 </div><!-- end .flex-blocks-wrapper -->
 </form>
+
+
 <?php echo foot(); ?>
+

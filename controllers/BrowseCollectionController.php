@@ -12,7 +12,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
   public $microsite_options;
   public $total_results;
   public $total_page_results;
-
+  public $active_filters;
+  public $filters_set;
   public function init()
   {
     if (!isset($_SESSION)) {
@@ -27,6 +28,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
       }
     }
 
+    $this->filters_set = false;
+
     /**
      * If the user has come to this page via a link with the collection_id
      * query param, update the session filter variables.
@@ -36,6 +39,29 @@ class ExhibitMicrosite_BrowseCollectionController extends
       if (is_numeric($_GET["collection"])) {
         $_SESSION["filters"]["collection"][] = $_GET["collection"];
       }
+    }
+
+    // If the collection,creator, or item_type_id filters are set, move them into
+    // the $active_filters array.
+    if (isset($_SESSION["filters"]["collection"])) {
+      $this->active_filters["collection"] = $_SESSION["filters"]["collection"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["collection"] = [];
+    }
+
+    if (isset($_SESSION["filters"]["creator"])) {
+      $this->active_filters["creator"] = $_SESSION["filters"]["creator"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["creator"] = [];
+    }
+
+    if (isset($_SESSION["filters"]["item_type"])) {
+      $this->active_filters["item_type"] = $_SESSION["filters"]["item_type"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["item_type"] = [];
     }
 
     // Set the model class so this controller can perform some functions,
@@ -94,10 +120,11 @@ class ExhibitMicrosite_BrowseCollectionController extends
   {
     $this->init();
 
-    $creators_filter_data = $this->microsite->itemsFilterData("Creator");
-    $item_types_filter_data = $this->microsite->itemTypesFilterData();
+    $creator_filter_data = $this->microsite->itemsFilterData("Creator");
+    $item_type_filter_data = $this->microsite->itemTypesFilterData();
 
     $this->view->exhibitPage = $this->exhibitPage;
+
     echo $this->view->partial("collection/browse.php", [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
@@ -105,11 +132,11 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "exhibitPage" => $this->exhibitPage,
       "params" => $this->params,
       "microsite_options" => $this->microsite->options,
-      "collections_filter_data" => $this->microsite->options["collections"],
+      "collection_filter_data" => $this->microsite->options["collections"],
       "route" => $this->route,
       "theme_options" => $this->theme_options,
-      "creators_filter_data" => $creators_filter_data,
-      "item_types_filter_data" => $item_types_filter_data,
+      "creator_filter_data" => $creator_filter_data,
+      "item_type_filter_data" => $item_type_filter_data,
       "items" => $this->collectionItems(),
       "view" => $this->view,
       "total_pages" => $this->microsite->total_pages,
@@ -118,6 +145,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "pagination" => $this->microsite->paginate(),
       "refUri" => $this->microsite->refUri,
       "prevData" => $this->breadcrumb->prevData,
+      "active_filters" => $this->active_filters,
+      "filters_set" => $this->filters_set,
     ]);
     exit();
   }
