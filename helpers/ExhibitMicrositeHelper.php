@@ -434,6 +434,7 @@ class ExhibitMicrositeHelper
    */
   public function itemsFilterData($element_name)
   {
+    $db = get_db();
     $element_name = strtolower($element_name);
 
     if (isset($this->options["collection_id"])) {
@@ -442,7 +443,7 @@ class ExhibitMicrositeHelper
         !empty($this->options["collection_id"])
       ) {
         $collection_clause =
-          " AND i.collection_id IN(" .
+          " AND {$db->prefix}items.collection_id IN(" .
           implode(",", $this->options["collection_id"]) .
           ") ";
       } else {
@@ -452,21 +453,32 @@ class ExhibitMicrositeHelper
       $collection_clause = "";
     }
 
-    $db = get_db();
     $sql = "
-     SELECT et.`id`,et.`text` AS {$element_name} FROM `{$db->prefix}elements` e
-     LEFT OUTER JOIN `{$db->prefix}element_texts` et ON et.element_id = e.id
-     LEFT OUTER JOIN `{$db->prefix}items` i on i.`id` = et.record_id
+     SELECT {$db->prefix}element_texts.`id`,{$db->prefix}element_texts.`text` AS {$element_name} FROM `{$db->prefix}elements`
+     LEFT OUTER JOIN `{$db->prefix}element_texts` ON {$db->prefix}element_texts.element_id = {$db->prefix}elements.id
+     LEFT OUTER JOIN `{$db->prefix}items`  on {$db->prefix}items.`id` = {$db->prefix}element_texts.record_id
+     LEFT OUTER JOIN `{$db->prefix}collections` on {$db->prefix}collections.`id` = {$db->prefix}items.collection_id
      WHERE 1
-     AND e.`name` = '{$element_name}'
-     AND et.`record_type` = 'Item' {$collection_clause}
-     GROUP BY et.text
-     ORDER BY et.`text` ASC
+     AND {$db->prefix}collections.public = 1
+     AND {$db->prefix}elements.`name` = '{$element_name}'
+     AND {$db->prefix}element_texts.`record_type` = 'Item'
+     {$collection_clause}
+     ORDER BY {$db->prefix}element_texts.`text` ASC
      ";
 
     $rows = $db->getTable("ElementText")->fetchAll($sql);
 
-    return $rows;
+    // Loop through the rows and create a new set of results eliminating duplicates.
+    $data = [];
+    $return_rows = [];
+    foreach ($rows as $row) {
+      if (!in_array($row[$element_name], $data)) {
+        $return_rows[] = $row;
+        $data[] = $row[$element_name];
+      }
+    }
+
+    return $return_rows;
   }
 
   /**
@@ -484,9 +496,11 @@ class ExhibitMicrositeHelper
       $this->options["collection_id"]
     );
     $sql = "
-      SELECT it.id AS item_type_id,it.name AS item_type FROM {$db->prefix}item_types it
-      LEFT OUTER JOIN {$db->prefix}items i ON i.item_type_id = it.id
+      SELECT it.`id` AS item_type_id,it.`name` AS item_type FROM {$db->prefix}item_types it
+      LEFT OUTER JOIN {$db->prefix}items i ON i.`item_type_id` = it.`id`
+      LEFT OUTER JOIN {$db->prefix}collections ON {$db->prefix}collections.id = i.collection_id
       WHERE 1
+      AND {$db->prefix}collections.public = 1
       AND i.public = 1
       ";
     $sql .= $collections_clause;

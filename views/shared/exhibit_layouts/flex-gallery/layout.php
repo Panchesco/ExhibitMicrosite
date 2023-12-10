@@ -47,7 +47,9 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
 </div><!-- end bg-grey-300 -->
 
 <div class="ems-gallery-thumbnails"<?php echo $thumbnails_background_inline; ?>>
-<h2><?php echo __("Gallery Items"); ?></h2>
+<?php if (
+  !empty($thumbs_heading)
+): ?><h2><?php echo $thumbs_heading; ?></h2><?php endif; ?>
 <div id="block-<?php echo $block->id; ?>-thumbnails" class="ems-gallery-thumbnails d-flex flex-wrap"<?php echo $thumbnails_background_inline; ?>>
 <?php foreach ($files as $key => $file): ?>
   <a class="<?php if (

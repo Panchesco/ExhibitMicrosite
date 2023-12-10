@@ -65,6 +65,7 @@ echo head(["bodyclass" => "browse"]); ?>
     "collection_filter_data" => $collection_filter_data,
     "creator_filter_data" => $creator_filter_data,
     "item_type_filter_data" => $item_type_filter_data,
+    "options" => $microsite_options,
   ]); ?>
   <?php endif; ?>
 <div class="flex-blocks-wrapper d-flex flex-row flex-wrap  justify-content-between">

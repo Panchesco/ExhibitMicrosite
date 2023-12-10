@@ -28,6 +28,14 @@ class ExhibitMicrosite_BrowseCollectionController extends
       }
     }
 
+    if (isset($_SESSION["filters"]) && is_array($_SESSION["filters"])) {
+      foreach ($_SESSION["filters"] as $key => $data) {
+        if (is_array($data)) {
+          $_SESSION["filters"][$key] = array_unique($data);
+        }
+      }
+    }
+
     $this->filters_set = false;
 
     /**
@@ -39,29 +47,6 @@ class ExhibitMicrosite_BrowseCollectionController extends
       if (is_numeric($_GET["collection"])) {
         $_SESSION["filters"]["collection"][] = $_GET["collection"];
       }
-    }
-
-    // If the collection,creator, or item_type_id filters are set, move them into
-    // the $active_filters array.
-    if (isset($_SESSION["filters"]["collection"])) {
-      $this->active_filters["collection"] = $_SESSION["filters"]["collection"];
-      $this->filters_set = true;
-    } else {
-      $this->active_filters["collection"] = [];
-    }
-
-    if (isset($_SESSION["filters"]["creator"])) {
-      $this->active_filters["creator"] = $_SESSION["filters"]["creator"];
-      $this->filters_set = true;
-    } else {
-      $this->active_filters["creator"] = [];
-    }
-
-    if (isset($_SESSION["filters"]["item_type"])) {
-      $this->active_filters["item_type"] = $_SESSION["filters"]["item_type"];
-      $this->filters_set = true;
-    } else {
-      $this->active_filters["item_type"] = [];
     }
 
     // Set the model class so this controller can perform some functions,
@@ -114,6 +99,32 @@ class ExhibitMicrosite_BrowseCollectionController extends
     $this->set_total_results();
     $this->set_total_page_results();
     $this->microsite->setTotalPages($this->total_results);
+
+    // If the collection,creator, or item_type_id filters are set, move them into
+    // the $active_filters array.
+    if (
+      isset($_SESSION["filters"]["collection"]) &&
+      count($this->microsite->options["collections"]) > 1
+    ) {
+      $this->active_filters["collection"] = $_SESSION["filters"]["collection"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["collection"] = [];
+    }
+
+    if (isset($_SESSION["filters"]["creator"])) {
+      $this->active_filters["creator"] = $_SESSION["filters"]["creator"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["creator"] = [];
+    }
+
+    if (isset($_SESSION["filters"]["item_type"])) {
+      $this->active_filters["item_type"] = $_SESSION["filters"]["item_type"];
+      $this->filters_set = true;
+    } else {
+      $this->active_filters["item_type"] = [];
+    }
   }
 
   public function browseAction()
@@ -235,12 +246,18 @@ class ExhibitMicrosite_BrowseCollectionController extends
     $data = [];
     if (!empty($this->microsite->options["collection_id"])) {
       $db = get_db();
-      $sql =
+      $sql = "
+          SELECT {$db->prefix}collections.`id`,{$db->prefix}collections.`public`, {$db->prefix}items.`id`
+          FROM {$db->prefix}items
+          ";
+
+      $sql .= "LEFT OUTER JOIN {$db->prefix}collections ON {$db->prefix}collections.id = {$db->prefix}items.collection_id ";
+      $sql .=
         "
-    SELECT `id` FROM {$db->prefix}items
-    WHERE 1
-    AND `public` = 1
-    " .
+          WHERE 1
+          AND {$db->prefix}collections.`public` = 1
+          AND {$db->prefix}items.`public` = 1
+          " .
         $this->microsite->columnInSql(
           "collection_id",
           $this->microsite->options["collection_id"]

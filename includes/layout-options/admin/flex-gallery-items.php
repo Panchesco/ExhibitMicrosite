@@ -27,6 +27,21 @@ $options["gallery_item_height"] = isset($options["gallery_item_height"])
           : "",
         []
       ); ?>
-  </div>
+    </div>
+
+</div>
+
+<div>
+ <div class="ems-thumbs-heading-wrapper" data-formstem="<?php echo $formStem; ?>" data-block="<?php echo $block->id; ?>">
+     <?php echo $this->formLabel(
+       $formStem . "[options][thumbs_heading]",
+       __("Enter the heading, if any to use above the gallery thumbnails.")
+     ); ?>
+     <?php echo $this->formtext(
+       $formStem . "[options][thumbs_heading]",
+       @$options["thumbs_heading"] ? @$options["thumbs_heading"] : "",
+       []
+     ); ?>
+ </div>
 </div>
 <!-- end .ems-gallery-item-height-wrapper -->

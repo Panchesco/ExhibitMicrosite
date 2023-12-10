@@ -157,3 +157,8 @@ if (isset($options["backgroundColor"])) {
     }
   }
 }
+
+$thumbs_heading = "";
+if (isset($options["thumbs_heading"])) {
+  $thumbs_heading = trim($options["thumbs_heading"]);
+}
