@@ -15,6 +15,7 @@ require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/helpers/ExhibitMicrositeHelper.php";
 require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/BreadcrumbHelper.php";
+require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/NavHelper.php";
 
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -167,10 +168,6 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
           $data[] = $hex;
         }
       }
-
-      print_r("<pre>");
-      print_r($data);
-      print_r("</pre>");
     }
   }
 

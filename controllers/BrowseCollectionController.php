@@ -91,6 +91,10 @@ class ExhibitMicrosite_BrowseCollectionController extends
       PLUGIN_DIR . "/exhibit-microsite/views/exhibit-pages"
     );
 
+    $this->view->addScriptPath(
+      PLUGIN_DIR . "/ExhibitMicrosite/views/public/sitewide"
+    );
+
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
@@ -158,6 +162,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "prevData" => $this->breadcrumb->prevData,
       "active_filters" => $this->active_filters,
       "filters_set" => $this->filters_set,
+      "microsite" => $this->microsite,
     ]);
     exit();
   }

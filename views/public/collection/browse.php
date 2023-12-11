@@ -1,4 +1,4 @@
-<?php
+<?php echo __FILE__;
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rending, and you're seeing a
@@ -7,7 +7,12 @@
  *
  * Wrap for non-ems blocks:
  */
-echo head(["bodyclass" => "browse"]); ?>
+echo $this->view->partial("microsite-header.php", []);
+
+print_r("<pre>");
+print_r($microsite);
+print_r("</pre>");
+?>
  <form name="filters" method="POST" action="<?php echo url(
    [
      "action" => "browse",
@@ -22,33 +27,6 @@ echo head(["bodyclass" => "browse"]); ?>
 <h1><?php echo isset($microsite_options["collection_page_title"])
   ? $microsite_options["collection_page_title"]
   : $exhibitPage->title; ?></h1>
-  <?php if ($params->page_number == 1): ?>
-  <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
-  <?php foreach ($exhibitPage->ExhibitPageBlocks as $block):
-    $layout = $block->getLayout();
-    $options = $block->getOptions();
-    $attachments = $block->getAttachments();
-    set_current_record("exhibit", $exhibit, true);
-    echo get_view()->partial($layout->getViewPartial(), [
-      "block" => $block,
-      "exhibit" => $exhibit,
-      "exhibitPage" => $exhibitPage,
-      "item_route" => "ems_collection_item",
-      "options" => $options,
-      "page_slug_1" => $params->page_slug_1,
-      "page_slug_2" => $params->page_slug_2,
-      "page_slug_3" => $params->page_slug_3,
-      "page_slugs" => $params->page_slugs,
-      "slug" => $params->slug,
-      "text" => $block->text,
-      "params" => $params,
-      "refUri" => $refUri,
-      "prevData" => $prevData,
-    ]);
-  endforeach; ?>
-  </div>
-  <?php endif; ?>
-
   <div class="col-lg-8">
     <?php if (count($items) == 0): ?>
     <p><?php echo __(

@@ -28,8 +28,6 @@ class ExhibitMicrositeHelper
 
     $this->params = new ParamsHelper();
 
-    //echo $this->refUri;
-
     // Make sure we have the current exhibit.
     if (!isset($config["exhibit"])) {
       $this->exhibit = get_record("Exhibit", [

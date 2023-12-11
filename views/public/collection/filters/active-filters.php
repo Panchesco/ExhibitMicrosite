@@ -23,7 +23,7 @@ foreach ($active_filters as $filter => $values) {
   <div class="active-filters col-lg-9 py-3 no-js">
     <h3><?php echo __("Active Filters"); ?></h3>
     <p><?php echo __(
-      "To remove a filter, click on its filter badge below, then click the update button."
+      "To remove a filter, click on its filter badge below, then submit the changes using the Update button. To remove all filters, use the Clear Filters button."
     ); ?>
     <?php if ($filters_set): ?>
     <?php foreach ($active_filters as $key => $set) {

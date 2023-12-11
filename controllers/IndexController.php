@@ -45,6 +45,8 @@ class ExhibitMicrosite_IndexController extends
       $data[$key]["name"] = $option->name;
       $data[$key]["exhibit_id"] = $exhibit->id;
       $data[$key]["title"] = $exhibit->title;
+      $data[$key]["microsite_title"] = $option->microsite_title;
+      $data[$key]["microsite_subheading"] = $option->microsite_subheading;
       $data[$key]["exhibit_slug"] = $exhibit->slug;
       $data[$key]["collection_page_title"] = $exhibit->slug;
       $data[$key]["layout_preference"] = $option->layout_preference;
@@ -142,6 +144,8 @@ class ExhibitMicrosite_IndexController extends
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
     $formData["collection_page_title"] = $values["collection_page_title"];
+    $formData["microsite_title"] = $values["microsite_title"];
+    $formData["microsite_subheading"] = $values["microsite_subheading"];
     $formData["layout_preference"] = isset($values["layout_preference"])
       ? $values["layout_preference"]
       : "bootstrap-grid";
@@ -281,6 +285,28 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
+    $form->addElementToEditGroup("text", "microsite_title", [
+      "id" => "exhibit-microsite-title",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["microsite_title"])
+        ? $option["microsite_title"]
+        : "",
+      "label" => __("Microsite Title"),
+      "description" => __("What title should appear in the microsite header?"),
+    ]);
+
+    $form->addElementToEditGroup("text", "microsite_subheading", [
+      "id" => "exhibit-microsite-subheading",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["microsite_subheading"])
+        ? $option["microsite_subheading"]
+        : "",
+      "label" => __("Microsite Subheading"),
+      "description" => __(
+        "What subheading, if any, would you like for the microsite header?"
+      ),
+    ]);
+
     $form->addElementToEditGroup("text", "per_page", [
       "id" => "exhibit-microsite-per-page",
       "class" => "exhibit-microsite-options",
@@ -319,24 +345,6 @@ class ExhibitMicrosite_IndexController extends
       "required" => true,
       "multiOptions" => [1 => 1, 2 => 2, 3 => 3],
     ]);
-
-    // $form->addElementToEditGroup("select", "layout_preference", [
-    //   "id" => "exhibit-microsite-layout-preference",
-    //   "class" => "exhibit-microsite-options",
-    //   "multiOptions" => [
-    //     "bootstrap-grid" => "Bootstrap Grid Columns",
-    //     "masonry" => "Masonry",
-    //   ],
-    //   "value" => isset($option["layout_preference"])
-    //     ? $option["layout_preference"]
-    //     : "bootstrap-grid",
-    //   "data-record_type" => "layout_preference",
-    //   "label" => __("Layout Preference"),
-    //   "description" => __(
-    //     "Would you like to layout page blocks using Masonry or Bootstrap Grid?"
-    //   ),
-    //   "required" => true,
-    // ]);
 
     $form->addElementToEditGroup("text", "palette", [
       "id" => "exhibit-microsite-palette",
@@ -429,10 +437,13 @@ class ExhibitMicrosite_IndexController extends
           "collection_page_title" => htmlentities(
             $_POST["collection_page_title"]
           ),
+          "microsite_title" => htmlentities($_POST["microsite_title"]),
+          "microsite_subheading" => htmlentities(
+            $_POST["microsite_subheading"]
+          ),
           "titles_separator" => htmlentities($_POST["titles_separator"]),
           "per_page" => htmlentities($_POST["per_page"]),
           "nav_depth" => htmlentities($_POST["nav_depth"]),
-          "layout_preference" => htmlentities($_POST["layout_preference"]),
           "palette" => htmlentities($_POST["palette"]),
         ];
 
