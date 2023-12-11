@@ -30,5 +30,7 @@ include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/admin/padding.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
   "/includes/layout-options/admin/flex-gallery-items.php";
+include EXHIBIT_MICROSITE_PLUGIN_DIR .
+  "/includes/layout-options/admin/thumbs-heading.php";
 ?>
 </div><!-- end .layout-options -->

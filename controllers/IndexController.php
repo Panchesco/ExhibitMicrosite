@@ -145,6 +145,7 @@ class ExhibitMicrosite_IndexController extends
     $formData["layout_preference"] = isset($values["layout_preference"])
       ? $values["layout_preference"]
       : "bootstrap-grid";
+    $formData["nav_depth"] = $values["nav_depth"] ? $values["nav_depth"] : 1;
     $formData["palette"] = isset($values["palette"])
       ? $values["palette"]
       : "#8B0015,#AB0520,#9D5A20,#EBD999,#F4EDE5,#4A634E,#001c48,#0c234b,#1E5288,#E2E9EB,#222222,#212529,#343A40,#495057,#6C757D,#ADB5BD,#CED4DA,#DEE2E6,#E9ECEF,#F8F9FA,#FFFFFF,";
@@ -262,7 +263,7 @@ class ExhibitMicrosite_IndexController extends
       "data-record_type" => "collection",
       "label" => __("Collections"),
       "description" => __(
-        "Select the collections to be available in the microsite."
+        "Select the collections to include in the microsite. Note: Collections and items not currently public, will not appear on the public area of the site."
       ),
       "required" => true,
     ]);
@@ -307,23 +308,35 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
-    $form->addElementToEditGroup("select", "layout_preference", [
-      "id" => "exhibit-microsite-layout-preference",
+    $form->addElementToEditGroup("select", "nav_depth", [
+      "id" => "exhibit-microsite-nav-depth",
       "class" => "exhibit-microsite-options",
-      "multiOptions" => [
-        "bootstrap-grid" => "Bootstrap Grid Columns",
-        "masonry" => "Masonry",
-      ],
-      "value" => isset($option["layout_preference"])
-        ? $option["layout_preference"]
-        : "bootstrap-grid",
-      "data-record_type" => "layout_preference",
-      "label" => __("Layout Preference"),
+      "value" => isset($option["nav_depth"]) ? $option["nav_depth"] : 1,
+      "label" => __("Global Nav Depth"),
       "description" => __(
-        "Would you like to layout page blocks using Masonry or Bootstrap Grid?"
+        "Depth of Exhibit Pages to include in the global navigation. If the exhibit starts on the summary page, that will be the first nav link."
       ),
       "required" => true,
+      "multiOptions" => [1 => 1, 2 => 2, 3 => 3],
     ]);
+
+    // $form->addElementToEditGroup("select", "layout_preference", [
+    //   "id" => "exhibit-microsite-layout-preference",
+    //   "class" => "exhibit-microsite-options",
+    //   "multiOptions" => [
+    //     "bootstrap-grid" => "Bootstrap Grid Columns",
+    //     "masonry" => "Masonry",
+    //   ],
+    //   "value" => isset($option["layout_preference"])
+    //     ? $option["layout_preference"]
+    //     : "bootstrap-grid",
+    //   "data-record_type" => "layout_preference",
+    //   "label" => __("Layout Preference"),
+    //   "description" => __(
+    //     "Would you like to layout page blocks using Masonry or Bootstrap Grid?"
+    //   ),
+    //   "required" => true,
+    // ]);
 
     $form->addElementToEditGroup("text", "palette", [
       "id" => "exhibit-microsite-palette",
@@ -418,6 +431,7 @@ class ExhibitMicrosite_IndexController extends
           ),
           "titles_separator" => htmlentities($_POST["titles_separator"]),
           "per_page" => htmlentities($_POST["per_page"]),
+          "nav_depth" => htmlentities($_POST["nav_depth"]),
           "layout_preference" => htmlentities($_POST["layout_preference"]),
           "palette" => htmlentities($_POST["palette"]),
         ];
