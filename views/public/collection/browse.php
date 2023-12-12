@@ -1,4 +1,4 @@
-<?php echo __FILE__;
+<?php
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rending, and you're seeing a
@@ -7,12 +7,13 @@
  *
  * Wrap for non-ems blocks:
  */
-echo $this->view->partial("microsite-header.php", []);
-
-print_r("<pre>");
-print_r($microsite);
-print_r("</pre>");
-?>
+echo $this->view->partial("microsite-header.php", [
+  "title" => $microsite->options["microsite_title"],
+  "subheading" => $microsite->options["microsite_subheading"],
+  "theme_options" => $theme_options,
+  "params" => $params,
+  "global_nav" => $nav->top_pages_html,
+]); ?>
  <form name="filters" method="POST" action="<?php echo url(
    [
      "action" => "browse",
@@ -104,8 +105,8 @@ print_r("</pre>");
     </div><!-- end .row -->
 
 </div><!-- end .flex-blocks-wrapper -->
-<div class="row justify-content-end ">
-  <div class="col-lg-8">
+<div class="row">
+  <div class="col">
     <?php if ($total_pages > 1): ?>
     <?php echo $this->view->partial("sitewide/pagination.php", [
       "pagination" => $pagination,

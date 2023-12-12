@@ -57,11 +57,18 @@
             <div class="container">
               <div class="d-xl-flex logo-identity-wrapper">
                 <div id="logo-wrapper">
-                  <a href=""><img class="img-fluid" src="/files/theme_uploads/" alt="" /></a>
+                  <a href="<?php echo url(
+                    [
+                      "controller" => "default",
+                      "action" => "show",
+                      "slug" => $params->slug,
+                    ],
+                    "ems_exhibitLanding"
+                  ); ?>"><?php echo theme_logo(); ?></a>
                 </div>
                 <div class="site-title-wrapper">
-                 <a href=""><span id="site-title">[site title]</span><br>
-                  <span id="identity-subheading" class="subheading h2">[site subheading]</span>
+                 <a href=""><span id="site-title"><?php echo $title; ?></span><br>
+                  <span id="identity-subheading" class="subheading h2"><?php echo $subheading; ?></span>
                  </a>
                 </div><!-- end .col -->
                 </div><!-- end .d-xl-flex -->
@@ -71,7 +78,7 @@
             <div class="container">
               <div class="d-flex justify-content-end">
                 <div id="header-region-two">
-                  <nav class=""></nav>
+                  <nav class="global-nav"><?php echo $global_nav; ?></nav>
                   </div><!-- end header-region-two -->
               </div><!-- end .d-flex -->
             </div><!-- end .container -->

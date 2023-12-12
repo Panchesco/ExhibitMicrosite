@@ -1,8 +1,13 @@
 
-<?php echo head([
-  "title" => metadata("exhibit", "title"),
-  "bodyclass" => "exhibits summary",
+<?php echo $this->view->partial("microsite-header.php", [
+  "title" => $microsite->options["microsite_title"],
+  "subheading" => $microsite->options["microsite_subheading"],
+  "exhibit" => $exhibit,
+  "exhibitPage" => $exhibitPage,
+  "theme_options" => $theme_options,
+  "params" => $params,
 ]); ?>
+?>
 
   <?php
   $pageTree = exhibit_builder_page_tree();

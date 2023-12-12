@@ -3,6 +3,7 @@
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
+use ExhibitMicrosite\Helpers\NavHelper;
 
 class ExhibitMicrosite_BrowseCollectionController extends
   Omeka_Controller_AbstractActionController
@@ -135,6 +136,12 @@ class ExhibitMicrosite_BrowseCollectionController extends
   {
     $this->init();
 
+    $this->nav = new NavHelper([
+      "exhibit" => $this->exhibit,
+      "exhibitPage" => $this->exhibitPage,
+      "route" => $this->route,
+    ]);
+
     $creator_filter_data = $this->microsite->itemsFilterData("Creator");
     $item_type_filter_data = $this->microsite->itemTypesFilterData();
 
@@ -163,6 +170,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "active_filters" => $this->active_filters,
       "filters_set" => $this->filters_set,
       "microsite" => $this->microsite,
+      "nav" => $this->nav,
     ]);
     exit();
   }

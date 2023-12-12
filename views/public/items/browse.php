@@ -1,6 +1,12 @@
 <?php
 $pageTitle = __("Browse Items");
-echo head(["title" => $pageTitle, "bodyclass" => "items browse"]);
+echo $this->view->partial("microsite-header.php", [
+  "title" => $microsite->options["microsite_title"],
+  "subheading" => $microsite->options["microsite_subheading"],
+  "theme_options" => $theme_options,
+  "params" => $params,
+  "global_nav" => $nav->top_pages_html,
+]);
 ?>
 
 <h1><?php echo $pageTitle; ?> <?php echo __(

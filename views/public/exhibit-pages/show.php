@@ -1,5 +1,5 @@
 <?php
-echo head();
+
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rendering, and you're seeing a
@@ -8,7 +8,13 @@ echo head();
  *
  * Wrap for non-ems blocks:
  */
-?>
+echo $this->view->partial("microsite-header.php", [
+  "title" => $microsite->options["microsite_title"],
+  "subheading" => $microsite->options["microsite_subheading"],
+  "theme_options" => $theme_options,
+  "params" => $params,
+  "global_nav" => $nav->top_pages_html,
+]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>

@@ -1,10 +1,12 @@
 <?php echo __FILE__;
 set_current_record("Item", $item);
-echo head([
-  "title" => metadata("item", ["Dublin Core", "Title"]),
-  "bodyclass" => "items show",
+echo $this->view->partial("microsite-header.php", [
+  "title" => $microsite->options["microsite_title"],
+  "subheading" => $microsite->options["microsite_subheading"],
+  "theme_options" => $theme_options,
+  "params" => $params,
+  "global_nav" => $nav->top_pages_html,
 ]);
-
 if (
   isset($theme_options["item_canvas_color"]) &&
   !empty($theme_options["item_canvas_color"])

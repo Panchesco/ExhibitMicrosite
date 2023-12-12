@@ -3,6 +3,7 @@
 use ExhibitMicrosite\helpers\ParamsHelper;
 use ExhibitMicrosite\helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\helpers\BreadcrumbHelper;
+use ExhibitMicrosite\Helpers\NavHelper;
 
 class ExhibitMicrosite_ExhibitpageController extends
   Omeka_Controller_AbstractActionController
@@ -55,6 +56,10 @@ class ExhibitMicrosite_ExhibitpageController extends
       PLUGIN_DIR . "/exhibit-microsite/views/exhibit-pages"
     );
 
+    $this->view->addScriptPath(
+      PLUGIN_DIR . "/ExhibitMicrosite/views/public/sitewide"
+    );
+
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
@@ -70,6 +75,12 @@ class ExhibitMicrosite_ExhibitpageController extends
   public function showAction()
   {
     $this->init();
+
+    $this->nav = new NavHelper([
+      "exhibit" => $this->exhibit,
+      "exhibitPage" => $this->exhibitPage,
+      "route" => $this->route,
+    ]);
 
     $this->view->exhibitPage = $this->exhibitPage;
 
@@ -87,6 +98,8 @@ class ExhibitMicrosite_ExhibitpageController extends
         "theme_options" => $this->theme_options,
         "view" => $this->view,
         "refUri" => $this->microsite->refUri,
+        "microsite" => $this->microsite,
+        "nav" => $this->nav,
       ]);
     } else {
       echo $this->view->partial("exhibit-pages/show.php", [
@@ -100,8 +113,11 @@ class ExhibitMicrosite_ExhibitpageController extends
         "theme_options" => $this->theme_options,
         "view" => $this->view,
         "refUri" => $this->microsite->refUri,
+        "microsite" => $this->microsite,
+        "nav" => $this->nav,
       ]);
     }
+
     exit();
   }
 
