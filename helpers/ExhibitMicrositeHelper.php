@@ -366,6 +366,22 @@ class ExhibitMicrositeHelper
 
   protected function _setOptions()
   {
+    // Set some options default values to overwrite (or not).
+    $options = [
+      "microsite_title" => "",
+      "microsite_subheading" => "",
+      "exhibit_id" => 0,
+      "collection_id" => [],
+      "collection_page_title" => "",
+      "titles_separator" => "",
+      "nav_depth" => 1,
+      "palette" => "#222222,#ffffff",
+      "created_by_user_id" => "",
+      "inserted" => "",
+      "updated" => "",
+      "collections" => [],
+    ];
+
     if (!$this->exhibit) {
       if ($this->slug) {
         $this->exhibit = get_record("Exhibit", [
@@ -420,9 +436,12 @@ class ExhibitMicrositeHelper
         $row["collections"][] = $collection;
       }
 
-      return $row;
+      // Overwrite option defaults.
+      foreach ($row as $key => $value) {
+        $options[$key] = $value;
+      }
     }
-    return;
+    return $options;
   }
 
   /**

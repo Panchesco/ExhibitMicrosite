@@ -178,10 +178,10 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       $db = get_db();
 
       $sql =
-        "SELECT `value` FROM {$db->prefix}options WHERE 1 
+        "SELECT `value` FROM {$db->prefix}options WHERE 1
         AND `name` = 'exhibit_microsite[" .
         $exhibit_id .
-        "]' 
+        "]'
         LIMIT 1
         ";
 
