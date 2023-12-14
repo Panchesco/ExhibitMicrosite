@@ -123,6 +123,10 @@ class NavHelper
         "</a></li>" .
         "\n";
     }
+
+    $html .=
+      '<li class="lang" data-slug="lang"><a href="#">Español</a></li>' . "\n";
+
     $html .= "</ul>\n";
     return $html;
   }

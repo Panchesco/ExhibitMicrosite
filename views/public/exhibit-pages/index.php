@@ -7,6 +7,7 @@ echo $this->view->partial("microsite-header.php", [
   "global_nav" => $nav->top_pages_html,
   "bodyid" => $microsite->route,
   "bodyclass" => "index",
+  "view" => $this->view,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>

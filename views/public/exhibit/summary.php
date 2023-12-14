@@ -10,6 +10,7 @@ echo $this->view->partial("microsite-header.php", [
   "microsite" => $microsite,
   "bodyid" => $microsite->route,
   "bodyclass" => "summary",
+  "view" => $this->view,
 ]);
 ?>
 

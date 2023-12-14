@@ -11,6 +11,7 @@ echo $this->view->partial("microsite-header.php", [
   "params" => $microsite->params,
   "global_nav" => $nav->top_pages_html,
   "microsite" => $microsite,
+  "view" => $this->view,
 ]);
 
 // Get ordered element texts.

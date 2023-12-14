@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="<?php echo get_html_lang(); ?>">
-    
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes" />
@@ -86,6 +85,20 @@
             </div><!-- end .nav-wrapper -->
         </header>
         <main>
+            <nav class="flyouts">
+                <div id="collections-flyout">
+                  <div class="container">
+                      <div class="row">
+                          <div class="col listing-wrapper">
+                            <?php echo $view->partial(
+                              "exhibit-pages/index-listing.php",
+                              []
+                            ); ?>  
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </nav>
           <div id="content" role="main" tabindex="-1">
             <div class="container">
 

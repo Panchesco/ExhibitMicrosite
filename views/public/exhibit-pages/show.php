@@ -8,6 +8,7 @@
  *
  * Wrap for non-ems blocks:
  */
+
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
@@ -16,6 +17,7 @@ echo $this->view->partial("microsite-header.php", [
   "global_nav" => $nav->top_pages_html,
   "bodyid" => $microsite->route,
   "bodyclass" => "show",
+  "view" => $this->view,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
