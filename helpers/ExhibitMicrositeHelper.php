@@ -370,6 +370,8 @@ class ExhibitMicrositeHelper
     $options = [
       "microsite_title" => "",
       "microsite_subheading" => "",
+      "summary_in_nav" => 0,
+      "summary_alt_title" => "",
       "exhibit_id" => 0,
       "collection_id" => [],
       "collection_page_title" => "",

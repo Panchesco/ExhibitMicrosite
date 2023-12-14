@@ -41,41 +41,44 @@ class ExhibitMicrosite_IndexController extends
     foreach ($options as $key => $option) {
       $values = @unserialize($option["value"]);
       $exhibit = get_record_by_id("Exhibit", $values["exhibit_id"]);
-      $data[$key]["id"] = $option->id;
-      $data[$key]["name"] = $option->name;
-      $data[$key]["exhibit_id"] = $exhibit->id;
-      $data[$key]["title"] = $exhibit->title;
-      $data[$key]["microsite_title"] = $option->microsite_title;
-      $data[$key]["microsite_subheading"] = $option->microsite_subheading;
-      $data[$key]["exhibit_slug"] = $exhibit->slug;
-      $data[$key]["collection_page_title"] = $exhibit->slug;
-      $data[$key]["layout_preference"] = $option->layout_preference;
-      $data[$key]["palette"] = html_entity_decode($option->palette);
-      $data[$key]["titles_separator"] = $option->titles_separator;
-      $data[$key]["modified_by_username"] =
-        isset($values["modified_by_user_id"]) &&
-        !empty($values["modified_by_user_id"])
-          ? get_record_by_id("User", $values["modified_by_user_id"])->username
-          : "";
-      $data[$key]["updated"] =
-        isset($values["updated"]) & !empty($values["updated"])
-          ? $values["updated"]
-          : null;
-      $data[$key]["collection_page_title"] =
-        isset($values["collection_page_title"]) &
-        !empty($values["collection_page_title"])
-          ? $values["collection_page_title"]
-          : __("Collection");
-      $data[$key]["per_page"] =
-        isset($values["per_page"]) & !empty($values["per_page"])
-          ? $values["per_page"]
-          : get_option("per_page_public");
+      if ($exhibit) {
+        $data[$key]["id"] = $option->id;
+        $data[$key]["name"] = $option->name;
+        $data[$key]["exhibit_id"] = $exhibit->id;
+        $data[$key]["title"] = $exhibit->title;
+        $data[$key]["microsite_title"] = $option->microsite_title;
+        $data[$key]["microsite_subheading"] = $option->microsite_subheading;
+        $data[$key]["summary_in_nav"] = $option->summary_in_nav;
+        $data[$key]["exhibit_slug"] = $exhibit->slug;
+        $data[$key]["collection_page_title"] = $exhibit->slug;
+        $data[$key]["layout_preference"] = $option->layout_preference;
+        $data[$key]["palette"] = html_entity_decode($option->palette);
+        $data[$key]["titles_separator"] = $option->titles_separator;
+        $data[$key]["modified_by_username"] =
+          isset($values["modified_by_user_id"]) &&
+          !empty($values["modified_by_user_id"])
+            ? get_record_by_id("User", $values["modified_by_user_id"])->username
+            : "";
+        $data[$key]["updated"] =
+          isset($values["updated"]) & !empty($values["updated"])
+            ? $values["updated"]
+            : null;
+        $data[$key]["collection_page_title"] =
+          isset($values["collection_page_title"]) &
+          !empty($values["collection_page_title"])
+            ? $values["collection_page_title"]
+            : __("Collection");
+        $data[$key]["per_page"] =
+          isset($values["per_page"]) & !empty($values["per_page"])
+            ? $values["per_page"]
+            : get_option("per_page_public");
 
-      $data[$key]["layout_preference"] =
-        isset($values["layout_preference"]) &
-        !empty($values["layout_preference"])
-          ? $values["layout_preference"]
-          : "Masonry";
+        $data[$key]["layout_preference"] =
+          isset($values["layout_preference"]) &
+          !empty($values["layout_preference"])
+            ? $values["layout_preference"]
+            : "Masonry";
+      }
     }
 
     $sort_field = isset($_GET["sort_field"])
@@ -146,6 +149,8 @@ class ExhibitMicrosite_IndexController extends
     $formData["collection_page_title"] = $values["collection_page_title"];
     $formData["microsite_title"] = $values["microsite_title"];
     $formData["microsite_subheading"] = $values["microsite_subheading"];
+    $formData["summary_in_nav"] = $values["summary_in_nav"];
+    $formData["summary_alt_title"] = $values["summary_alt_title"];
     $formData["layout_preference"] = isset($values["layout_preference"])
       ? $values["layout_preference"]
       : "bootstrap-grid";
@@ -307,6 +312,30 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
+    $form->addElementToEditGroup("checkbox", "summary_in_nav", [
+      "id" => "exhibit-microsite-summary-in-nav",
+      "class" => "exhibit-microsite-option",
+      "value" => isset($option["summary_in_nav"])
+        ? $option["summary_in_nav"]
+        : "",
+      "label" => __("Show Exhibit Summary Page in Header Navigation?"),
+      "description" => __(
+        "If using the Exhibit Summary Page, should the summary page title appear in the header navigation? Default is no."
+      ),
+    ]);
+
+    $form->addElementToEditGroup("text", "summary_alt_title", [
+      "id" => "exhibit-microsite-summary-alt-title",
+      "class" => "exhibit-microsite-options",
+      "value" => isset($option["summary_alt_title"])
+        ? $option["summary_alt_title"]
+        : "",
+      "label" => __("Summary Page Alternative Title"),
+      "description" => __(
+        "If using an Exhibit Summary Page and you would like a title other than the Exhibit Title to appear in the header navigation, enter that here."
+      ),
+    ]);
+
     $form->addElementToEditGroup("text", "per_page", [
       "id" => "exhibit-microsite-per-page",
       "class" => "exhibit-microsite-options",
@@ -334,17 +363,17 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
-    $form->addElementToEditGroup("select", "nav_depth", [
-      "id" => "exhibit-microsite-nav-depth",
-      "class" => "exhibit-microsite-options",
-      "value" => isset($option["nav_depth"]) ? $option["nav_depth"] : 1,
-      "label" => __("Global Nav Depth"),
-      "description" => __(
-        "Depth of Exhibit Pages to include in the global navigation. If the exhibit starts on the summary page, that will be the first nav link."
-      ),
-      "required" => true,
-      "multiOptions" => [1 => 1, 2 => 2, 3 => 3],
-    ]);
+    // $form->addElementToEditGroup("select", "nav_depth", [
+    //   "id" => "exhibit-microsite-nav-depth",
+    //   "class" => "exhibit-microsite-options",
+    //   "value" => isset($option["nav_depth"]) ? $option["nav_depth"] : 1,
+    //   "label" => __("Global Nav Depth"),
+    //   "description" => __(
+    //     "Depth of Exhibit Pages to include in the global navigation. If the exhibit starts on the summary page, that will be the first nav link."
+    //   ),
+    //   "required" => true,
+    //   "multiOptions" => [1 => 1, 2 => 2, 3 => 3],
+    // ]);
 
     $form->addElementToEditGroup("text", "palette", [
       "id" => "exhibit-microsite-palette",
@@ -441,6 +470,8 @@ class ExhibitMicrosite_IndexController extends
           "microsite_subheading" => htmlentities(
             $_POST["microsite_subheading"]
           ),
+          "summary_in_nav" => htmlentities($_POST["summary_in_nav"]),
+          "summary_alt_title" => htmlentities($_POST["summary_alt_title"]),
           "titles_separator" => htmlentities($_POST["titles_separator"]),
           "per_page" => htmlentities($_POST["per_page"]),
           "nav_depth" => htmlentities($_POST["nav_depth"]),

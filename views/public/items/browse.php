@@ -1,4 +1,4 @@
-<?php
+<?php echo __FILE__;
 $pageTitle = __("Browse Items");
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
@@ -6,6 +6,8 @@ echo $this->view->partial("microsite-header.php", [
   "theme_options" => $theme_options,
   "params" => $params,
   "global_nav" => $nav->top_pages_html,
+  "bodyid" => $this->microsite->route,
+  "bodyclass" => "browse",
 ]);
 ?>
 

@@ -34,13 +34,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     "public_theme_name",
     "admin_navigation_main",
     "item_citation",
-    "public_navigation_admin_bar",
   ];
-
-  public function filterPublicNavigationAdminBar($args)
-  {
-    return $args;
-  }
 
   protected function hookInstall()
   {

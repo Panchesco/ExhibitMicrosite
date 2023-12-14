@@ -1,12 +1,21 @@
-<?php echo __FILE__;
+<?php
+
 set_current_record("Item", $item);
+
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
+  "bodyid" => $microsite->route,
+  "bodyclass" => "show",
   "theme_options" => $theme_options,
-  "params" => $params,
+  "params" => $microsite->params,
   "global_nav" => $nav->top_pages_html,
+  "microsite" => $microsite,
 ]);
+
+// Get ordered element texts.
+$element_texts = ems_element_texts($item, ["rights"]);
+
 if (
   isset($theme_options["item_canvas_color"]) &&
   !empty($theme_options["item_canvas_color"])
@@ -78,11 +87,22 @@ if ($file_title && $file_title) {
   <div class="col-span-12 col-xl-8">
     <h2 class="underlined"><?php echo __("Dublin Core"); ?></h2>
     <div id="item-metadata">
-        <?php echo all_element_texts("item", [
-          "show_empty_elements" => false,
-          "show_element_set_headings" => false,
-          "show_element_sets" => ["Dublin Core", "Item Type Metadata"],
-        ]); ?>
+      <?php foreach ($element_texts as $elem):
+        if (isset($elem["text"]) && !empty($elem["text"])): ?>
+          <div class="element">
+          <?php if (
+            isset($elem["element_name"]) &&
+            !empty($elem["element_name"])
+          ): ?><h3><?php echo $elem["element_name"]; ?></h3><?php endif; ?>
+        
+          <?php if (isset($elem["text"]) && !empty($elem["text"])): ?>
+            <div class="element-text">
+              <?php echo $elem["text"]; ?>
+            </div><!-- end .element-text -->
+          <?php endif; ?>
+          </div><!-- end .element -->
+      <?php endif;
+      endforeach; ?>
     </div>
   </div><!-- end #dublin-core -->
   <div id="citation" class="col-span-12 col-xl-4">

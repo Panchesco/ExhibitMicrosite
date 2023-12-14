@@ -3,6 +3,7 @@
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
+use ExhibitMicrosite\Helpers\NavHelper;
 
 class ExhibitMicrosite_DefaultController extends
   Omeka_Controller_AbstractActionController
@@ -20,57 +21,66 @@ class ExhibitMicrosite_DefaultController extends
       ->getRouter()
       ->getCurrentRouteName();
 
-    $this->params = new ParamsHelper();
-    $this->slug = $this->params->slug;
+    $request = Zend_Controller_Front::getInstance()->getRequest();
+
+    $this->slug = $request->getParam("slug");
+
     if (!$this->exhibit) {
       $this->exhibit = $this->_helper->db
         ->getTable("Exhibit")
         ->findBySlug($this->slug);
     }
 
-    $this->theme_options = $this->exhibit->getThemeOptions();
+    $this->view->addScriptPath(
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
+    );
 
-    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views");
+    $this->view->addScriptPath(
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public/sitewide"
+    );
+
+    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public");
+
+    $this->view->addScriptPath(
+      PUBLIC_THEME_DIR .
+        "/" .
+        $this->exhibit->theme .
+        "/exhibit-microsite/views"
+    );
 
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
     ]);
 
+    $this->theme_options = $this->exhibit->getThemeOptions();
+
     $this->breadcrumb = new BreadcrumbHelper(["exhibit" => $this->exhibit]);
-  }
 
-  public function showAction()
-  {
-    $this->init();
-
-    if ($this->exhibit->use_summary_page == 1) {
-      return $this->summaryPage();
-    } else {
-      $firstPage = $this->exhibit->getFirstTopPage();
-      if (null !== $firstPage) {
-        $this->_helper->redirector->gotoRoute(
-          [
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $firstPage->slug,
-          ],
-          "exhibitShow"
-        );
-      }
-    }
-
-    $this->view->exhibit = $this->exhibit;
-
-    $this->view->partial("exhibit-pages/show.php", [
-      "breadcrumb" => $this->breadcrumb->html,
-      "exhibitPage" => get_record("ExhibitPage", $this->slug),
+    $this->nav = new NavHelper([
       "exhibit" => $this->exhibit,
-      "theme_options" => $this->theme_options,
-      "view" => $this->view,
+      "route" => $this->route,
     ]);
   }
 
-  public function summaryPage()
+  public function summaryAction()
+  {
+    echo $this->view->partial("exhibit/summary.php", [
+      "breadcrumb" => $this->breadcrumb->html,
+      "canonicalURL" => $this->microsite->canonicalURL($this->route),
+      "exhibit" => $this->exhibit,
+      "view" => $this->view,
+      "microsite" => $this->microsite,
+      "nav" => $this->nav,
+      "params" => $this->microsite->params,
+      "refUri" => $this->microsite->refUri,
+      "route" => $this->route,
+      "theme_options" => $this->theme_options,
+    ]);
+    exit();
+  }
+
+  public function XsummaryPage()
   {
     $this->view->exhibit = $this->exhibit;
 

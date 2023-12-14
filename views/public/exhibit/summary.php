@@ -1,33 +1,30 @@
+<?php
 
-<?php echo $this->view->partial("microsite-header.php", [
+set_current_record("exhibit", $exhibit);
+echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
-  "exhibit" => $exhibit,
-  "exhibitPage" => $exhibitPage,
   "theme_options" => $theme_options,
   "params" => $params,
-]); ?>
+  "global_nav" => $nav->top_pages_html,
+  "microsite" => $microsite,
+  "bodyid" => $microsite->route,
+  "bodyclass" => "summary",
+]);
 ?>
-
-  <?php
-  $pageTree = exhibit_builder_page_tree();
-  if ($pageTree): ?>
-    <nav id="exhibit-pages" class="cell small-2" data-sticky-container>
-        <div class="exhibit-tree-container sticky" data-sticky data-anchor="exhibit-content">
-        <?php echo exhibit_builder_page_tree($exhibit); ?>
-        </div>
-    </nav>
-<?php endif;
-  ?>
 
 <div id="exhibit-content" class="row ">
 <div class="col col-lg-12">
 <nav id="breadcrumb">
-  <?php echo $breadcrumb; ?>
+  <?php
+//echo $breadcrumb;
+?>
 </nav>
 <div class="row justify-content-around">
 <div class="col-lg-8">
-<h1><?php echo metadata("exhibit", "title"); ?></h1>
+<h1><?php
+//echo metadata("exhibit", "title");
+?></h1>
 
 <?php if (
   $exhibitDescription = metadata("exhibit", "description", [

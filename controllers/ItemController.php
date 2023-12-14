@@ -3,6 +3,7 @@
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
+use ExhibitMicrosite\Helpers\NavHelper;
 
 class ExhibitMicrosite_ItemController extends
   Omeka_Controller_AbstractActionController
@@ -85,7 +86,22 @@ class ExhibitMicrosite_ItemController extends
 
     $this->thumb_links_base = $this->thumbLinksBase();
 
-    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views");
+    $this->view->addScriptPath(
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
+    );
+
+    $this->view->addScriptPath(
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public/sitewide"
+    );
+
+    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public");
+
+    $this->view->addScriptPath(
+      PUBLIC_THEME_DIR .
+        "/" .
+        $this->exhibit->theme .
+        "/exhibit-microsite/views"
+    );
 
     // Set some config values to pass to the breadcrumb helper.
     $config = [
@@ -104,6 +120,10 @@ class ExhibitMicrosite_ItemController extends
     ];
 
     $this->breadcrumb = new BreadcrumbHelper($config);
+    $this->nav = new NavHelper([
+      "exhibit" => $this->exhibit,
+      "route" => $this->route,
+    ]);
   }
 
   public function fileInfo()
@@ -158,19 +178,19 @@ class ExhibitMicrosite_ItemController extends
       "item" => $this->item,
       "item_id" => $this->item_id,
       "file_info" => $this->file_info,
-      "page_slugs" => $this->params->page_slugs,
-      "slug" => $this->params->slug,
+      "slug" => $this->microsite->params->slug,
       "thumb_links_base" => $this->thumb_links_base,
       "theme_options" => $this->microsite->exhibit->getThemeOptions(),
       "microsite" => $this->microsite,
       "view" => $this->view,
-      "params" => $this->params,
+      "params" => $this->microsite->params,
       "refUri" => $this->microsite->refUri,
       "prevData" => $this->breadcrumb->prevData,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "collection_title" => metadata($collection, "rich_title", [
         "no_escape" => true,
       ]),
+      "nav" => $this->nav,
     ]);
 
     exit();

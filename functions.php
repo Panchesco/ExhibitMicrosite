@@ -359,3 +359,81 @@ function allNumeric($data)
   }
   return true;
 }
+
+/**
+ * Returns  element names in an associative array
+ * of element id => element name
+ * @return array
+ */
+function ems_element_names()
+{
+  $data = [];
+  $db = get_db();
+  $rows = $db
+    ->getTable("Element")
+    ->fetchAll("SELECT `id`,`name` FROM {$db->prefix}elements");
+
+  foreach ($rows as $element) {
+    $data[$element["id"]] = $element["name"];
+  }
+
+  ksort($data);
+  return $data;
+}
+
+function in_arrayi($needle, $haystack)
+{
+  return in_array(strtolower($needle), array_map("strtolower", $haystack));
+}
+
+function ems_search_for_key($needle, $haystack)
+{
+  foreach ($haystack as $index => $row) {
+    if (gettype($row == "object")) {
+      $row = (array) get_object_vars($row);
+    }
+    if (strtolower($row["element_name"]) === strtolower($needle)) {
+      return $row;
+    }
+  }
+  return null;
+}
+
+/**
+ * We want to customize the order of element texts for an item
+ * @param object $item Omeka item object.
+ * @param array $elements array of element text names to place.
+ * @param boolean $start place element names at the start of the
+ *  returned array or at the end?
+ * @return array
+ */
+function ems_element_texts($item, $elements = [], $start = 0)
+{
+  $data = [];
+  $ordered = [];
+  $sorted = [];
+  $elementTexts = $item->getAllElementTexts();
+  $elems = ems_element_names();
+  foreach ($elementTexts as $row) {
+    $row->element_name = isset($elems[$row->element_id])
+      ? $elems[$row->element_id]
+      : "";
+
+    if (in_arrayi($row->element_name, $elements)) {
+      $ordered[] = $row;
+    } else {
+      $data[] = $row;
+    }
+  }
+
+  // Create the sorted elements array
+  foreach ($elements as $element_name) {
+    $sorted[] = ems_search_for_key($element_name, $ordered);
+  }
+
+  if ($start === 1) {
+    return array_merge($sorted, $data);
+  } else {
+    return array_merge($data, $sorted);
+  }
+}

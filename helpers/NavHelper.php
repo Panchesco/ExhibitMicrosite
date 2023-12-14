@@ -34,17 +34,22 @@ class NavHelper
   {
     $html = "<ul>\n";
     if ($this->microsite->exhibit->use_summary_page) {
-      $route = "ems_exhibitLanding";
-      $options["action"] = "summary";
-      $options["controller"] = "default";
-      $options["slug"] = $this->microsite->params->slug;
-      $url = url($options, $route);
-      $html .=
-        '  <li><a href="' .
-        $url .
-        '">' .
-        $this->microsite->exhibit->title .
-        "</a></li>\n";
+      if ($this->microsite->options["summary_in_nav"]) {
+        $title = !empty($this->microsite->options["summary_alt_title"])
+          ? $this->microsite->options["summary_alt_title"]
+          : $this->microsite->exhibit->title;
+        $route = "ems_exhibitLanding";
+        $options["action"] = "summary";
+        $options["controller"] = "default";
+        $options["slug"] = $this->microsite->params->slug;
+        $url = url($options, $route);
+        $html .=
+          '  <li class="nav-ems_exhibitLanding"><a href="' .
+          $url .
+          '">' .
+          $title .
+          "</a></li>\n";
+      }
     }
 
     foreach ($this->top_pages as $page) {
@@ -59,7 +64,10 @@ class NavHelper
           $data_slug = $page->slug;
           $route = "ems_collection";
           $display_title = $page->title;
-          //$current = $page->slug == "browse" ? ' class="active"' : "";
+          $current =
+            $this->microsite->params->page_slug_1 == "browse"
+              ? ' class="current"'
+              : "";
           break;
 
         case "collections":
@@ -70,7 +78,10 @@ class NavHelper
           $data_slug = $page->slug;
           $route = "ems_exhibitPage1";
           $display_title = $page->title;
-          //$current = $page->slug == "collections" ? ' class="active"' : "";
+          $current =
+            $this->microsite->params->page_slug_1 == "collections"
+              ? ' class="current"'
+              : "";
           break;
 
         case "search":
@@ -83,6 +94,7 @@ class NavHelper
           $display_title = '<span class="material-symbols-outlined">
           search
           </span>';
+          $current = "";
           break;
 
         default:
@@ -93,18 +105,16 @@ class NavHelper
           $data_slug = $page->slug;
           $route = "ems_exhibitPage1";
           $display_title = $page->title;
-          //$current =
-          $page->slug == $this->microsite->params->page_slug_1
-            ? ' class="active"'
-            : "";
+          $current =
+            $page->slug == $this->microsite->params->page_slug_1
+              ? ' class="current"'
+              : "";
           break;
       }
 
-      $current = "";
-      $html .= ' <li data-slug="' . $data_slug . '"';
+      $html .= " <li" . $current . ' data-slug="' . $data_slug . '">';
       $html .=
-        $current .
-        '</li><a title="' .
+        '<a title="' .
         $page->title .
         '" href="' .
         url($options, $route) .
