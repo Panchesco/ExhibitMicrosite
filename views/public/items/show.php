@@ -95,7 +95,7 @@ if ($file_title && $file_title) {
             isset($elem["element_name"]) &&
             !empty($elem["element_name"])
           ): ?><h3><?php echo $elem["element_name"]; ?></h3><?php endif; ?>
-        
+
           <?php if (isset($elem["text"]) && !empty($elem["text"])): ?>
             <div class="element-text">
               <?php echo $elem["text"]; ?>
@@ -185,13 +185,13 @@ if ($file_title && $file_title) {
      <!-- Download Link. -->
           <div id="file-download" class="element">
               <h2 class="underlined"><?php echo __("Download"); ?></h2>
-              <div class="element-text download-button">
-                <h3><a id="download" class="btn btn-solid btn-sage color-white" href="<?php echo file_display_url(
+              <div class="element-text download-button sans-serif">
+                <a id="download" class="btn btn-solid btn-sage color-white" href="<?php echo file_display_url(
                   $active_file,
                   "fullsize"
                 ); ?>" download><?php echo __(
   "Download"
-); ?> [<?php echo $size; ?>]</a></h3></div>
+); ?> [<?php echo $size; ?>]</a></div>
               </div>
 
 
@@ -201,14 +201,14 @@ if ($file_title && $file_title) {
          <div class="element-text"><?php echo metadata("item", "citation", [
            "no_escape" => true,
          ]); ?></div>
-         <div class="copy-button">
-           <h3><a id="copy-to-clipboard" data-success="<?php echo __(
-             "Copied!"
-           ); ?>" data-error="<?php echo __(
+         <div class="copy-button sans-serif">
+          <a id="copy-to-clipboard" data-success="<?php echo __(
+            "Copied!"
+          ); ?>" data-error="<?php echo __(
   "Browser not allowing copy to clipboard."
 ); ?>" href="#" class="btn btn-solid btn-sage color-white"><?php echo __(
   "Copy citation to clipboard"
-); ?></a></h3></div>
+); ?></a></div>
          </div>
      </div>
   </div><!-- end #dublin-core -->

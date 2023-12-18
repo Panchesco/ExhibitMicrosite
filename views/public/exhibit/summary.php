@@ -11,6 +11,7 @@ echo $this->view->partial("microsite-header.php", [
   "bodyid" => $microsite->route,
   "bodyclass" => "summary",
   "view" => $this->view,
+  "refUri" => $refUri,
 ]);
 ?>
 

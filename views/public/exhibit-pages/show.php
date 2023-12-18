@@ -13,11 +13,13 @@ echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
   "theme_options" => $theme_options,
-  "params" => $params,
   "global_nav" => $nav->top_pages_html,
   "bodyid" => $microsite->route,
   "bodyclass" => "show",
   "view" => $this->view,
+  "refUri" => $refUri,
+  "route" => $route,
+  "microsite" => $microsite,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
@@ -37,14 +39,11 @@ echo get_view()->partial($layout->getViewPartial(), [
   "exhibitPage" => $exhibitPage,
   "item_route" => $item_route,
   "options" => $options,
-  "page_slug_1" => $params->page_slug_1,
-  "page_slug_2" => $params->page_slug_2,
-  "page_slug_3" => $params->page_slug_3,
-  "page_slugs" => $params->page_slugs,
-  "slug" => $params->slug,
+  "slug" => $microsite->params->paramsArray["slug"],
   "text" => $block->text,
-  "params" => $params,
   "refUri" => $refUri,
+  "route" => $route,
+  "microsite" => $microsite,
 ]);
 ?>
 <?php endforeach; ?>

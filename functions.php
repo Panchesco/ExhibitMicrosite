@@ -437,3 +437,21 @@ function ems_element_texts($item, $elements = [], $start = 0)
     return array_merge($data, $sorted);
   }
 }
+
+/**
+ * Loop through an array of attribute name value pairs and return a
+ * a string
+ * @param array $atts
+ * @return string
+ */
+function ems_array_to_attributes($atts = [])
+{
+  $str = "";
+  if (!is_array($atts)) {
+    return $str;
+  }
+  foreach ($atts as $key => $val) {
+    $str .= " " . $key . '="' . $val . '"';
+  }
+  return $str;
+}

@@ -1,4 +1,5 @@
 <?php
+
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
@@ -8,6 +9,9 @@ echo $this->view->partial("microsite-header.php", [
   "bodyid" => $microsite->route,
   "bodyclass" => "index",
   "view" => $this->view,
+  "refUri" => $refUri,
+  "route" => $route,
+  "microsite" => $microsite,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
@@ -15,9 +19,8 @@ echo $this->view->partial("microsite-header.php", [
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 <?php echo $this->view->partial("exhibit-pages/index-listing.php", [
-  "child_pages" => $child_pages,
-  "params" => $params,
   "refUri" => $refUri,
+  "microsite" => $microsite,
 ]); ?>
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php
@@ -40,6 +43,8 @@ echo get_view()->partial($layout->getViewPartial(), [
   "text" => $block->text,
   "child_pages" => $child_pages,
   "refUri" => $refUri,
+  "route" => $route,
+  "microsite" => $microsite,
 ]);
 ?>
 <?php endforeach; ?>

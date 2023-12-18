@@ -96,6 +96,10 @@ class BreadcrumbHelper
       ]);
 
       $this->data[] = [
+        "atts" => [
+          "class" => "ems-trigger",
+          "data-target" => "#nav-collections",
+        ],
         "title" => $this->exhibitPage_1->title,
         "slug" => $this->exhibitPage_1->slug,
         "url" => url(
@@ -120,6 +124,7 @@ class BreadcrumbHelper
       ]);
 
       $this->data[] = [
+        "atts" => [],
         "title" => $this->exhibitPage_2->title,
         "slug" => $this->exhibitPage_2->slug,
         "url" => url(
@@ -145,6 +150,7 @@ class BreadcrumbHelper
       ]);
 
       $this->data[] = [
+        "atts" => [],
         "title" => $this->exhibitPage_3->title,
         "slug" => $this->exhibitPage_3->slug,
         "url" => url(
@@ -172,6 +178,7 @@ class BreadcrumbHelper
       if ($this->params->item_id && isset($this->config["item"])) {
         set_current_record("item", $this->config["item"]);
         $this->data[] = [
+          "atts" => [],
           "title" => $this->config["file_info"]["display_title"],
           "slug" => $this->exhibit->slug,
           "url" => url(
@@ -210,6 +217,7 @@ class BreadcrumbHelper
       if ($this->params->item_id && isset($this->config["item"])) {
         set_current_record("item", $this->config["item"]);
         $this->data[] = [
+          "atts" => [],
           "title" => $this->config["file_info"]["display_title"],
           "slug" => $this->exhibit->slug,
           "url" => url(
@@ -253,6 +261,7 @@ class BreadcrumbHelper
       ) {
         set_current_record("item", $this->config["item"]);
         $this->data[] = [
+          "atts" => [],
           "title" => $this->config["file_info"]["display_title"],
           "slug" => $this->exhibit->slug,
           "url" => url(
@@ -296,6 +305,7 @@ class BreadcrumbHelper
       ) {
         set_current_record("item", $this->config["item"]);
         $this->data[] = [
+          "atts" => [],
           "title" => $this->config["file_info"]["display_title"],
           "slug" => $this->exhibit->slug,
           "url" => url(
@@ -339,6 +349,7 @@ class BreadcrumbHelper
       ) {
         set_current_record("item", $this->config["item"]);
         $this->data[] = [
+          "atts" => [],
           "title" => $this->config["file_info"]["display_title"],
           "slug" => $this->exhibit->slug,
           "url" => url(
@@ -481,11 +492,21 @@ class BreadcrumbHelper
   public function html()
   {
     $last_title = "";
+
     $this->html = "<ul>";
     foreach ($this->data as $key => $row) {
+      $attributes = isset($row["atts"])
+        ? ems_array_to_attributes($row["atts"])
+        : "";
       if ($row["title"] !== $last_title) {
         $this->html .=
-          '<li><a href="' . $row["url"] . '">' . $row["title"] . "</a></li>";
+          "<li" .
+          $attributes .
+          '><a href="' .
+          $row["url"] .
+          '">' .
+          $row["title"] .
+          "</a></li>";
       }
       $last_title = $row["title"];
     }

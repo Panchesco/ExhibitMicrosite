@@ -7,13 +7,20 @@
  *
  * Wrap for non-ems blocks:
  */
+set_current_record("exhibit", $exhibit);
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
   "theme_options" => $theme_options,
   "params" => $params,
   "global_nav" => $nav->top_pages_html,
-]); ?>
+  "microsite" => $microsite,
+  "bodyid" => $microsite->route,
+  "bodyclass" => "browse",
+  "view" => $this->view,
+  "refUri" => $refUri,
+]);
+?>
  <form name="filters" method="POST" action="<?php echo url(
    [
      "action" => "browse",

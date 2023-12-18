@@ -29,14 +29,26 @@
     <?php fire_plugin_hook("public_head", ["view" => $this]); ?>
 
     <!-- Stylesheets -->
+    <!-- https://fonts.gstatic.com is the font file origin -->
+    <!-- It may not have the same origin as the CSS file (https://fonts.googleapis.com) -->
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin />
+    <!-- We use the full link to the CSS file in the rest of the tags -->
+
+     <link rel="preload"
+                as="style"
+                href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono" />
+    <link rel="stylesheet"
+                href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap"
+                media="print" onload="this.media='all'" />
+
+    <noscript>
+            <link rel="stylesheet"
+                    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap" />
+    </noscript>
     <?php
     queue_css_file(["bootstrap", "default"]);
-    queue_css_url(
-      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    );
-    queue_css_url(
-      "https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap"
-    );
     echo head_css();
     ?>
     <!-- JavaScripts -->
@@ -57,14 +69,7 @@
             <div class="container">
               <div class="d-xl-flex logo-identity-wrapper">
                 <div id="logo-wrapper">
-                  <a href="<?php echo url(
-                    [
-                      "controller" => "default",
-                      "action" => "show",
-                      "slug" => $params->slug,
-                    ],
-                    "ems_exhibitLanding"
-                  ); ?>"><?php echo theme_logo(); ?></a>
+                  <a href=""><?php echo theme_logo(); ?></a>
                 </div>
                 <div class="site-title-wrapper">
                  <a href=""><span id="site-title"><?php echo $title; ?></span><br>
@@ -86,18 +91,17 @@
         </header>
         <main>
             <nav class="flyouts">
-                <div id="collections-flyout">
-                  <div class="container">
-                      <div class="row">
-                          <div class="col listing-wrapper">
-                            <?php echo $view->partial(
-                              "exhibit-pages/index-listing.php",
-                              []
-                            ); ?>  
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                <div id="nav-collections" class="ems-flyout">
+             <?php echo $view->partial("exhibit-pages/index-listing.php", [
+               "microsite" => $microsite,
+             ]); ?>
+                </div><!-- end #nav-collections -->
+                <nav class="flyouts">
+                    <div id="nav-search" class="ems-flyout">
+                 <?php echo $view->partial("exhibit-pages/index-listing.php", [
+                   "microsite" => $microsite,
+                 ]); ?>
+                    </div><!-- end #nav-search -->
             </nav>
           <div id="content" role="main" tabindex="-1">
             <div class="container">

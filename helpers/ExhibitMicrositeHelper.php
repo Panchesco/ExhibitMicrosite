@@ -662,6 +662,7 @@ class ExhibitMicrositeHelper
     if ($this->params->file_id) {
       $data["file_id"] = $this->params->file_id;
     }
+
     $this->refUri = url($data, $this->route);
   }
 } // End MicrositeHelper class.

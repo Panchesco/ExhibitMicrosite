@@ -79,18 +79,4 @@ class ExhibitMicrosite_DefaultController extends
     ]);
     exit();
   }
-
-  public function XsummaryPage()
-  {
-    $this->view->exhibit = $this->exhibit;
-
-    echo $this->view->partial("exhibit/summary.php", [
-      "breadcrumb" => $this->breadcrumb->html,
-      "exhibit" => $this->exhibit,
-      "theme_options" => $this->theme_options,
-      "view" => $this->view,
-    ]);
-
-    exit();
-  }
 } // End ExhibitMicrosite_DefaultController

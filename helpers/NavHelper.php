@@ -80,8 +80,8 @@ class NavHelper
           $display_title = $page->title;
           $current =
             $this->microsite->params->page_slug_1 == "collections"
-              ? ' class="current"'
-              : "";
+              ? ' class="current ems-trigger indicator" data-target="#nav-collections"'
+              : ' class="ems-trigger indicator" data-target="#nav-collections"';
           break;
 
         case "search":
@@ -91,10 +91,15 @@ class NavHelper
           $options["page_slug_1"] = $page->slug;
           $data_slug = $page->slug;
           $route = "ems_exhibitPage1";
-          $display_title = '<span class="material-symbols-outlined">
-          search
-          </span>';
-          $current = "";
+          $display_title =
+            '<img id="search-icon" src="' .
+            WEB_RELATIVE_THEME .
+            '/border-narrative/img/icons/search_FILL0_wght400_GRAD0_opsz24.svg" title="' .
+            __("Search") .
+            ' alt="' .
+            __("Search Icon") .
+            '">';
+          $current = ' data-target="#nav-search" class="ems-trigger"';
           break;
 
         default:
