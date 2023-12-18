@@ -57,7 +57,10 @@
     echo head_js();
     ?>
 </head>
- <?php echo body_tag(["id" => @$bodyid, "class" => @$bodyclass]); ?>
+ <?php echo body_tag([
+   "id" => @$bodyid,
+   "class" => @$bodyclass,
+ ]); ?>
     <a href="#content" id="skipnav" class="sr-only"><?php echo __(
       "Skip to main content"
     ); ?></a>
@@ -98,8 +101,9 @@
                 </div><!-- end #nav-collections -->
                 <nav class="flyouts">
                     <div id="nav-search" class="ems-flyout">
-                 <?php echo $view->partial("exhibit-pages/index-listing.php", [
+                 <?php echo $view->partial("sitewide/simple-search.php", [
                    "microsite" => $microsite,
+                   "breadcrumb" => $breadcrumb,
                  ]); ?>
                     </div><!-- end #nav-search -->
             </nav>

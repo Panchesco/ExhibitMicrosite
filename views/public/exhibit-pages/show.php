@@ -20,6 +20,7 @@ echo $this->view->partial("microsite-header.php", [
   "refUri" => $refUri,
   "route" => $route,
   "microsite" => $microsite,
+  "breadcrumb" => $breadcrumb,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
@@ -44,6 +45,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "refUri" => $refUri,
   "route" => $route,
   "microsite" => $microsite,
+  "breadcrumb" => $breadcrumb,
 ]);
 ?>
 <?php endforeach; ?>

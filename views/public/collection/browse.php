@@ -19,6 +19,7 @@ echo $this->view->partial("microsite-header.php", [
   "bodyclass" => "browse",
   "view" => $this->view,
   "refUri" => $refUri,
+  "breadcrumb" => $breadcrumb,
 ]);
 ?>
  <form name="filters" method="POST" action="<?php echo url(

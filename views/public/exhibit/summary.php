@@ -12,6 +12,7 @@ echo $this->view->partial("microsite-header.php", [
   "bodyclass" => "summary",
   "view" => $this->view,
   "refUri" => $refUri,
+  "breadcrumb" => $breadcrumb,
 ]);
 ?>
 
