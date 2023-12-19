@@ -12,6 +12,7 @@ echo $this->view->partial("microsite-header.php", [
   "refUri" => $refUri,
   "route" => $route,
   "microsite" => $microsite,
+  "exhibit" => $exhibit,
   "exhibit_theme_options" => $exhibit_theme_options,
 ]);
 ?>

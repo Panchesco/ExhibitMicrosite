@@ -11,6 +11,7 @@ class ExhibitMicrosite_DefaultController extends
   public $exhibit;
   public $slug;
   public $theme_options;
+  public $exhibit_theme_options;
   public $request;
   public $route;
   public $microsite;
@@ -61,6 +62,8 @@ class ExhibitMicrosite_DefaultController extends
       "exhibit" => $this->exhibit,
       "route" => $this->route,
     ]);
+
+    $this->exhibit_theme_options = $this->exhibit->getThemeOptions();
   }
 
   public function summaryAction()
@@ -69,7 +72,7 @@ class ExhibitMicrosite_DefaultController extends
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
-      "exhbiti_theme_options" => $this->exhibit->getThemeOptions(),
+      "exhibit_theme_options" => $this->exhibit_theme_options,
       "view" => $this->view,
       "microsite" => $this->microsite,
       "nav" => $this->nav,

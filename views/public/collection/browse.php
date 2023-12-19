@@ -7,6 +7,7 @@
  *
  * Wrap for non-ems blocks:
  */
+$exhibit_theme_options = $this->exhibit->getThemeOptions();
 set_current_record("exhibit", $exhibit);
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
@@ -20,6 +21,8 @@ echo $this->view->partial("microsite-header.php", [
   "view" => $this->view,
   "refUri" => $refUri,
   "breadcrumb" => $breadcrumb,
+  "exhibit" => $exhibit,
+  "exhibitPage" => $exhibitPage,
   "exhibit_theme_options" => $exhibit_theme_options,
 ]);
 ?>

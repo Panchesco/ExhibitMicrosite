@@ -5,6 +5,8 @@ use Zend_Controller_Front;
 class ExhibitMicrositeHelper
 {
   public $action;
+  public $heading;
+  public $subheading;
   public $controller;
   public $options;
   public $index;
@@ -12,6 +14,8 @@ class ExhibitMicrositeHelper
   public $total_rows;
   public $total_pages;
   public $refUri;
+  public $url;
+
   function __construct($config)
   {
     $this->config = $config;
@@ -38,77 +42,122 @@ class ExhibitMicrositeHelper
       $this->exhibit = $config["exhibit"];
     }
 
-    // Get first exhibitPage if there is one.
-    if ($this->params->page_slug_1) {
-      $this->exhibitPage = get_record("ExhibitPage", [
-        "slug" => $this->params->page_slug_1,
-        "exhibit_id" => $this->exhibit->id,
-      ]);
-      $this->exhibitPages[] = $this->exhibitPage;
-    }
+    $this->exhibitPages = $this->exhibit->getPages();
 
-    // Get second exhibitPage if there is one.
-    if ($this->params->page_slug_2) {
-      $this->exhibitPage = get_record("ExhibitPage", [
-        "slug" => $this->params->page_slug_2,
-        "exhibit_id" => $this->exhibit->id,
-      ]);
-      $this->exhibitPages[] = $this->exhibitPage;
-    }
-
-    // Get third exhibitPage if there is one.
-    if ($this->params->page_slug_3) {
-      $this->exhibitPage = get_record("ExhibitPage", [
-        "slug" => $this->params->page_slug_3,
-        "exhibit_id" => $this->exhibit->id,
-      ]);
-      $this->exhibitPages[] = $this->exhibitPage;
-    }
-
-    // Get item object if there is one.
-    if (!isset($config["item"])) {
-      if ($this->params->item_id) {
-        $this->item = get_record("Item", [
-          "slug" => $this->params->item_id,
-          "public" => 1,
-        ]);
-      } else {
-        $this->item = null;
-      }
-    } else {
-      $this->item = $config["item"];
-    }
-
-    // Get file object if there is one.
-    if (!isset($config["file"])) {
-      if ($this->params->file_id) {
-        $this->file = get_record("File", [
-          "slug" => $this->params->file_id,
-          "public" => 1,
-        ]);
-      }
-    } else {
-      $this->file = $config["file"];
-    }
-
-    // Get collection object if there is one.
-    if (!isset($config["collection"])) {
-      if ($this->params->collection_id) {
-        $this->item = get_record("Collection", [
-          "slug" => $this->params->collection_id,
-          "public" => 1,
-        ]);
-      } else {
-        $this->collection = null;
-      }
-    } else {
-      $this->collection = $config["collection"];
-    }
+    //     // Get first exhibitPage if there is one.
+    //     if ($this->params->page_slug_1) {
+    //       $this->exhibitPage = get_record("ExhibitPage", [
+    //         "slug" => $this->params->page_slug_1,
+    //         "exhibit_id" => $this->exhibit->id,
+    //       ]);
+    //       $this->exhibitPages[] = $this->exhibitPage;
+    //     }
+    //
+    //     // Get second exhibitPage if there is one.
+    //     if ($this->params->page_slug_2) {
+    //       $this->exhibitPage = get_record("ExhibitPage", [
+    //         "slug" => $this->params->page_slug_2,
+    //         "exhibit_id" => $this->exhibit->id,
+    //       ]);
+    //       $this->exhibitPages[] = $this->exhibitPage;
+    //     }
+    //
+    //     // Get third exhibitPage if there is one.
+    //     if ($this->params->page_slug_3) {
+    //       $this->exhibitPage = get_record("ExhibitPage", [
+    //         "slug" => $this->params->page_slug_3,
+    //         "exhibit_id" => $this->exhibit->id,
+    //       ]);
+    //       $this->exhibitPages[] = $this->exhibitPage;
+    //     }
+    //
+    //     // Get item object if there is one.
+    //     if (!isset($config["item"])) {
+    //       if ($this->params->item_id) {
+    //         $this->item = get_record("Item", [
+    //           "slug" => $this->params->item_id,
+    //           "public" => 1,
+    //         ]);
+    //       } else {
+    //         $this->item = null;
+    //       }
+    //     } else {
+    //       $this->item = $config["item"];
+    //     }
+    //
+    //     // Get file object if there is one.
+    //     if (!isset($config["file"])) {
+    //       if ($this->params->file_id) {
+    //         $this->file = get_record("File", [
+    //           "slug" => $this->params->file_id,
+    //           "public" => 1,
+    //         ]);
+    //       }
+    //     } else {
+    //       $this->file = $config["file"];
+    //     }
+    //
+    //     // Get collection object if there is one.
+    //     if (!isset($config["collection"])) {
+    //       if ($this->params->collection_id) {
+    //         $this->item = get_record("Collection", [
+    //           "slug" => $this->params->collection_id,
+    //           "public" => 1,
+    //         ]);
+    //       } else {
+    //         $this->collection = null;
+    //       }
+    //     } else {
+    //       $this->collection = $config["collection"];
+    //     }
 
     // Get the exhibit theme options.
     $this->theme_options = $this->exhibit->theme_options;
 
     $this->options = $this->_setOptions();
+    // Set a title/Heading
+    if (
+      isset($this->options["microsite_title"]) &&
+      !empty($this->options["microsite_title"])
+    ) {
+      $this->heading = $this->options["microsite_title"];
+    } else {
+      $this->heading = $this->exhibit->title;
+    }
+
+    // Set the landing page url.
+    if ($this->exhibit->use_summary_page === 1) {
+      $this->url = url(
+        [
+          "action" => "summary",
+          "controller" => "default",
+          "slug" => $this->params->paramsArray["slug"],
+        ],
+        "ems_exhibitLanding"
+      );
+    } elseif (isset($this->exhibitPages[0])) {
+      $this->exhibitPage = $this->url = url(
+        [
+          "action" => "show",
+          "controller" => "exhibitpage",
+          "slug" => $this->params->paramsArray["slug"],
+          "page_slug_1" => $this->exhibitPages[0]->slug,
+        ],
+        "ems_exhibitPage1"
+      );
+    } else {
+      $this->url = WEB_DIR;
+    }
+
+    // Set a subheading
+    if (
+      isset($this->options["microsite_subheading"]) &&
+      !empty($this->options["microsite_subheading"])
+    ) {
+      $this->subheading = $this->options["microsite_subheading"];
+    } else {
+      $this->subheading = "";
+    }
 
     $this->_setPerPage();
     $this->_setIndex();

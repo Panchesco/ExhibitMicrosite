@@ -4,6 +4,7 @@ set_current_record("exhibit", $exhibit);
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
+  "exhibit" => $exhibit,
   "theme_options" => $theme_options,
   "exhibit_theme_options" => $exhibit_theme_options,
   "params" => $params,
