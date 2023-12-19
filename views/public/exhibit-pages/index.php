@@ -1,4 +1,4 @@
-<?php
+<?php echo __FILE__;
 
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
@@ -12,7 +12,9 @@ echo $this->view->partial("microsite-header.php", [
   "refUri" => $refUri,
   "route" => $route,
   "microsite" => $microsite,
-]); ?>
+  "exhibit_theme_options" => $exhibit_theme_options,
+]);
+?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
@@ -32,6 +34,7 @@ echo get_view()->partial($layout->getViewPartial(), [
   "attachments" => $attachments,
   "block" => $block,
   "exhibit" => $exhibit,
+  "exhibit_theme_options" => $exhibit_theme_options,
   "exhibitPage" => $exhibitPage,
   "item_route" => $item_route,
   "options" => $options,

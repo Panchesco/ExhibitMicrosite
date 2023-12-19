@@ -10,6 +10,7 @@ echo $this->view->partial("microsite-header.php", [
   "bodyclass" => "browse",
   "view" => $this->view,
   "breadcrumb" => $breadcrumb,
+  "exhibit_theme_options" => $exhibit_theme_options,
 ]);
 ?>
 

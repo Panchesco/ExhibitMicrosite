@@ -173,6 +173,7 @@ class ExhibitMicrosite_ItemController extends
       "collection_id" => $collection->id,
       "route" => $this->route,
       "exhibit" => $this->exhibit,
+      "exhibit_theme_options" => $this->exhibit->getThemeOptions(),
       "exhibitPage" => $this->exhibitPage,
       "files" => $this->files,
       "item" => $this->item,

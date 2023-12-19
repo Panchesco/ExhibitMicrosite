@@ -157,6 +157,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "collection_filter_data" => $this->microsite->options["collections"],
       "route" => $this->route,
       "theme_options" => $this->theme_options,
+      "exhibit_theme_options" => $this->exhibit->getThemeOptions(),
       "creator_filter_data" => $creator_filter_data,
       "item_type_filter_data" => $item_type_filter_data,
       "items" => $this->collectionItems(),

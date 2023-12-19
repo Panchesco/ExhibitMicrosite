@@ -69,6 +69,7 @@ class ExhibitMicrosite_DefaultController extends
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
+      "exhbiti_theme_options" => $this->exhibit->getThemeOptions(),
       "view" => $this->view,
       "microsite" => $this->microsite,
       "nav" => $this->nav,

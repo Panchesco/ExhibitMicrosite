@@ -13,6 +13,7 @@ echo $this->view->partial("microsite-header.php", [
   "microsite" => $microsite,
   "view" => $this->view,
   "breadcrumb" => $breadcrumb,
+  "exhibit_theme_options" => $exhibit_theme_options,
 ]);
 
 // Get ordered element texts.

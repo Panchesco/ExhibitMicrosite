@@ -20,6 +20,7 @@ echo $this->view->partial("microsite-header.php", [
   "view" => $this->view,
   "refUri" => $refUri,
   "breadcrumb" => $breadcrumb,
+  "exhibit_theme_options" => $exhibit_theme_options,
 ]);
 ?>
  <form name="filters" method="POST" action="<?php echo url(

@@ -28,16 +28,12 @@
     <!-- Plugin Stuff -->
     <?php fire_plugin_hook("public_head", ["view" => $this]); ?>
 
-    <!-- Stylesheets -->
-    <!-- https://fonts.gstatic.com is the font file origin -->
-    <!-- It may not have the same origin as the CSS file (https://fonts.googleapis.com) -->
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
           crossorigin />
     <!-- We use the full link to the CSS file in the rest of the tags -->
 
-     <link rel="preload"
-                as="style"
+     <link rel="stylesheet"
                 href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono" />
     <link rel="stylesheet"
                 href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap"
@@ -55,6 +51,35 @@
     <?php
     queue_js_file(["globals"]);
     echo head_js();
+
+    if (isset($exhibit_theme_options) and is_array($exhibit_theme_options)) {
+      extract($exhibit_theme_options);
+    }
+
+    // Set some defaults in case they weren't set in the theme.
+    $header_image_colspan = isset($header_image_colspan)
+      ? $header_image_colspan
+      : 12;
+
+    $header_wrapper_colspan = isset($header_image_colspan)
+      ? $header_image_colspan
+      : 12;
+
+    $headings_wrapper_colspan = isset($headins_wrapper_colspan)
+      ? $headings_wrapper_colspan
+      : 12;
+
+    $heading_colspan = isset($heading_colspan) ? $heading_colspan : 12;
+
+    $suheading_colspan = isset($subheading_colspan) ? $subheading_colspan : 12;
+
+    $header_justify_content = isset($header_justify_content)
+      ? $header_justify_content
+      : "justify-content-start";
+
+    $header_align_items = isset($header_align_items)
+      ? $header_align_items
+      : "align-items-center";
     ?>
 </head>
  <?php echo body_tag([
@@ -68,20 +93,26 @@
     <?php fire_plugin_hook("public_content_top", ["view" => $this]); ?>
         <header role="banner">
             <?php fire_plugin_hook("public_header", ["view" => $this]); ?>
-          <div class="identity">
             <div class="container">
-              <div class="d-xl-flex logo-identity-wrapper">
-                <div id="logo-wrapper">
-                  <a href=""><?php echo theme_logo(); ?></a>
+            <div class="row">
+            <div class="header-wrapper col-lg-<?php echo $header_wrapper_colspan; ?>">
+              <div class="d-lg-flex border border-dark">
+                <div id="header-image-wrapper" class="col-lg-<?php echo $header_image_colspan; ?>">
+                  <img class="lazy" src="<?php echo WEB_FILES .
+                    "/theme_uploads/" .
+                    $header_image; ?>" alt="<?php echo $header_image_alt; ?>">
                 </div>
+              </div><!-- end .d-lg-flex -->
+              <div class="d-lg-flex border border-dark">
                 <div class="site-title-wrapper">
                  <a href=""><span id="site-title"><?php echo $title; ?></span><br>
                   <span id="identity-subheading" class="subheading h2"><?php echo $subheading; ?></span>
                  </a>
                 </div><!-- end .col -->
                 </div><!-- end .d-xl-flex -->
-                </div><!-- end .container -->
-              </div><!-- end .identity -->
+              </div><!-- end .header-wrapper -->
+            </div><!-- end .row -->
+               </div><!-- end .container -->
             <div class="nav-wrapper">
             <div class="container">
               <div class="d-flex justify-content-end">
@@ -109,4 +140,9 @@
             </nav>
           <div id="content" role="main" tabindex="-1">
             <div class="container">
+               <?php
+               print_r("<pre>");
+               print_r($exhibit_theme_options);
+               print_r("</pre>");
+               ?>
 
