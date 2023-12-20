@@ -32,7 +32,9 @@ class NavHelper
 
   public function topPagesHtml()
   {
-    $html = "<ul>\n";
+    $html =
+      '<label id="mobile-menu-wrapper" for="mobile-menu-toggle">[mobile menu toggle]<input type="checkbox" name="mobile-menu-toggle" id="mobile-menu-toggle" /></label>';
+    $html .= "<ul>\n";
     if ($this->microsite->exhibit->use_summary_page) {
       if ($this->microsite->options["summary_in_nav"]) {
         $title = !empty($this->microsite->options["summary_alt_title"])
@@ -133,6 +135,7 @@ class NavHelper
       '<li class="lang" data-slug="lang"><a href="#">Español</a></li>' . "\n";
 
     $html .= "</ul>\n";
+
     return $html;
   }
 } // End ExhibitMicrosite_Nav class.

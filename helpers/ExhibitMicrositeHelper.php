@@ -2,6 +2,7 @@
 namespace ExhibitMicrosite\Helpers;
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use Zend_Controller_Front;
+use Omeka\View;
 class ExhibitMicrositeHelper
 {
   public $action;
@@ -15,6 +16,8 @@ class ExhibitMicrositeHelper
   public $total_pages;
   public $refUri;
   public $url;
+  public $is_exhibit_landing;
+  public $view;
 
   function __construct($config)
   {
@@ -44,77 +47,11 @@ class ExhibitMicrositeHelper
 
     $this->exhibitPages = $this->exhibit->getPages();
 
-    //     // Get first exhibitPage if there is one.
-    //     if ($this->params->page_slug_1) {
-    //       $this->exhibitPage = get_record("ExhibitPage", [
-    //         "slug" => $this->params->page_slug_1,
-    //         "exhibit_id" => $this->exhibit->id,
-    //       ]);
-    //       $this->exhibitPages[] = $this->exhibitPage;
-    //     }
-    //
-    //     // Get second exhibitPage if there is one.
-    //     if ($this->params->page_slug_2) {
-    //       $this->exhibitPage = get_record("ExhibitPage", [
-    //         "slug" => $this->params->page_slug_2,
-    //         "exhibit_id" => $this->exhibit->id,
-    //       ]);
-    //       $this->exhibitPages[] = $this->exhibitPage;
-    //     }
-    //
-    //     // Get third exhibitPage if there is one.
-    //     if ($this->params->page_slug_3) {
-    //       $this->exhibitPage = get_record("ExhibitPage", [
-    //         "slug" => $this->params->page_slug_3,
-    //         "exhibit_id" => $this->exhibit->id,
-    //       ]);
-    //       $this->exhibitPages[] = $this->exhibitPage;
-    //     }
-    //
-    //     // Get item object if there is one.
-    //     if (!isset($config["item"])) {
-    //       if ($this->params->item_id) {
-    //         $this->item = get_record("Item", [
-    //           "slug" => $this->params->item_id,
-    //           "public" => 1,
-    //         ]);
-    //       } else {
-    //         $this->item = null;
-    //       }
-    //     } else {
-    //       $this->item = $config["item"];
-    //     }
-    //
-    //     // Get file object if there is one.
-    //     if (!isset($config["file"])) {
-    //       if ($this->params->file_id) {
-    //         $this->file = get_record("File", [
-    //           "slug" => $this->params->file_id,
-    //           "public" => 1,
-    //         ]);
-    //       }
-    //     } else {
-    //       $this->file = $config["file"];
-    //     }
-    //
-    //     // Get collection object if there is one.
-    //     if (!isset($config["collection"])) {
-    //       if ($this->params->collection_id) {
-    //         $this->item = get_record("Collection", [
-    //           "slug" => $this->params->collection_id,
-    //           "public" => 1,
-    //         ]);
-    //       } else {
-    //         $this->collection = null;
-    //       }
-    //     } else {
-    //       $this->collection = $config["collection"];
-    //     }
-
     // Get the exhibit theme options.
     $this->theme_options = $this->exhibit->theme_options;
 
     $this->options = $this->_setOptions();
+
     // Set a title/Heading
     if (
       isset($this->options["microsite_title"]) &&
@@ -125,6 +62,30 @@ class ExhibitMicrositeHelper
       $this->heading = $this->exhibit->title;
     }
 
+    // Set a subheading
+    if (
+      isset($this->options["microsite_subheading"]) &&
+      !empty($this->options["microsite_subheading"])
+    ) {
+      $this->subheading = $this->options["microsite_subheading"];
+    } else {
+      $this->subheading = "";
+    }
+
+    $this->is_exhibit_landing = $this->_isExhibitLanding();
+    $this->_setScriptPaths();
+    $this->_setLandingPageUrl();
+    $this->_setPerPage();
+    $this->_setIndex();
+    $this->setRefUri();
+  }
+
+  /**
+   * Set the microsite URL property based on
+   * whether the microsite Exhibit uses the exhibit summary page or not.
+   */
+  protected function _setLandingPageUrl()
+  {
     // Set the landing page url.
     if ($this->exhibit->use_summary_page === 1) {
       $this->url = url(
@@ -148,20 +109,6 @@ class ExhibitMicrositeHelper
     } else {
       $this->url = WEB_DIR;
     }
-
-    // Set a subheading
-    if (
-      isset($this->options["microsite_subheading"]) &&
-      !empty($this->options["microsite_subheading"])
-    ) {
-      $this->subheading = $this->options["microsite_subheading"];
-    } else {
-      $this->subheading = "";
-    }
-
-    $this->_setPerPage();
-    $this->_setIndex();
-    $this->setRefUri();
   }
 
   /**
@@ -179,6 +126,29 @@ class ExhibitMicrositeHelper
     } else {
       $this->index = 0;
     }
+  }
+
+  /**
+   * Determine if we're on the exhibit summary page or starting exhibit page
+   * @return boolean
+   */
+  protected function _isExhibitLanding()
+  {
+    if ($this->exhibit->use_summary_page === 1) {
+      if ($this->route == "ems_exhibitLanding") {
+        return true;
+      } else {
+        if ($this->route == "ems_exhibitPage1") {
+          if (isset($this->exhibitPages[0])) {
+            if ($this->exhibitPages[0]->slug == $this->params->page_slug_1) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -207,68 +177,68 @@ class ExhibitMicrositeHelper
     $this->total_pages = ceil(intval($total_rows) / intval($this->per_page));
   }
 
-  function urlArray()
-  {
-    $data = [];
-    if ($this->params->slug) {
-      $data["landing"] = [
-        "url" => url(
-          ["action" => "show", "slug" => $this->exhibit->slug],
-          "ems_exhibitLanding"
-        ),
-        "title" => $this->exhibit->title,
-      ];
-    }
-
-    if ($this->params->page_slug_1) {
-      $data["page_1"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->params->page_slug_1,
-          ],
-          "ems_exhibitPage1"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_1])
-          ->title,
-      ];
-    }
-
-    if ($this->page_slug_2) {
-      $data["page_2"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $params->page_slug_1,
-            "page_slug_2" => $this->page_slug_2,
-          ],
-          "ems_exhibitPage2"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_2])
-          ->title,
-      ];
-    }
-
-    if ($this->page_slug_3) {
-      $data["page_3"] = [
-        "url" => url(
-          [
-            "action" => "show",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->page_slug_1,
-            "page_slug_2" => $this->page_slug_2,
-            "page_slug_3" => $this->page_slug_3,
-          ],
-          "ems_exhibitPage3"
-        ),
-        "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_3])
-          ->title,
-      ];
-    }
-    return $data;
-  }
+  //   function urlArray()
+  //   {
+  //     $data = [];
+  //     if ($this->params->slug) {
+  //       $data["landing"] = [
+  //         "url" => url(
+  //           ["action" => "show", "slug" => $this->exhibit->slug],
+  //           "ems_exhibitLanding"
+  //         ),
+  //         "title" => $this->exhibit->title,
+  //       ];
+  //     }
+  //
+  //     if ($this->params->page_slug_1) {
+  //       $data["page_1"] = [
+  //         "url" => url(
+  //           [
+  //             "action" => "show",
+  //             "slug" => $this->exhibit->slug,
+  //             "page_slug_1" => $this->params->page_slug_1,
+  //           ],
+  //           "ems_exhibitPage1"
+  //         ),
+  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_1])
+  //           ->title,
+  //       ];
+  //     }
+  //
+  //     if ($this->page_slug_2) {
+  //       $data["page_2"] = [
+  //         "url" => url(
+  //           [
+  //             "action" => "show",
+  //             "slug" => $this->exhibit->slug,
+  //             "page_slug_1" => $params->page_slug_1,
+  //             "page_slug_2" => $this->page_slug_2,
+  //           ],
+  //           "ems_exhibitPage2"
+  //         ),
+  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_2])
+  //           ->title,
+  //       ];
+  //     }
+  //
+  //     if ($this->page_slug_3) {
+  //       $data["page_3"] = [
+  //         "url" => url(
+  //           [
+  //             "action" => "show",
+  //             "slug" => $this->exhibit->slug,
+  //             "page_slug_1" => $this->page_slug_1,
+  //             "page_slug_2" => $this->page_slug_2,
+  //             "page_slug_3" => $this->page_slug_3,
+  //           ],
+  //           "ems_exhibitPage3"
+  //         ),
+  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_3])
+  //           ->title,
+  //       ];
+  //     }
+  //     return $data;
+  //   }
 
   /**
    * Returns a canonical URL for the current page.
@@ -713,5 +683,27 @@ class ExhibitMicrositeHelper
     }
 
     $this->refUri = url($data, $this->route);
+  }
+
+  /**
+   * Set the script paths the microsite uses. Script paths are an array
+   * of paths to views Omeka loops through when including them.
+   */
+  protected function _setScriptPaths()
+  {
+    $view = get_view();
+    $paths = [
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages",
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public/sitewide",
+      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public",
+      PUBLIC_THEME_DIR .
+      "/" .
+      $this->exhibit->theme .
+      "/exhibit-microsite/views",
+    ];
+
+    foreach ($paths as $path) {
+      $view->addScriptPath($path);
+    }
   }
 } // End MicrositeHelper class.

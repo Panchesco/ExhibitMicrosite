@@ -66,6 +66,9 @@
       ? $header_image_colspan
       : 12;
 
+    $headings_container_flex = isset($headings_container_flex)
+      ? $headings_container_flex
+      : "row";
     $headings_wrapper_colspan = isset($headings_wrapper_colspan)
       ? $headings_wrapper_colspan
       : 12;
@@ -104,24 +107,26 @@
             <div class="identity-wrapper bottom-shadow">
                <div class="header-container-all container">
                   <div class="header-row-all row">
-                     <div class="col-identity-wrapper col col-12 col-lg-<?php echo $header_colspan; ?> border border-solid border-dark">
+                     <div class="col-identity-wrapper col col-<?php echo $header_colspan; ?>">
                         <div class="row-identity-wrapper row">
                            <?php if (
                              isset($header_image) &&
                              !empty($header_image)
-                           ): ?><div class="header-image-wrapper col col-12 col-lg-<?php echo $header_image_colspan; ?> d-flex flex-row flex-wrap justify-content-center align-items-center">
+                           ): ?><div class="header-image-wrapper col col-<?php echo $header_image_colspan; ?> d-flex flex-row flex-wrap justify-content-center align-items-center">
                               <a href="<?php echo $microsite->url; ?>"><img src="<?php echo WEB_FILES .
   "/theme_uploads/" .
   $header_image; ?>" alt="<?php echo $header_image_alt; ?>" /></a>
                            </div><!-- end .header-image-wrapper -->
                            <?php endif; ?>
-                           <div class="header-identity-wrapper col col-12 col-lg-<?php echo $headings_wrapper_colspan; ?> d-flex flex-row flex-wrap">
-                              <div class="col col-12 col-lg-<?php echo $heading_colspan; ?> align-self-<?php echo $heading_align_self; ?>"">
-                                 <?php echo $microsite->heading; ?>
+                           <div class="header-identity-wrapper col col-<?php echo $headings_wrapper_colspan; ?> d-flex flex-<?php echo $headings_container_flex; ?> flex-wrap">
+                              <div class="heading-wrapper col col-<?php echo $heading_colspan; ?> align-self-<?php echo $heading_align_self; ?>"">
+                                 <?php if (
+                                   $microsite->is_exhibit_landing
+                                 ): ?><h1><?php echo $microsite->heading; ?></h1><?php else:echo $microsite->heading;endif; ?>
                               </div>
-                              <div class="col col-12 col-lg-<?php echo $subheading_colspan; ?> align-self-<?php echo $subheading_align_self; ?>">
+                              <div class="subheading-wrapper col col-<?php echo $subheading_colspan; ?> align-self-<?php echo $subheading_align_self; ?>">
                                  <?php echo $microsite->subheading; ?>
-                              </div>  
+                              </div><!-- end .subheading-wrapper -->
                            </div><!-- end .header-identity-wrapper -->
                         </div><!-- end .row-identity-wrapper -->
                      </div><!-- end .col-identity-wrapper -->

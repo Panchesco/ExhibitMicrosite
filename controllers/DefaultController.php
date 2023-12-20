@@ -9,6 +9,7 @@ class ExhibitMicrosite_DefaultController extends
   Omeka_Controller_AbstractActionController
 {
   public $exhibit;
+  public $exhibitPages;
   public $slug;
   public $theme_options;
   public $exhibit_theme_options;
@@ -32,42 +33,48 @@ class ExhibitMicrosite_DefaultController extends
         ->findBySlug($this->slug);
     }
 
-    $this->view->addScriptPath(
-      EXHIBIT_MICROSITE_PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
-    );
-
-    $this->view->addScriptPath(
-      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public/sitewide"
-    );
-
-    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public");
-
-    $this->view->addScriptPath(
-      PUBLIC_THEME_DIR .
-        "/" .
-        $this->exhibit->theme .
-        "/exhibit-microsite/views"
-    );
+    if ($this->exhibit) {
+      $this->exhibitPages = $this->exhibit->getPages();
+    }
 
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
+      "view" => $this->view,
     ]);
 
     $this->theme_options = $this->exhibit->getThemeOptions();
-
     $this->breadcrumb = new BreadcrumbHelper(["exhibit" => $this->exhibit]);
-
     $this->nav = new NavHelper([
       "exhibit" => $this->exhibit,
       "route" => $this->route,
     ]);
-
+    // Make the Exhbit Theme Options available
     $this->exhibit_theme_options = $this->exhibit->getThemeOptions();
   }
 
+  /**
+   * If the exhibit summary option is active, show the summary page.
+   * If not, redirect to the first page to the exhibit pages.
+   */
   public function summaryAction()
   {
+    if ($this->exhibit->use_summary_page === 0) {
+      if (isset($this->exhibitPages[0]->slug)) {
+        $url = url(
+          [
+            "action" => "show",
+            "controller" => "exhibitpage",
+            "slug" => $this->microsite->params->slug,
+            "page_slug_1" => $this->exhibitPages[0]->slug,
+          ],
+          "ems_exhibitPage1"
+        );
+        Header("Location:" . $url);
+      }
+    }
+
+    // If the exhibit uses the summary page, display that now.
     echo $this->view->partial("exhibit/summary.php", [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),

@@ -55,23 +55,6 @@ class ExhibitMicrosite_ExhibitpageController extends
       "exhibit" => $this->exhibit,
       "route" => $this->route,
     ]);
-
-    $this->view->addScriptPath(
-      EXHIBIT_MICROSITE_PLUGIN_DIR . "/ExhibitMicrosite/views/exhibit-pages"
-    );
-
-    $this->view->addScriptPath(
-      EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public/sitewide"
-    );
-
-    $this->view->addScriptPath(EXHIBIT_MICROSITE_PLUGIN_DIR . "/views/public");
-
-    $this->view->addScriptPath(
-      PUBLIC_THEME_DIR .
-        "/" .
-        $this->exhibit->theme .
-        "/exhibit-microsite/views"
-    );
   }
 
   public function showAction()

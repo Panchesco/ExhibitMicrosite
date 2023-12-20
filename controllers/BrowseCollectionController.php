@@ -81,21 +81,6 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
     $this->theme_options = $this->exhibit->getThemeOptions();
 
-    $this->view->addScriptPath(
-      PUBLIC_THEME_DIR .
-        "/" .
-        $this->exhibit->theme .
-        "/exhibit-microsite/views"
-    );
-
-    $this->view->addScriptPath(
-      PLUGIN_DIR . "/exhibit-microsite/views/exhibit-pages"
-    );
-
-    $this->view->addScriptPath(
-      PLUGIN_DIR . "/ExhibitMicrosite/views/public/sitewide"
-    );
-
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
