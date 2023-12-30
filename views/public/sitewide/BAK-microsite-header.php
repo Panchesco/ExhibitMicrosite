@@ -62,15 +62,42 @@
       extract($exhibit_theme_options);
     }
     // Set some defaults in case they haven't yet been set in the theme config.
-    $header_logo = isset($header_logo) ? $header_logo : 12;
-    $header_logo_alt = isset($header_logo_alt) ? $header_logo_alt : "";
-    $header_layout = isset($header_layout) ? $header_layout : "logo-left";
+    $header_image_colspan = isset($header_image_colspan)
+      ? $header_image_colspan
+      : 12;
+
+    $header_image_alt = isset($header_image_alt) ? $header_image_alt : "";
+
+    $header_wrapper_colspan = isset($header_image_colspan)
+      ? $header_image_colspan
+      : 12;
+
+    $headings_container_flex = isset($headings_container_flex)
+      ? $headings_container_flex
+      : "row";
+    $headings_wrapper_colspan = isset($headings_wrapper_colspan)
+      ? $headings_wrapper_colspan
+      : 12;
+
+    $heading_colspan = isset($heading_colspan) ? $heading_colspan : 12;
+    $heading_align_self = isset($heading_align_self)
+      ? $heading_align_self
+      : "center";
+
+    $subheading_colspan = isset($subheading_colspan) ? $subheading_colspan : 12;
+
+    $subheading_align_self = isset($subheading_align_self)
+      ? $subheading_align_self
+      : "center";
+
+    $header_justify_content = isset($header_justify_content)
+      ? $header_justify_content
+      : "justify-content-start";
+
+    $header_align_items = isset($header_align_items)
+      ? $header_align_items
+      : "align-items-center";
     ?>
-    <style>
-
-
-
-    </style>
 </head>
  <?php echo body_tag([
    "id" => @$bodyid,
@@ -84,35 +111,43 @@
         <header role="banner">
             <?php fire_plugin_hook("public_header", ["view" => $this]); ?>
             <div class="identity-wrapper bottom-shadow">
-               <div class="header-container-all container g-0 <?php echo $header_layout; ?>">
-                     <div class="col-identity-wrapper col-12">
+               <div class="header-container-all container">
+                  <div class="header-row-all row">
+                     <div class="col-identity-wrapper col col-<?php echo $header_colspan; ?>">
+                        <div class="row-identity-wrapper row">
                            <?php if (
-                             isset($header_logo) &&
-                             !empty($header_logo)
-                           ): ?><div class="header-logo-wrapper">
+                             isset($header_image) &&
+                             !empty($header_image)
+                           ): ?><div class="header-image-wrapper col col-<?php echo $header_image_colspan; ?> d-flex flex-row flex-wrap justify-content-center align-items-center">
                               <a href="<?php echo $microsite->url; ?>"><img src="<?php echo WEB_FILES .
   "/theme_uploads/" .
-  $header_logo; ?>" alt="<?php echo $header_logo_alt; ?>" /></a>
-                           </div><!-- end .header-logo-wrapper -->
+  $header_image; ?>" alt="<?php echo $header_image_alt; ?>" /></a>
+                           </div><!-- end .header-image-wrapper -->
                            <?php endif; ?>
-                           <div class="headings-wrapper">
-                              <div class="heading-wrapper">
+                           <div class="header-identity-wrapper col col-<?php echo $headings_wrapper_colspan; ?> d-flex flex-<?php echo $headings_container_flex; ?> flex-wrap">
+                              <div class="heading-wrapper col col-<?php echo $heading_colspan; ?> align-self-<?php echo $heading_align_self; ?>"">
                                  <?php if (
-                                   1 == 1 ||
                                    $microsite->is_exhibit_landing
-                                 ): ?><h1><?php echo $microsite->heading; ?></h1><?php else: ?><div class="h1"><?php echo $microsite->heading; ?></div><?php endif; ?>
+                                 ): ?><h1><?php echo $microsite->heading; ?></h1><?php else:echo $microsite->heading;endif; ?>
                               </div>
-                              <div class="subheading-wrapper">
+                              <div class="subheading-wrapper col col-<?php echo $subheading_colspan; ?> align-self-<?php echo $subheading_align_self; ?>">
                                  <?php echo $microsite->subheading; ?>
                               </div><!-- end .subheading-wrapper -->
-                           </div><!-- end .headings-wrapper -->
+                           </div><!-- end .header-identity-wrapper -->
+                        </div><!-- end .row-identity-wrapper -->
                      </div><!-- end .col-identity-wrapper -->
+                  </div><!-- end .header-row-all -->
                </div><!-- end .header-container-all -->
             </div><!-- end .identity-wrapper -->
-<?php echo $view->partial("sitewide/header-nav.php", [
-  "global_nav" => $global_nav,
-  "microsite" => $microsite,
-]); ?>
+            <div class="nav-wrapper bottom-shadow">
+            <div class="container">
+              <div class="d-flex justify-content-end">
+                <div id="header-region-two">
+                  <nav class="global-nav"><?php echo $global_nav; ?></nav>
+                  </div><!-- end header-region-two -->
+              </div><!-- end .d-flex -->
+            </div><!-- end .container -->
+            </div><!-- end .nav-wrapper -->
         </header>
         <main>
             <nav class="flyouts">

@@ -1,17 +1,39 @@
 <?php
+/**
+ *
+ * $active_file
+ * $breadcrumb
+ * $breadcrumb->html
+ * $breadcrumb->prevData,
+ * $collection
+ * $collection->id
+ * $route
+ * $exhibit
+ * $exhibit_theme_options
+ * $exhibitPage
+ * $file
+ * $item
+ * $item->id
+ * $file_info
+ * $microsite
+ * $microsite->params
+ * $microsite->params->slug
+ * $microsite->refUri
+ * $view
+ */
 
 set_current_record("Item", $item);
-
+// Display the microsite header
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
   "bodyid" => $microsite->route,
   "bodyclass" => "show",
-  "theme_options" => $theme_options,
+  "exhibit_theme_options" => $exhibit_theme_options,
   "params" => $microsite->params,
   "global_nav" => $nav->top_pages_html,
   "microsite" => $microsite,
-  "view" => $this->view,
+  "view" => $view,
   "breadcrumb" => $breadcrumb,
   "exhibit_theme_options" => $exhibit_theme_options,
 ]);
@@ -48,7 +70,7 @@ if ($file_title && $file_title) {
 ?>
 <div class="row g-0">
   <nav id="breadcrumb" class="col-span-12">
-<?php echo $breadcrumb; ?>
+<?php echo $breadcrumb->html; ?>
   </nav>
   <div class="col-span-12">
     <h1><?php echo $h1; ?></h1>
@@ -118,11 +140,11 @@ if ($file_title && $file_title) {
             [
               "action" => "browse",
               "controller" => "item",
-              "slug" => $params->slug,
+              "slug" => $microsite->params->slug,
             ],
             "ems_collection",
             ["collection" => $collection->id]
-          ); ?>"><?php echo $collection_title; ?></a>
+          ); ?>"><?php echo $collection->title; ?></a>
                 </div>
         </div>
      <?php endif; ?>
@@ -214,10 +236,9 @@ if ($file_title && $file_title) {
          </div>
      </div>
   </div><!-- end #dublin-core -->
-<p><a class="return-to" href="<?php echo $prevData["uri"]; ?>"><?php echo __(
-  "Return to %s",
-  $prevData["title"]
-); ?></a>
+<p><a class="return-to" href="<?php echo $breadcrumb->prevData[
+  "uri"
+]; ?>"><?php echo __("Return to %s", $breadcrumb->prevData["title"]); ?></a>
 </p>
 <?php echo foot(); ?>
 

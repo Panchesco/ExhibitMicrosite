@@ -32,8 +32,7 @@ class NavHelper
 
   public function topPagesHtml()
   {
-    $html =
-      '<label id="mobile-menu-wrapper" for="mobile-menu-toggle">[mobile menu toggle]<input type="checkbox" name="mobile-menu-toggle" id="mobile-menu-toggle" /></label>';
+    $html = "";
     $html .= "<ul>\n";
     if ($this->microsite->exhibit->use_summary_page) {
       if ($this->microsite->options["summary_in_nav"]) {
@@ -68,8 +67,8 @@ class NavHelper
           $display_title = $page->title;
           $current =
             $this->microsite->params->page_slug_1 == "browse"
-              ? ' class="current"'
-              : "";
+              ? ' class="current ' . $page->slug . '"'
+              : ' class="' . $page->slug . '"';
           break;
 
         case "collections":
@@ -82,8 +81,12 @@ class NavHelper
           $display_title = $page->title;
           $current =
             $this->microsite->params->page_slug_1 == "collections"
-              ? ' class="current ems-trigger indicator" data-target="#nav-collections"'
-              : ' class="ems-trigger indicator" data-target="#nav-collections"';
+              ? ' class="current ems-trigger indicator ' .
+                $page->slug .
+                '" data-target="#nav-collections"'
+              : ' class="ems-trigger indicator ' .
+                $page->slug .
+                '" data-target="#nav-collections"';
           break;
 
         case "search":
@@ -98,10 +101,13 @@ class NavHelper
             WEB_RELATIVE_THEME .
             '/border-narrative/img/icons/search_FILL0_wght400_GRAD0_opsz24.svg" title="' .
             __("Search") .
-            ' alt="' .
+            '" alt="' .
             __("Search Icon") .
             '">';
-          $current = ' data-target="#nav-search" class="ems-trigger"';
+          $current =
+            ' data-target="#nav-search" class="ems-trigger ' .
+            $page->slug .
+            '"';
           break;
 
         default:
@@ -114,12 +120,12 @@ class NavHelper
           $display_title = $page->title;
           $current =
             $page->slug == $this->microsite->params->page_slug_1
-              ? ' class="current"'
-              : "";
+              ? ' class="current ' . $page->slug . '"'
+              : ' class="' . $page->slug . '"';
           break;
       }
 
-      $html .= " <li" . $current . ' data-slug="' . $data_slug . '">';
+      $html .= " <li " . $current . ' data-slug="' . $data_slug . '">';
       $html .=
         '<a title="' .
         $page->title .
@@ -130,11 +136,9 @@ class NavHelper
         "</a></li>" .
         "\n";
     }
-
     $html .=
       '<li class="lang" data-slug="lang"><a href="#">Español</a></li>' . "\n";
-
-    $html .= "</ul>\n";
+    "</ul>" . "\n";
 
     return $html;
   }

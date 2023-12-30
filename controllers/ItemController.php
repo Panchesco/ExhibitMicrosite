@@ -1,6 +1,5 @@
 <?php
 
-use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 use ExhibitMicrosite\Helpers\NavHelper;
@@ -12,65 +11,71 @@ class ExhibitMicrosite_ItemController extends
   public $item;
   public $exhibit;
   public $exhibitPage;
-  public $slug;
-  public $page_slug_1;
-  public $page_slug_2;
-  public $page_slug_3;
-  public $page;
   public $theme_options;
-  public $page_slugs = [];
-  public $route;
   public $active_file;
   public $file_info;
   public $files;
-  public $params;
+  public $nav;
 
   protected $_request;
 
   protected function _init()
   {
+    // Create instance of view object.
     $this->view = get_view();
+
+    // Create instance of request method.
     $this->request = Zend_Controller_Front::getInstance()->getRequest();
+
+    // Set current route name, so we can pass it to views and blocks for linking
+    // to ExhibitMicrosite custom routes.
     $this->route = $this->getFrontController()
       ->getRouter()
       ->getCurrentRouteName();
 
-    $this->params = new ParamsHelper();
-
-    if (!$this->exhibit && $this->params->slug) {
+    // Get the current exhibit object based on the slug.
+    if (!$this->exhibit && $this->request->getParam("slug")) {
       $this->exhibit = get_record("Exhibit", [
         "public" => 1,
-        "slug" => $this->params->slug,
+        "slug" => $this->request->getParam("slug"),
       ]);
     }
 
-    if (!$this->exhibitPage && $this->params->page_slugs) {
+    // Set the current exhibit page object.
+    if (!$this->exhibitPage) {
       $this->exhibitPage = get_record("ExhibitPage", [
         "public" => 1,
         "exhibit_id" => $this->exhibit->id,
-        "slug" => array_pop($this->params->page_slugs),
+        "slug" => $this->request->getParam("slug"),
       ]);
     }
 
+    // Create instance of ExhibitMicrositeHelper to use in here and to pass to
+    // views.
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
       "exhibitPage" => $this->exhibitPage,
     ]);
 
-    if (!$this->item && $this->params->item_id) {
-      $this->item = get_record_by_id("Item", $this->params->item_id);
+    // Set the item object.
+    if (!$this->item && $this->request->getParam("item_id")) {
+      $this->item = get_record_by_id(
+        "Item",
+        $this->request->getParam("item_id")
+      );
       $this->files = $this->item->getFiles();
       if ($this->files) {
-        $this->active_file = !$this->params->file_id
+        $this->active_file = !$this->request->getParam("file_id")
           ? $this->files[0]
-          : get_record_by_id("File", $this->params->file_id);
+          : get_record_by_id("File", $this->request->getParam("file_id"));
       } else {
         $this->files = [];
         $this->active_file = null;
       }
     }
 
+    // Set the active file and active file info.
     if ($this->active_file) {
       $title = metadata($this->active_file, "rich_title", [
         "no_escape" => true,
@@ -83,8 +88,6 @@ class ExhibitMicrosite_ItemController extends
           $title != $this->active_file->original_filename ? $title : null,
       ];
     }
-
-    //$this->thumb_links_base = $this->thumbLinksBase();
 
     // Set some config values to pass to the breadcrumb helper.
     $config = [
@@ -109,51 +112,19 @@ class ExhibitMicrosite_ItemController extends
     ]);
   }
 
-  public function fileInfo()
-  {
-    return $file_info;
-  }
-
-  public function thumbLinksBase()
-  {
-    $this->params = new ParamsHelper();
-    $base = WEB_ROOT . "/exhibits/show";
-
-    if ($this->params->slug) {
-      $base .= "/" . $this->params->slug;
-    }
-
-    if (!$this->params->page_slugs || !is_array($this->params->page_slugs)) {
-      $base .= "/item";
-      $base .= "/" . $this->params->item_id;
-      return $base;
-    }
-
-    foreach ($this->page_slugs as $slug) {
-      $base .= "/" . $slug;
-    }
-    foreach ($this->params->page_slugs as $param) {
-      $base .= "/" . $param;
-    }
-    $base .= "/item";
-    $base .= "/" . $this->params->item_id;
-    return $base;
-  }
-
   public function showAction()
   {
     $this->_init();
 
-    $this->params = new ParamsHelper();
     $collection = $this->item->getCollection();
 
     $this->view->item = $this->item;
 
     echo $this->view->partial("items/show.php", [
       "active_file" => $this->active_file,
-      "breadcrumb" => $this->breadcrumb->html,
+      "breadcrumb" => $this->breadcrumb,
       "collection" => $collection,
-      "collection_id" => $collection->id,
+      //"collection_id" => $collection->id,
       "route" => $this->route,
       "exhibit" => $this->exhibit,
       "exhibit_theme_options" => $this->exhibit->getThemeOptions(),
@@ -162,15 +133,11 @@ class ExhibitMicrosite_ItemController extends
       "item" => $this->item,
       "item_id" => $this->item_id,
       "file_info" => $this->file_info,
-      "slug" => $this->microsite->params->slug,
-      "thumb_links_base" => $this->thumb_links_base,
-      "theme_options" => $this->microsite->exhibit->getThemeOptions(),
       "microsite" => $this->microsite,
       "view" => $this->view,
-      "params" => $this->microsite->params,
-      "refUri" => $this->microsite->refUri,
-      "prevData" => $this->breadcrumb->prevData,
-      "canonicalURL" => $this->microsite->canonicalURL($this->route),
+      // "refUri" => $this->microsite->refUri,
+      // "prevData" => $this->breadcrumb->prevData,
+      // "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "collection_title" => metadata($collection, "rich_title", [
         "no_escape" => true,
       ]),

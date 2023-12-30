@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-12">
                 <nav id="breadcrumb" class="w-100">
-                <?php echo $breadcrumb; ?>
+                <?php echo $breadcrumb->html; ?>
                 </nav><!-- end .breadcrumb -->
             </div>
              <div class="col-11">

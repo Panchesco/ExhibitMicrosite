@@ -5,7 +5,7 @@ use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 use ExhibitMicrosite\Helpers\NavHelper;
 
-class ExhibitMicrosite_DefaultController extends
+class ExhibitMicrosite_SearchController extends
   Omeka_Controller_AbstractActionController
 {
   public $exhibit;
@@ -19,6 +19,7 @@ class ExhibitMicrosite_DefaultController extends
 
   function init()
   {
+    die(__FILE__);
     $this->route = $this->getFrontController()
       ->getRouter()
       ->getCurrentRouteName();
@@ -49,7 +50,7 @@ class ExhibitMicrosite_DefaultController extends
       "exhibit" => $this->exhibit,
       "route" => $this->route,
     ]);
-    // Make the Exhbit Theme Options available
+    // Make the Exhibit Theme Options available
     $this->exhibit_theme_options = $this->exhibit->getThemeOptions();
   }
 
@@ -57,25 +58,10 @@ class ExhibitMicrosite_DefaultController extends
    * If the exhibit summary option is active, show the summary page.
    * If not, redirect to the first page to the exhibit pages.
    */
-  public function summaryAction()
+  public function showAction()
   {
-    if ($this->exhibit->use_summary_page === 0) {
-      if (isset($this->exhibitPages[0]->slug)) {
-        $url = url(
-          [
-            "action" => "show",
-            "controller" => "exhibitpage",
-            "slug" => $this->microsite->params->slug,
-            "page_slug_1" => $this->exhibitPages[0]->slug,
-          ],
-          "ems_exhibitPage1"
-        );
-        Header("Location:" . $url);
-      }
-    }
-
     // If the exhibit uses the summary page, display that now.
-    echo $this->view->partial("exhibit/summary.php", [
+    echo $this->view->partial("sitewide/search.php", [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
@@ -90,4 +76,4 @@ class ExhibitMicrosite_DefaultController extends
     ]);
     exit();
   }
-} // End ExhibitMicrosite_DefaultController
+} // End ExhibitMicrosite_SearchController

@@ -510,6 +510,7 @@ class BreadcrumbHelper
       }
       $last_title = $row["title"];
     }
+    // Add the language switcher.
     $this->html .= "</ul>";
   }
 } // End BreadcrumbHelper class.

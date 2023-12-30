@@ -7,7 +7,11 @@ $exhibitPage = isset($exhibitPage)
 $child_pages = $exhibitPage->getChildPages();
 ?>
 <div class="container">
+
     <div class="d-flex flex-wrap">
+      <div class="col-12 w-100 text-end"><a href="#" class="ems-closer icon" title="<?php echo __(
+        "Close this menu"
+      ); ?>"></a></div>
   <?php foreach ($child_pages as $page):
     $file = exhibitPage_first_file_image($page); ?>
   <div class="exhibit-page-link-wrapper col-12 col-md-6 col-lg-4 ">

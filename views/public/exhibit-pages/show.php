@@ -26,7 +26,7 @@ echo $this->view->partial("microsite-header.php", [
   "exhibitPage" => $exhibitPage,
 ]); ?>
 <nav id="breadcrumb">
- <?php echo $breadcrumb; ?>
+ <?php echo $breadcrumb->html; ?>
 </nav>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
