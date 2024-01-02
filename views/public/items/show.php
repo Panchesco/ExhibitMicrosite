@@ -70,7 +70,7 @@ if ($file_title && $file_title) {
 ?>
 <div class="row g-0">
   <nav id="breadcrumb" class="col-span-12">
-<?php echo $breadcrumb->html; ?>
+<?php echo $breadcrumb; ?>
   </nav>
   <div class="col-span-12">
     <h1><?php echo $h1; ?></h1>
@@ -108,7 +108,7 @@ if ($file_title && $file_title) {
 
 <?php endif; ?>
 </div><!-- end .stage-and-thumbs-wrapper -->
-<div class="d-flex g-0 gap-3 py-5">
+<div class="row py-5">
   <div class="col-span-12 col-xl-8">
     <h2 class="underlined"><?php echo __("Dublin Core"); ?></h2>
     <div id="item-metadata">
@@ -135,8 +135,7 @@ if ($file_title && $file_title) {
     <?php if (metadata("item", "Collection Name")): ?>
       <h2 class="underlined"><?php echo __("Collection"); ?></h2>
         <div id="collection" class="element">
-          <div class="element-text"><a href="
-          <?php echo url(
+          <div class="element-text"><a href="<?php echo url(
             [
               "action" => "browse",
               "controller" => "item",
@@ -144,7 +143,7 @@ if ($file_title && $file_title) {
             ],
             "ems_collection",
             ["collection" => $collection->id]
-          ); ?>"><?php echo $collection->title; ?></a>
+          ); ?>"><?php echo $collection_title; ?></a>
                 </div>
         </div>
      <?php endif; ?>
@@ -236,9 +235,10 @@ if ($file_title && $file_title) {
          </div>
      </div>
   </div><!-- end #dublin-core -->
-<p><a class="return-to" href="<?php echo $breadcrumb->prevData[
-  "uri"
-]; ?>"><?php echo __("Return to %s", $breadcrumb->prevData["title"]); ?></a>
+<p><a class="return-to" href="<?php echo $prevData["uri"]; ?>"><?php echo __(
+  "Return to %s",
+  $prevData["title"]
+); ?></a>
 </p>
 <?php echo foot(); ?>
 

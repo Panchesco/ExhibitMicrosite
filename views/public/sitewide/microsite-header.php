@@ -98,7 +98,6 @@
                            <div class="headings-wrapper">
                               <div class="heading-wrapper">
                                  <?php if (
-                                   1 == 1 ||
                                    $microsite->is_exhibit_landing
                                  ): ?><h1><?php echo $microsite->heading; ?></h1><?php else: ?><div class="h1"><?php echo $microsite->heading; ?></div><?php endif; ?>
                               </div>
@@ -121,14 +120,14 @@
                "microsite" => $microsite,
              ]); ?>
                 </div><!-- end #nav-collections -->
-                <nav class="flyouts">
-                    <div id="nav-search" class="ems-flyout">
+                <div id="nav-search" class="ems-flyout">
                  <?php echo $view->partial("sitewide/simple-search.php", [
                    "microsite" => $microsite,
                    "breadcrumb" => $breadcrumb,
                  ]); ?>
                     </div><!-- end #nav-search -->
-            </nav>
+            </nav><!-- end nav.flyouts -->
           <div id="content" role="main" tabindex="-1">
             <div class="container">
+
 

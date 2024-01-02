@@ -122,9 +122,8 @@ class ExhibitMicrosite_ItemController extends
 
     echo $this->view->partial("items/show.php", [
       "active_file" => $this->active_file,
-      "breadcrumb" => $this->breadcrumb,
+      "breadcrumb" => $this->breadcrumb->html,
       "collection" => $collection,
-      //"collection_id" => $collection->id,
       "route" => $this->route,
       "exhibit" => $this->exhibit,
       "exhibit_theme_options" => $this->exhibit->getThemeOptions(),
@@ -135,9 +134,9 @@ class ExhibitMicrosite_ItemController extends
       "file_info" => $this->file_info,
       "microsite" => $this->microsite,
       "view" => $this->view,
-      // "refUri" => $this->microsite->refUri,
-      // "prevData" => $this->breadcrumb->prevData,
-      // "canonicalURL" => $this->microsite->canonicalURL($this->route),
+      "refUri" => $this->microsite->refUri,
+      "prevData" => $this->breadcrumb->prevData,
+      "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "collection_title" => metadata($collection, "rich_title", [
         "no_escape" => true,
       ]),

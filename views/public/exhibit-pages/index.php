@@ -3,6 +3,7 @@
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "subheading" => $microsite->options["microsite_subheading"],
+  "breadcrumb" => $breadcrumb,
   "theme_options" => $theme_options,
   "params" => $params,
   "global_nav" => $nav->top_pages_html,
@@ -33,6 +34,7 @@ $attachments = $block->getAttachments();
 set_current_record("exhibit", $exhibit, true);
 echo get_view()->partial($layout->getViewPartial(), [
   "attachments" => $attachments,
+  "breadcrumb" => $breadcrumb,
   "block" => $block,
   "exhibit" => $exhibit,
   "exhibit_theme_options" => $exhibit_theme_options,

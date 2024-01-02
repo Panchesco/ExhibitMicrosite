@@ -11,6 +11,7 @@
 
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
+  "breadcrumb" => $breadcrumb,
   "subheading" => $microsite->options["microsite_subheading"],
   "theme_options" => $theme_options,
   "global_nav" => $nav->top_pages_html,
@@ -26,7 +27,7 @@ echo $this->view->partial("microsite-header.php", [
   "exhibitPage" => $exhibitPage,
 ]); ?>
 <nav id="breadcrumb">
- <?php echo $breadcrumb->html; ?>
+ <?php echo $breadcrumb; ?>
 </nav>
 <h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
@@ -38,6 +39,7 @@ $attachments = $block->getAttachments();
 set_current_record("exhibit", $exhibit, true);
 echo get_view()->partial($layout->getViewPartial(), [
   "attachments" => $attachments,
+  "breadcrumb" => $breadcrumb,
   "block" => $block,
   "exhibit" => $exhibit,
   "exhibit_theme_options" => $exhibit_theme_options,
@@ -49,7 +51,6 @@ echo get_view()->partial($layout->getViewPartial(), [
   "refUri" => $refUri,
   "route" => $route,
   "microsite" => $microsite,
-  "breadcrumb" => $breadcrumb,
 ]);
 ?>
 <?php endforeach; ?>

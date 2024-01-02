@@ -19,7 +19,6 @@ class ExhibitMicrosite_SearchController extends
 
   function init()
   {
-    die(__FILE__);
     $this->route = $this->getFrontController()
       ->getRouter()
       ->getCurrentRouteName();

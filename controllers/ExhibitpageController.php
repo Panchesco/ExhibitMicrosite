@@ -72,7 +72,7 @@ class ExhibitMicrosite_ExhibitpageController extends
     // Branch for projects page handling.
     if ($this->exhibitPage->slug == "collections") {
       echo $this->view->partial("exhibit-pages/index.php", [
-        "breadcrumb" => $this->breadcrumb,
+        "breadcrumb" => $this->breadcrumb->html,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
         "exhibit_theme_options" => $this->exhibit->getThemeOptions(),
@@ -89,7 +89,7 @@ class ExhibitMicrosite_ExhibitpageController extends
       ]);
     } else {
       echo $this->view->partial("exhibit-pages/show.php", [
-        "breadcrumb" => $this->breadcrumb,
+        "breadcrumb" => $this->breadcrumb->html,
         "canonicalURL" => $this->microsite->canonicalURL($this->route),
         "exhibit" => $this->exhibit,
         "exhibit_theme_options" => $this->exhibit->getThemeOptions(),

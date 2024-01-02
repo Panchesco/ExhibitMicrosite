@@ -1,5 +1,4 @@
 <?php
-
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;

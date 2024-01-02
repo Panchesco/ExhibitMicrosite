@@ -3,7 +3,7 @@
   <div class="d-flex justify-content-between">
     <nav class="global-nav"><?php echo $global_nav; ?></nav>
     <div class="mobile-toggle-wrapper">
-    <div class="menu mobile-toggle closer" data-menu="1">
+    <div class="menu mobile-toggle closer ems-closer" data-menu="1">
       <div class="icon-left"></div>
       <div class="icon-right"></div>
     </div><!-- end .mobile-toggle -->
