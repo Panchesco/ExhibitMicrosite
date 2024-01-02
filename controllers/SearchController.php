@@ -1,6 +1,5 @@
 <?php
 
-//use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 use ExhibitMicrosite\Helpers\NavHelper;
@@ -9,6 +8,7 @@ class ExhibitMicrosite_SearchController extends
   Omeka_Controller_AbstractActionController
 {
   public $exhibit;
+  public $exhibitPage;
   public $exhibitPages;
   public $slug;
   public $theme_options;
@@ -37,6 +37,13 @@ class ExhibitMicrosite_SearchController extends
       $this->exhibitPages = $this->exhibit->getPages();
     }
 
+    if (!$this->exhibitPage) {
+      $this->exhibitPage = get_record("ExhibitPage", [
+        "slug" => $request->getParam("page_slug_1"),
+        "exhibit_id" => $this->exhibit->id,
+      ]);
+    }
+
     $this->microsite = new ExhibitMicrositeHelper([
       "route" => $this->route,
       "exhibit" => $this->exhibit,
@@ -60,10 +67,11 @@ class ExhibitMicrosite_SearchController extends
   public function showAction()
   {
     // If the exhibit uses the summary page, display that now.
-    echo $this->view->partial("sitewide/search.php", [
+    echo $this->view->partial("exhibit-pages/search.php", [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
+      "exhibitPage" => $this->exhibitPage,
       "exhibit_theme_options" => $this->exhibit_theme_options,
       "view" => $this->view,
       "microsite" => $this->microsite,
