@@ -97,8 +97,8 @@ class BreadcrumbHelper
 
       $this->data[] = [
         "atts" => [
-          "class" => "ems-trigger",
-          "data-target" => "#nav-collections",
+          "class" => "",
+          "data-target" => "",
         ],
         "title" => $this->exhibitPage_1->title,
         "slug" => $this->exhibitPage_1->slug,

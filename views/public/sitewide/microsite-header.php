@@ -114,19 +114,6 @@
 ]); ?>
         </header>
         <main>
-            <nav class="flyouts">
-                <div id="nav-collections" class="ems-flyout">
-             <?php echo $view->partial("exhibit-pages/index-listing.php", [
-               "microsite" => $microsite,
-             ]); ?>
-                </div><!-- end #nav-collections -->
-                <div id="nav-search" class="ems-flyout">
-                 <?php echo $view->partial("sitewide/simple-search.php", [
-                   "microsite" => $microsite,
-                   "breadcrumb" => $breadcrumb,
-                 ]); ?>
-                    </div><!-- end #nav-search -->
-            </nav><!-- end nav.flyouts -->
           <div id="content" role="main" tabindex="-1">
             <div class="container">
 

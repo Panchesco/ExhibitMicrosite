@@ -466,16 +466,14 @@ class ExhibitMicrosite_IndexController extends
           "collection_page_title" => htmlentities(
             $_POST["collection_page_title"]
           ),
-          "microsite_title" => htmlentities($_POST["microsite_title"]),
-          "microsite_subheading" => htmlentities(
-            $_POST["microsite_subheading"]
-          ),
-          "summary_in_nav" => htmlentities($_POST["summary_in_nav"]),
-          "summary_alt_title" => htmlentities($_POST["summary_alt_title"]),
-          "titles_separator" => htmlentities($_POST["titles_separator"]),
-          "per_page" => htmlentities($_POST["per_page"]),
-          "nav_depth" => htmlentities($_POST["nav_depth"]),
-          "palette" => htmlentities($_POST["palette"]),
+          "microsite_title" => $_POST["microsite_title"],
+          "microsite_subheading" => $_POST["microsite_subheading"],
+          "summary_in_nav" => $_POST["summary_in_nav"],
+          "summary_alt_title" => $_POST["summary_alt_title"],
+          "titles_separator" => $_POST["titles_separator"],
+          "per_page" => $_POST["per_page"],
+          "nav_depth" => $_POST["nav_depth"],
+          "palette" => $_POST["palette"],
         ];
 
         $data = @unserialize($option->value);
