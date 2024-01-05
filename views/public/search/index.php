@@ -44,7 +44,6 @@ echo get_view()->partial($layout->getViewPartial(), [
   "exhibit" => $exhibit,
   "exhibit_theme_options" => $exhibit_theme_options,
   "exhibitPage" => $exhibitPage,
-  "item_route" => $item_route,
   "options" => $options,
   "slug" => $microsite->params->paramsArray["slug"],
   "text" => $block->text,

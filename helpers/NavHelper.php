@@ -3,7 +3,7 @@ namespace ExhibitMicrosite\Helpers;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 
 /**
- * The Exhibit Microsite NavHelper class.
+ * Exhibit Microsite NavHelper class.
  * @description Tasks associated with the Exhibit Microsite's navigation.
  * @package ExhibitMicrosite
  */
@@ -33,16 +33,20 @@ class NavHelper
   * @description Returns HTML for Top level Exhibit Page links
   * @param string $wrapper the html wrapper tag for the links. Default is ul.
   */
-  public function topPagesHtml($wrapper = "ul")
+  public function topPagesHtml($wrapper = "ul",$options = ["tag" => "li"])
   {
     $wrapper = str_replace(['<','>'],"",$wrapper);
     $wrapper = strtolower($wrapper);
-    $options = [];
-    $options["tag"] = "li";
+    $options["tag"]= str_replace(['<','>'],"",$options["tag"]);
+    $options["tag"] = strtolower($options["tag"]);
     $html = "<{$wrapper}>\n";
 
+    // If the Exhibit for this microsite uses a summary page, start the nav with it.
     if ($this->microsite->exhibit->use_summary_page) {
       if ($this->microsite->options["summary_in_nav"]) {
+
+        $current = ($this->microsite->exhibit->slug == $this->microsite->params->slug) ? " current" : "";
+
         $options["display_title"] = !empty($this->microsite->options["summary_alt_title"])
           ? $this->microsite->options["summary_alt_title"]
           : $this->microsite->exhibit->title;
@@ -50,26 +54,24 @@ class NavHelper
         $options["routing"]["action"] = "summary";
         $options["routing"]["controller"] = "default";
         $options["routing"]["slug"] = $this->microsite->params->slug;
-        $options["atts"] = [ "class" => "nav-ems_exhibitLanding"];
+        $options["atts"] = [ "class" => $current . "nav-ems_exhibitLanding " . $this->microsite->params->slug];
         $options["data_slug"] = $this->microsite->params->slug;
-        $options["current"] =
-        $this->microsite->exhibit->slug == $this->microsite->params->slug
-          ? ' class="current ' .  $this->microsite->exhibit->slug . '"'
-          : ' class="' .  $this->microsite->exhibit->slug. '"';
         $html.= $this->text_link($options);
       }
     }
 
+    // Loop through the exhibit top pages and create links for each.
+    // To customize this, add a switch statement based on the page slug.
     foreach ($this->top_pages as $key => $page) {
+
+      $current = ($page->slug == $this->microsite->params->page_slug_1) ? "current " . $page->slug : $page->slug;
       $options = [];
       $options["atts"] = [];
       $options["img"]["atts"] = [];
       $options["tag"] = "li";
 
       switch ($page->slug) {
-
         case "search":
-
           $options["routing"]["action"] = "show";
           $options["routing"]["controller"] = "exhibitpage";
           $options["routing"]["slug"] = $this->microsite->params->slug;
@@ -77,51 +79,52 @@ class NavHelper
           $options["data_slug"] = $page->slug;
           $options["display_title"] = ($page->short_title) ? $page->short_title: $page->title;
           $options["route"] = "ems_exhibitPage1";
+          $options["atts"] = ["class" => $current];
           $options["img"]["atts"] = ["id" => "search-icon",
                                       "src" => WEB_RELATIVE_THEME . "/border-narrative/img/icons/search_FILL0_wght400_GRAD0_opsz24.svg",
                                     "title" => __("Search"),
                                   "alt" => __("Search icon")
                                 ];
-
-          $options["current"] =
-          $page->slug == $this->microsite->params->page_slug_1
-            ? ' class="current ' . $page->slug . '"'
-            : ' class="' . $page->slug . '"';
           $html.= $this->image_link($options);
           break;
 
-        default:
+          case "es":
+          $options["routing"]["action"] = "show";
+          $options["routing"]["controller"] = "exhibitpage";
+          $options["routing"]["slug"] = $this->microsite->params->slug;
+          $options["routing"]["page_slug_1"] = $page->slug;
+          $options["data_slug"] = $page->slug;
+          $options["display_title"] = ($page->short_title) ? $page->short_title: $page->title;
+          $options["route"] = "ems_exhibitPage1";
+          $options["atts"] = ["class" => $current . " lang"];
+          $html.= $this->text_link($options);
+          break;
 
+          default:
           $options["routing"]["action"] = "show";
           $options["routing"]["controller"] = "exhibitpage";
           $options["routing"]["slug"] = $this->microsite->params->slug;
           $options["routing"]["page_slug_1"] = $page->slug;
           $options["data_slug"] = $page->slug;
           $options["route"] = "ems_exhibitPage1";
+          $options['atts'] = ["class" => $current];
           $options["display_title"] = ($page->short_title) ? $page->short_title: $page->title;
-          $options["current"] =
-            $page->slug == $this->microsite->params->page_slug_1
-              ? ' class="current ' . $page->slug . '"'
-              : ' class="' . $page->slug . '"';
-
           $html.= $this->text_link($options);
           break;
       }
     }
-
-    $html.= ' <li class="lang"><a href="#">Español</a></li>' . "\n";
     $html.="</{$wrapper}";
     return $html;
   }
 
 
   /**
-   * @Description return html for an image link.
+   * @description Return html for an image link.
    * @param array $options
    * @return string
    */
   public function image_link($options) {
-      $html = "<" . $options["tag"] . $options['current'] . 'data-target="' . $options['data_slug'] . '" data-slug="' . $options['data_slug'];
+      $html = "<" . $options["tag"];
        foreach($options["atts"] as $att => $value ) {
          $html.= ' ' . $att . '="' . $value . '"';
        }
@@ -138,12 +141,12 @@ class NavHelper
   }
 
   /**
-   * @Description return html for a text link.
+   * @description return html for a text link.
    * @param array $options
    * @return string
    */
   public function text_link($options) {
-      $html = "<" . $options["tag"] . $options['current'] . ' data-slug="' . $options['data_slug'];
+      $html = "<" . $options["tag"];
       foreach($options["atts"] as $att => $value ) {
         $html.= ' ' . $att . '="' . $value . '"';
       }
