@@ -55,4 +55,20 @@ echo get_view()->partial($layout->getViewPartial(), [
 ?>
 <?php endforeach; ?>
 </div><!-- end .flex-blocks-wrapper -->
+<?php
+
+$search = [
+  "form_attributes" => [],
+  "show_advanced" => false,
+  "submit_value" => __("Search")
+];
+
+$filters = [ "record_types" => get_custom_search_record_types(),
+  "query" => "keyword",
+  "query_type" => get_option("search_query_type") ];
+$query_types = get_search_query_types();
+
+
+echo $this->view->partial("search/simple-search.php",["options"=>$search,"filters" => $filters]);?>
+
 <?php echo foot(); ?>

@@ -2,7 +2,7 @@
 
 /**
  * Intercept get_theme_option calls to allow theme settings on a per-Exhibit basis.
- *
+ * If no exhibit found, return active theme options.
  * @param string $themeOptions Serialized array of theme options
  */
 function microsite_theme_options($themeOptions)
@@ -26,7 +26,9 @@ function microsite_theme_options($themeOptions)
 }
 
 /**
- * @description If $data is not a string,
+ *
+ * @description Determine if a string is a serialized object or array.
+ *  If $data is not a string,
  *  then returned value will always be false.
  *  Serialized data is always a string.
  * @param string $data  Required Value to check
@@ -117,6 +119,10 @@ if (!function_exists("maybe_unserialize")) {
   }
 }
 
+/**
+ * @description Return the theme options saved for the current Exhibit.
+ * @return array.
+ */
 if (!function_exists("currentExhibitThemeOptions")) {
   function currentExhibitThemeOptions()
   {

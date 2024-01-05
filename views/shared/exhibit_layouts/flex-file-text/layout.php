@@ -12,7 +12,7 @@ $attachments = $block->getAttachments();
 // $attachment->Item->Files
 
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/public/option-defaults.php";
+"/views/public/sitewide/option-defaults.php";
 ?>
 <div class="block block-flex-values<?php echo "$block_flex_file_text_values"; ?>">
 <?php foreach ($attachments as $key => $attachment):

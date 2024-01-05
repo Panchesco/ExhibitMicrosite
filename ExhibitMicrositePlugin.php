@@ -3,30 +3,16 @@
  * @package ExhibitMicrosite
  * @category plugin
  */
-
-if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
-  define("EXHIBIT_MICROSITE_PLUGIN_DIR", dirname(__FILE__));
-}
-
-//require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitFunctions.php";
-//require_once PLUGIN_DIR . "/ExhibitBuilder/helpers/ExhibitPageFunctions.php";
-require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
-require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
-require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/helpers/ExhibitMicrositeHelper.php";
-require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/BreadcrumbHelper.php";
-require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/NavHelper.php";
-
 class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
 {
   public $options;
   protected $_hooks = [
     "install",
-    "config_form",
-    "define_acl",
     "uninstall",
-    "define_routes",
+    "define_acl",
     "admin_head",
+    "config_form",
+    "define_routes",
     "after_delete_record",
   ];
   protected $_filters = [
@@ -36,13 +22,30 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     "item_citation",
   ];
 
+  function __construct(){
+
+    if (!defined("EXHIBIT_MICROSITE_PLUGIN_DIR")) {
+      define("EXHIBIT_MICROSITE_PLUGIN_DIR", dirname(__FILE__));
+    }
+    if( ! defined("DIRECTORY_SEPARATOR") ) {
+      define("DIRECTORY_SEPARATOR", "/");
+    }
+
+    require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/functions.php";
+    require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/ParamsHelper.php";
+    require_once EXHIBIT_MICROSITE_PLUGIN_DIR .
+    "/helpers/ExhibitMicrositeHelper.php";
+    require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/BreadcrumbHelper.php";
+    require_once EXHIBIT_MICROSITE_PLUGIN_DIR . "/helpers/NavHelper.php";
+  }
+
   protected function hookInstall()
   {
-    //$this->_installOptions();
+    return true;
   }
   public function hookUninstall()
   {
-    //$this->_uninstallOptions();
+    return true;
   }
 
   public function hookConfig($args)
@@ -90,38 +93,13 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         $this->_emsDomObject();
       }
 
-      // Todo - These values need to be stored via the config form for the plugin,
-      // so users can edit.
-      $options["palette"] = [
-        "#8B0015",
-        "#AB0520",
-        "#9D5A20",
-        "#EBD999",
-        "#F4EDE5",
-        "#4A634E",
-        "#001c48",
-        "#0c234b",
-        "#1E5288",
-        "#E2E9EB",
-        "#222222",
-        "#212529",
-        "#343A40",
-        "#495057",
-        "#6C757D",
-        "#ADB5BD",
-        "#CED4DA",
-        "#DEE2E6",
-        "#E9ECEF",
-        "#F8F9FA",
-        "#FFFFFF",
-      ];
-      $json = json_encode($options, JSON_PRETTY_PRINT);
-      ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
+      $this->_emsDomObject();
     }
   }
 
   protected function _emsDomObject()
   {
+    $options = [];
     $exhibit_id = false;
     $request = Zend_Controller_Front::getInstance()->getRequest();
     // If we're adding a page, get the exhibit_id from the
@@ -142,35 +120,48 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
           "ExhibitPage",
           $request->getParam("id")
         );
-        $exhibit_id = $exhibitPage->exhibit_id;
+        if($exhibitPage) {
+          $exhibit_id = $exhibitPage->exhibit_id;
+        }
       }
     }
 
     if ($exhibit_id) {
-      $options = $this->_getExhibitOptions($exhibit_id);
-      $palette = $this->_emsPalette($options);
+      $options = $this->_getMicrositeExhibitOptions($exhibit_id);
+      if( isset($options['palette']) ) {
+        $options['palette'] = $this->_emsPalette($options['palette']);
+      } else {
+        $options['palette'] = [];
+      }
     }
+      $json = json_encode($options, JSON_PRETTY_PRINT);
+    ?><script>const exhibitMicrosite = <?php echo $json; ?></script><?php
   }
 
-  protected function _emsPalette($options)
+  /**
+  * @description Return the palette hex values from the ExhibitMicrosite config options.
+  * @param string $palette_string comma separated list of hex values.
+  * @return array array of hex values.
+  */
+  protected function _emsPalette($palette_string)
   {
     $data = [];
-    if (isset($options["palette"])) {
-      $values = explode(",", $options["palette"]);
+    if (is_string($palette_string)) {
+      $values = explode(",", $palette_string);
       foreach ($values as $key => $hex) {
         if (preg_match("/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/", $hex)) {
           $data[] = $hex;
         }
       }
     }
+    return $data;
   }
 
-  protected function _getExhibitOptions($exhibit_id)
+  protected function _getMicrositeExhibitOptions($exhibit_id)
   {
     // Get the ExhibitMicrosite options.
     if (is_numeric($exhibit_id)) {
       $db = get_db();
-
       $sql =
         "SELECT `value` FROM {$db->prefix}options WHERE 1
         AND `name` = 'exhibit_microsite[" .
@@ -178,7 +169,6 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         "]'
         LIMIT 1
         ";
-
       $row = $db->getTable("Option")->fetchRow($sql);
       return maybe_unserialize($row["value"]);
     }
@@ -217,9 +207,12 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
     return array_merge($ems, $layouts);
   }
 
+  /**
+   * Define the routes the ExhibitMicrosite plugin uses.
+  */
   function hookDefineRoutes($args)
   {
-    //Don't add these routes on the admin side to avoid conflicts.
+    // Don't add these routes on the admin side to avoid conflicts.
     if (is_admin_theme()) {
       return;
     }
@@ -229,17 +222,13 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
       return;
     }
 
-    $router = $args["router"];
-    $router->addConfig(
-      new Zend_Config_Ini(
-        EXHIBIT_MICROSITE_PLUGIN_DIR . "/routes.ini",
-        "routes"
-      )
-    );
+    $router = $args['router'];
+    $router->addConfig(new Zend_Config_Ini(EXHIBIT_MICROSITE_PLUGIN_DIR .
+        DIRECTORY_SEPARATOR . 'routes.ini', 'routes'));
   }
 
   /**
-   * Define the ACL.
+   * @description Define the ACL.
    *
    * @param Omeka_Acl
    */
@@ -333,22 +322,25 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
   }
 
   /**
-   * Confirms the current URI is that of a microsite.
+   * Confirms the current URI is that of a MicrositeExhibit
+   * by querying the options table.
    * @return boolean.
    */
   protected function _is_microsite()
   {
-    // Get the microsite IDs from the options table.
+    // Get the all microsite IDs from the options table.
     $ems = [];
     $db = get_db();
     $sql = "SELECT id,name,value FROM `{$db->prefix}options` WHERE 1 AND name REGEXP 'exhibit_microsite\\[\[0-9]+\\]'";
     $rows = $db->getTable("Option")->fetchAll($sql);
+    // Loop through the MicrositeExhibit rows.
     if ($rows) {
       foreach ($rows as $row) {
         $this->options = maybe_unserialize($row["value"]);
-
+        // Extract the exhibit id from the option name value.
         if (isset($row["name"])) {
           $id = str_replace(["exhibit_microsite[", "]"], "", $row["name"]);
+          // Get the Exhibit object and set it to an associative array of exhibit slugs and ids.
           $exhibit = get_record_by_id("Exhibit", $id);
           if ($exhibit) {
             $ems[$exhibit->slug] = $exhibit->id;
@@ -356,7 +348,7 @@ class ExhibitMicrositePlugin extends Omeka_Plugin_AbstractPlugin
         }
       }
     }
-    // We need to confirm the current request is a microsite before adding the routes.
+    // Compare the slugs in the array against the current URI.
     $uri = htmlentities($_SERVER["REQUEST_URI"]);
     foreach ($ems as $slug => $exhibit_id) {
       if (strpos($uri, $slug, 0) !== false) {

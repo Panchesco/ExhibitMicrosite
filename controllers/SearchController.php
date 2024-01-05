@@ -61,13 +61,11 @@ class ExhibitMicrosite_SearchController extends
   }
 
   /**
-   * If the exhibit summary option is active, show the summary page.
-   * If not, redirect to the first page to the exhibit pages.
+  * Renders the Search page.
    */
   public function showAction()
   {
-    // If the exhibit uses the summary page, display that now.
-    echo $this->view->partial("exhibit-pages/search.php", [
+    echo $this->view->partial("search/index.php", [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,

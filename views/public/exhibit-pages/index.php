@@ -24,6 +24,7 @@ echo $this->view->partial("microsite-header.php", [
 <?php echo $this->view->partial("exhibit-pages/index-listing.php", [
   "refUri" => $refUri,
   "microsite" => $microsite,
+  "exhibitPage" => $exhibitPage
 ]); ?>
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php

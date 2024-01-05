@@ -3,10 +3,10 @@
 // In the global nav we'll need to get the ExhibitPage object if we're not on the Projects page.
 $exhibitPage = isset($exhibitPage)
   ? $exhibitPage
-  : get_record("ExhibitPage", ["exhibit_id" => 8, "slug" => "collections"]);
+  : get_record("ExhibitPage", ["exhibit_id" => $microsite->options['exhibit_id'], "slug" => "collections"]);
 $child_pages = $exhibitPage->getChildPages();
 ?>
-<div class="container">
+<div class="container g-0">
     <div class="d-flex flex-wrap">
   <?php foreach ($child_pages as $page):
     $file = exhibitPage_first_file_image($page); ?>

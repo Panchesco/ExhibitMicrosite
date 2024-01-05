@@ -19,16 +19,16 @@ $options["col-span"] = isset($options["col-span"]) ? $options["col-span"] : 6;
 
 
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/palettes.php";
+  "/views/admin/layout-options/palettes.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/col-span.php";
+  "/views/admin/layout-options/col-span.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/justify-content.php";
+  "/views/admin/layout-options/justify-content.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/align-self.php";
+  "/views/admin/layout-options/align-self.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/flex-direction.php";
+  "/views/admin/layout-options/flex-direction.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/padding.php";
+  "/views/admin/layout-options/padding.php";
 ?>
 </div>

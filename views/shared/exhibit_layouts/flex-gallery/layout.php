@@ -8,7 +8,7 @@ foreach ($attachments as $key => $row) {
 }
 
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/public/option-defaults.php";
+"/views/public/sitewide/option-defaults.php";
 ?>
 <!---- Begin gallery layout -->
 <div id="block-<?php echo $block->id; ?>" class="ems-gallery">

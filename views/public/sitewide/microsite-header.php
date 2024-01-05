@@ -50,7 +50,7 @@
                 href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap"
                 media="print" onload="this.media='all'" />
     <?php
-    queue_css_file(["bootstrap", "default"]);
+    queue_css_file(["bootstrap", "style.min"]);
     echo head_css();
     ?>
     <!-- JavaScripts -->
@@ -66,11 +66,6 @@
     $header_logo_alt = isset($header_logo_alt) ? $header_logo_alt : "";
     $header_layout = isset($header_layout) ? $header_layout : "logo-left";
     ?>
-    <style>
-
-
-
-    </style>
 </head>
  <?php echo body_tag([
    "id" => @$bodyid,

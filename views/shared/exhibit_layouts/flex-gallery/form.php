@@ -23,14 +23,14 @@ $options = $block->getOptions();
 
 
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/flex-gallery-palettes.php";
+  "/views/admin/layout-options/flex-gallery-palettes.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/flex-file-text-colors.php";
+  "/views/admin/layout-options/flex-file-text-colors.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/padding.php";
+  "/views/admin/layout-options/padding.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/flex-gallery-items.php";
+  "/views/admin/layout-options/flex-gallery-items.php";
 include EXHIBIT_MICROSITE_PLUGIN_DIR .
-  "/includes/layout-options/admin/thumbs-heading.php";
+  "/views/admin/layout-options/thumbs-heading.php";
 ?>
 </div><!-- end .layout-options -->
