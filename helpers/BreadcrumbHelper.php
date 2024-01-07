@@ -95,23 +95,25 @@ class BreadcrumbHelper
         "slug" => $this->params->page_slug_1,
       ]);
 
-      $this->data[] = [
-        "atts" => [
-          "class" => "",
-          "data-target" => "",
-        ],
-        "title" => $this->exhibitPage_1->title,
-        "slug" => $this->exhibitPage_1->slug,
-        "url" => url(
-          [
-            "action" => "show",
-            "controller" => "exhibitpage",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->exhibitPage_1->slug,
+      if($this->exhibitPage_1) {
+        $this->data[] = [
+          "atts" => [
+            "class" => "",
+            "data-target" => "",
           ],
-          "ems_exhibitPage1"
-        ),
-      ];
+          "title" => ($this->exhibitPage_1->short_title) ? $this->exhibitPage_1->short_title : $this->exhibitPage_1->title,
+          "slug" => $this->exhibitPage_1->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "exhibitpage",
+              "slug" => $this->exhibit->slug,
+              "page_slug_1" => $this->exhibitPage_1->slug,
+            ],
+            "ems_exhibitPage1"
+          ),
+        ];
+      }
     }
   }
 
@@ -123,21 +125,23 @@ class BreadcrumbHelper
         "slug" => $this->params->page_slug_2,
       ]);
 
-      $this->data[] = [
-        "atts" => [],
-        "title" => $this->exhibitPage_2->title,
-        "slug" => $this->exhibitPage_2->slug,
-        "url" => url(
-          [
-            "action" => "show",
-            "controller" => "exhibitpage",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->exhibitPage_1->slug,
-            "page_slug_2" => $this->exhibitPage_2->slug,
-          ],
-          "ems_exhibitPage2"
-        ),
-      ];
+      if($this->exhibitPage_2) {
+        $this->data[] = [
+          "atts" => [],
+          "title" => $this->exhibitPage_2->title,
+          "slug" => $this->exhibitPage_2->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "exhibitpage",
+              "slug" => $this->exhibit->slug,
+              "page_slug_1" => $this->exhibitPage_1->slug,
+              "page_slug_2" => $this->exhibitPage_2->slug,
+            ],
+            "ems_exhibitPage2"
+          ),
+        ];
+      }
     }
   }
 
@@ -148,23 +152,24 @@ class BreadcrumbHelper
         "exhibit_id" => $this->exhibit->id,
         "slug" => $this->params->page_slug_3,
       ]);
-
-      $this->data[] = [
-        "atts" => [],
-        "title" => $this->exhibitPage_3->title,
-        "slug" => $this->exhibitPage_3->slug,
-        "url" => url(
-          [
-            "action" => "show",
-            "controller" => "exhibitpage",
-            "slug" => $this->exhibit->slug,
-            "page_slug_1" => $this->exhibitPage_1->slug,
-            "page_slug_2" => $this->exhibitPage_2->slug,
-            "page_slug_3" => $this->exhibitPage_3->slug,
-          ],
-          "ems_exhibitPage3"
-        ),
-      ];
+    if($this->exhibitPage_3) {
+          $this->data[] = [
+            "atts" => [],
+            "title" => $this->exhibitPage_3->title,
+            "slug" => $this->exhibitPage_3->slug,
+            "url" => url(
+              [
+                "action" => "show",
+                "controller" => "exhibitpage",
+                "slug" => $this->exhibit->slug,
+                "page_slug_1" => $this->exhibitPage_1->slug,
+                "page_slug_2" => $this->exhibitPage_2->slug,
+                "page_slug_3" => $this->exhibitPage_3->slug,
+              ],
+              "ems_exhibitPage3"
+            ),
+          ];
+      }
     }
   }
 

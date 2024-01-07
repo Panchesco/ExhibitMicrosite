@@ -177,68 +177,7 @@ class ExhibitMicrositeHelper
     $this->total_pages = ceil(intval($total_rows) / intval($this->per_page));
   }
 
-  //   function urlArray()
-  //   {
-  //     $data = [];
-  //     if ($this->params->slug) {
-  //       $data["landing"] = [
-  //         "url" => url(
-  //           ["action" => "show", "slug" => $this->exhibit->slug],
-  //           "ems_exhibitLanding"
-  //         ),
-  //         "title" => $this->exhibit->title,
-  //       ];
-  //     }
-  //
-  //     if ($this->params->page_slug_1) {
-  //       $data["page_1"] = [
-  //         "url" => url(
-  //           [
-  //             "action" => "show",
-  //             "slug" => $this->exhibit->slug,
-  //             "page_slug_1" => $this->params->page_slug_1,
-  //           ],
-  //           "ems_exhibitPage1"
-  //         ),
-  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_1])
-  //           ->title,
-  //       ];
-  //     }
-  //
-  //     if ($this->page_slug_2) {
-  //       $data["page_2"] = [
-  //         "url" => url(
-  //           [
-  //             "action" => "show",
-  //             "slug" => $this->exhibit->slug,
-  //             "page_slug_1" => $params->page_slug_1,
-  //             "page_slug_2" => $this->page_slug_2,
-  //           ],
-  //           "ems_exhibitPage2"
-  //         ),
-  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_2])
-  //           ->title,
-  //       ];
-  //     }
-  //
-  //     if ($this->page_slug_3) {
-  //       $data["page_3"] = [
-  //         "url" => url(
-  //           [
-  //             "action" => "show",
-  //             "slug" => $this->exhibit->slug,
-  //             "page_slug_1" => $this->page_slug_1,
-  //             "page_slug_2" => $this->page_slug_2,
-  //             "page_slug_3" => $this->page_slug_3,
-  //           ],
-  //           "ems_exhibitPage3"
-  //         ),
-  //         "title" => get_record("ExhibitPage", ["slug" => $this->page_slug_3])
-  //           ->title,
-  //       ];
-  //     }
-  //     return $data;
-  //   }
+
 
   /**
    * Returns a canonical URL for the current page.
@@ -699,7 +638,15 @@ class ExhibitMicrositeHelper
       PUBLIC_THEME_DIR .
       "/" .
       $this->exhibit->theme .
-      "/exhibit-microsite/views",
+      "/exhibit-microsite/views/public/exhibit-pages",
+      PUBLIC_THEME_DIR .
+      "/" .
+      $this->exhibit->theme .
+      "/exhibit-microsite/views/public/sitewide",
+      PUBLIC_THEME_DIR .
+      "/" .
+      $this->exhibit->theme .
+      "/exhibit-microsite/views/public",
     ];
 
     foreach ($paths as $path) {

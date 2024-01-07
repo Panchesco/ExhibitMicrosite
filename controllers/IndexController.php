@@ -50,7 +50,6 @@ class ExhibitMicrosite_IndexController extends
         $data[$key]["microsite_subheading"] = $option->microsite_subheading;
         $data[$key]["summary_in_nav"] = $option->summary_in_nav;
         $data[$key]["exhibit_slug"] = $exhibit->slug;
-        $data[$key]["collection_page_title"] = $exhibit->slug;
         $data[$key]["layout_preference"] = $option->layout_preference;
         $data[$key]["palette"] = html_entity_decode($option->palette);
         $data[$key]["titles_separator"] = $option->titles_separator;
@@ -63,11 +62,6 @@ class ExhibitMicrosite_IndexController extends
           isset($values["updated"]) & !empty($values["updated"])
             ? $values["updated"]
             : null;
-        $data[$key]["collection_page_title"] =
-          isset($values["collection_page_title"]) &
-          !empty($values["collection_page_title"])
-            ? $values["collection_page_title"]
-            : __("Collection");
         $data[$key]["per_page"] =
           isset($values["per_page"]) & !empty($values["per_page"])
             ? $values["per_page"]
@@ -146,7 +140,6 @@ class ExhibitMicrosite_IndexController extends
     $formData["id"] = $option["id"];
     $formData["exhibit_id"] = $values["exhibit_id"];
     $formData["collection_id"] = $values["collection_id"];
-    $formData["collection_page_title"] = $values["collection_page_title"];
     $formData["microsite_title"] = $values["microsite_title"];
     $formData["microsite_subheading"] = $values["microsite_subheading"];
     $formData["summary_in_nav"] = $values["summary_in_nav"];
@@ -277,19 +270,6 @@ class ExhibitMicrosite_IndexController extends
       "required" => true,
     ]);
 
-    $form->addElementToEditGroup("text", "collection_page_title", [
-      "id" => "exhibit-microsite-collection-page-title",
-      "class" => "exhibit-microsite-options",
-      "value" => isset($option["collection_page_title"])
-        ? $option["collection_page_title"]
-        : __("Collection"),
-      "data-record_type" => "collection-page-title",
-      "label" => __("Collection Page Title"),
-      "description" => __(
-        "What title should appear on the Collection browse page?"
-      ),
-    ]);
-
     $form->addElementToEditGroup("text", "microsite_title", [
       "id" => "exhibit-microsite-title",
       "class" => "exhibit-microsite-options",
@@ -363,17 +343,6 @@ class ExhibitMicrosite_IndexController extends
       ),
     ]);
 
-    // $form->addElementToEditGroup("select", "nav_depth", [
-    //   "id" => "exhibit-microsite-nav-depth",
-    //   "class" => "exhibit-microsite-options",
-    //   "value" => isset($option["nav_depth"]) ? $option["nav_depth"] : 1,
-    //   "label" => __("Global Nav Depth"),
-    //   "description" => __(
-    //     "Depth of Exhibit Pages to include in the global navigation. If the exhibit starts on the summary page, that will be the first nav link."
-    //   ),
-    //   "required" => true,
-    //   "multiOptions" => [1 => 1, 2 => 2, 3 => 3],
-    // ]);
 
     $form->addElementToEditGroup("text", "palette", [
       "id" => "exhibit-microsite-palette",
@@ -382,7 +351,7 @@ class ExhibitMicrosite_IndexController extends
       "data-record_type" => "palette",
       "label" => __("Palette"),
       "description" => __(
-        "Enter a comma separated list of hex values to use in block palettes."
+        "Enter a comma separated list of hex values to use in the Flex block palettes."
       ),
       "required" => false,
     ]);
@@ -428,7 +397,7 @@ class ExhibitMicrosite_IndexController extends
     $rows = $db->getTable("Collection")->fetchAll($sql);
 
     foreach ($rows as $key => $row) {
-      $data[$row["id"]] = $row["text"];
+      $data[$row["id"]] = strip_tags($row["text"]);
     }
     return $data;
   }
@@ -463,9 +432,6 @@ class ExhibitMicrosite_IndexController extends
         $option->value = [
           "exhibit_id" => $_POST["exhibit_id"],
           "collection_id" => $_POST["collection_id"],
-          "collection_page_title" => htmlentities(
-            $_POST["collection_page_title"]
-          ),
           "microsite_title" => $_POST["microsite_title"],
           "microsite_subheading" => $_POST["microsite_subheading"],
           "summary_in_nav" => $_POST["summary_in_nav"],

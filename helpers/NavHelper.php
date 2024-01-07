@@ -13,16 +13,14 @@ class NavHelper
   function __construct($config = ["active_route" => ""])
   {
     $this->config = $config;
-
     $this->microsite = new ExhibitMicrositeHelper($config);
-
     $this->top_pages = $this->microsite->exhibit->getTopPages();
     $this->top_pages_html = $this->topPagesHtml();
   }
 
   /**
-   * @description Returns the top level Exhibit Pages for the current exhibit.
-   * @return array array of Omeka ExhibitBuilder Exhibit pages with no parents
+   * Returns the top level Exhibit Pages for the current exhibit.
+   * @return array - array of Omeka ExhibitBuilder Exhibit pages with no parents
    */
   public function topPagesData()
   {
@@ -30,7 +28,7 @@ class NavHelper
   }
 
   /**
-  * @description Returns HTML for Top level Exhibit Page links
+  * Returns HTML for Top level Exhibit Page links
   * @param string $wrapper the html wrapper tag for the links. Default is ul.
   */
   public function topPagesHtml($wrapper = "ul",$options = ["tag" => "li"])
@@ -45,8 +43,7 @@ class NavHelper
     if ($this->microsite->exhibit->use_summary_page) {
       if ($this->microsite->options["summary_in_nav"]) {
 
-        $current = ($this->microsite->exhibit->slug == $this->microsite->params->slug) ? " current" : "";
-
+        $current = ($this->microsite->exhibit->slug == $this->microsite->params->slug && ! $this->microsite->params->page_slug_1) ? "current "   : $this->microsite->exhibit->slug;
         $options["display_title"] = !empty($this->microsite->options["summary_alt_title"])
           ? $this->microsite->options["summary_alt_title"]
           : $this->microsite->exhibit->title;
@@ -61,7 +58,10 @@ class NavHelper
     }
 
     // Loop through the exhibit top pages and create links for each.
-    // To customize this, add a switch statement based on the page slug.
+    // To customize this, add a switch statement based on the page slug and
+    // pass options to either the image_link() or text_link() methods.
+    // Default switch branch is example of options array elements for text link;
+    // Search case switch branch is example of options to pass to image link.
     foreach ($this->top_pages as $key => $page) {
 
       $current = ($page->slug == $this->microsite->params->page_slug_1) ? "current " . $page->slug : $page->slug;
@@ -119,7 +119,7 @@ class NavHelper
 
 
   /**
-   * @description Return html for an image link.
+   * Return html for an image link.
    * @param array $options
    * @return string
    */
@@ -141,7 +141,7 @@ class NavHelper
   }
 
   /**
-   * @description return html for a text link.
+   * Return html for a text link.
    * @param array $options
    * @return string
    */
@@ -155,4 +155,5 @@ class NavHelper
       $html.= '</' . $options["tag"] . ">\n";
       return $html;
   }
-} // End ExhibitMicrosite_Nav class.
+}
+// End ExhibitMicrosite_Nav class.

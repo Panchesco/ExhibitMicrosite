@@ -1,16 +1,3 @@
-<?php
-/**
- * $title
- * $subheading
- * $bodyid
- * $bodyclass
- * $global_nav
- * $microsite
- * $view
- * $breadcrumb
- * $exhibit_theme_options
-*/
-?>
 <!DOCTYPE html>
 <html lang="<?php echo get_html_lang(); ?>">
 <head>
@@ -40,6 +27,7 @@
 
     <!-- Plugin Stuff -->
     <?php fire_plugin_hook("public_head", ["view" => $this]); ?>
+    <!-- Minimize Flashing of Google Fonts-->
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
           crossorigin />
@@ -49,8 +37,10 @@
     <link rel="stylesheet"
                 href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@200;400&family=Oswald:wght@200;300;400;600;700&display=swap"
                 media="print" onload="this.media='all'" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <?php
-    queue_css_file(["bootstrap", "style.min"]);
+    queue_css_file(["style"]);
     echo head_css();
     ?>
     <!-- JavaScripts -->

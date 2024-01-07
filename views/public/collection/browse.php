@@ -37,9 +37,7 @@ echo $this->view->partial("microsite-header.php", [
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
-<h1><?php echo isset($microsite_options["collection_page_title"])
-  ? $microsite_options["collection_page_title"]
-  : $exhibitPage->title; ?></h1>
+<h1><?php echo $exhibitPage->title; ?></h1>
   <div class="col-lg-8">
     <?php if (count($items) == 0): ?>
     <p><?php echo __(

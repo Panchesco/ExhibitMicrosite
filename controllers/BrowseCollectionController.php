@@ -1,11 +1,17 @@
 <?php
+/**
+ * Exhibit Microsite BrowseCollectionController
+ * @description Tasks for browsing collection items in an Exhibit
+ * via ems_collection route.
+ * @package ExhibitMicrosite
+ */
+
 use ExhibitMicrosite\Helpers\ParamsHelper;
 use ExhibitMicrosite\Helpers\ExhibitMicrositeHelper;
 use ExhibitMicrosite\Helpers\BreadcrumbHelper;
 use ExhibitMicrosite\Helpers\NavHelper;
 
-class ExhibitMicrosite_BrowseCollectionController extends
-  Omeka_Controller_AbstractActionController
+class ExhibitMicrosite_BrowseCollectionController extends Omeka_Controller_AbstractActionController
 {
   public $exhibit;
   public $exhibitPage;
@@ -116,6 +122,10 @@ class ExhibitMicrosite_BrowseCollectionController extends
     }
   }
 
+  /**
+   * Displays the Collections Browse page using Omeka's view->partial method.
+   *
+   */
   public function browseAction()
   {
     $this->init();
@@ -131,7 +141,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
     $this->view->exhibitPage = $this->exhibitPage;
 
-    echo $this->view->partial("collection/browse.php", [
+    // Pass variables the view partial will use.
+    $page_data = [
       "breadcrumb" => $this->breadcrumb->html,
       "canonicalURL" => $this->microsite->canonicalURL($this->route),
       "exhibit" => $this->exhibit,
@@ -156,7 +167,8 @@ class ExhibitMicrosite_BrowseCollectionController extends
       "filters_set" => $this->filters_set,
       "microsite" => $this->microsite,
       "nav" => $this->nav,
-    ]);
+    ];
+    echo $this->view->partial("collection/browse.php", $page_data );
     exit();
   }
 
@@ -215,7 +227,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
   }
 
   /**
-   * Set the total number of results found.
+   * Set the total number of results found to total_results property.
    */
   public function set_total_results()
   {
@@ -237,9 +249,10 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
   /**
    * Get items for the page meeting the filter criteria.
+   * @param string $limit SQL limit statement.
    * @return array of item_ids
    */
-  public function collectionItemIds($limit = "", $filters = [])
+  public function collectionItemIds($limit = "")
   {
     $data = [];
     if (!empty($this->microsite->options["collection_id"])) {
@@ -279,6 +292,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
   /**
    * Returns a clause to filter query by collection ids saved to session.
+   * @access protected
    * @param string $column column name to use in query.
    * @return string
    */
@@ -296,6 +310,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
   /**
    * Returns a clause to filter query by collection creators saved to o session.
+   * @access protected
    * @param string $column column name to use in query.
    * @return string
    */
@@ -312,6 +327,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
   /**
    * Returns an array of item ids that have been assigned the creator found in
    * the submitted filters.
+   * @access protected
    * @return array
    */
   protected function _creatorItemIds()
@@ -336,6 +352,7 @@ class ExhibitMicrosite_BrowseCollectionController extends
 
   /**
    * Returns a clause to filter query by item_type ids saved to session.
+   * @access protected
    * @param string $column column name to use in query.
    * @return string
    */
@@ -350,4 +367,5 @@ class ExhibitMicrosite_BrowseCollectionController extends
     }
     return "";
   }
-} // End CollectionController class
+}
+// End CollectionController class
