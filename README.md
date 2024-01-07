@@ -53,6 +53,7 @@ The Exhibit Microsite Flex layout blocks are available on all exhibit pages; how
 If you're PHP savvy, you can customize the Exhibit Microsite view files and add them to any theme, [much the same as you can customize Exhibit Builder view files](https://omeka.readthedocs.io/en/latest/Tutorials/extendingExhibitBuilder.html).
 The plugin will look for the files first inside the Exhibit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
 
+```
 ./exhibit-microsite
    /views
     /public
@@ -82,3 +83,4 @@ The plugin will look for the files first inside the Exhibit's active theme, so w
        header-nav.php
        option-defaults.php
        microsite-header.php
+```
