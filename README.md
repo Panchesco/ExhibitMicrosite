@@ -54,7 +54,7 @@ If you're PHP savvy, you can customize the Exhibit Microsite view files and add 
 The plugin will look for the files first inside the Exhibit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
 
 ```
-|____ExhibitMicrosite
+|____exhibit-microsite
 | |____views
 | | |____public
 | | | |____collection
