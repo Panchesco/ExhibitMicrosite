@@ -53,32 +53,32 @@ The Exhibit Microsite Flex layout blocks are available on all exhibit pages; how
 If you're PHP savvy, you can customize the Exhibit Microsite view files and add them to any theme, [much the same as you can customize Exhibit Builder view files](https://omeka.readthedocs.io/en/latest/Tutorials/extendingExhibitBuilder.html).
 The plugin will look for the files first inside the Exhibit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
 
-| ExhibitMicrosite
-| | views
-| | |public
-| | | | collection
-| | | | | filters
-| | | | | | item-types.php
-| | | | | | active-filters.php
-| | | | | | creator.php
-| | | | | | collection-id.php
-| | | | | browse.php
-| | | | exhibit-pages
-| | | | | index.php
-| | | | | show.php
-| | | | |index-listing.php
-| | | | search
-| | | | | index.php
-| | | | | advanced-search.php
-| | | | | simple-search.php
-| | | | exhibit
-| | | | | summary.php
-| | | | items
-| | | | | show.php
-| | | | | browse.php
-| | | | sitewide
-| | | | | search-form.php
-| | | | | pagination.php
-| | | | | header-nav.php
-| | | | | option-defaults.php
-| | | | | microsite-header.php
+./exhibit-microsite
+   /views
+    /public
+     /collection
+      /filters
+       item-types.php
+       active-filters.php
+       creator.php
+       collection-id.php
+      browse.php
+      /exhibit-pages
+       index.php
+       show.php
+       index-listing.php
+     /search
+       index.php
+       advanced-search.php
+       simple-search.php
+     /exhibit
+       summary.php
+     /items
+       show.php
+       browse.php
+     /sitewide
+       search-form.php
+       pagination.php
+       header-nav.php
+       option-defaults.php
+       microsite-header.php
