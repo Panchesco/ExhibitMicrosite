@@ -54,33 +54,33 @@ If you're PHP savvy, you can customize the Exhibit Microsite view files and add 
 The plugin will look for the files first inside the Exhibit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
 
 ```
-./exhibit-microsite
-   /views
-    /public
-     /collection
-      /filters
-       item-types.php
-       active-filters.php
-       creator.php
-       collection-id.php
-      browse.php
-      /exhibit-pages
-       index.php
-       show.php
-       index-listing.php
-     /search
-       index.php
-       advanced-search.php
-       simple-search.php
-     /exhibit
-       summary.php
-     /items
-       show.php
-       browse.php
-     /sitewide
-       search-form.php
-       pagination.php
-       header-nav.php
-       option-defaults.php
-       microsite-header.php
+|____ExhibitMicrosite
+| |____views
+| | |____public
+| | | |____collection
+| | | | |____filters
+| | | | | |____item-types.php
+| | | | | |____active-filters.php
+| | | | | |____creator.php
+| | | | | |____collection-id.php
+| | | | |____browse.php
+| | | |____exhibit-pages
+| | | | |____index.php
+| | | | |____show.php
+| | | | |____index-listing.php
+| | | |____search
+| | | | |____index.php
+| | | | |____advanced-search.php
+| | | | |____simple-search.php
+| | | |____exhibit
+| | | | |____summary.php
+| | | |____items
+| | | | |____show.php
+| | | | |____browse.php
+| | | |____sitewide
+| | | | |____search-form.php
+| | | | |____pagination.php
+| | | | |____header-nav.php
+| | | | |____option-defaults.php
+| | | | |____microsite-header.php
 ```
