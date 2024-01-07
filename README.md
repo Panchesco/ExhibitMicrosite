@@ -51,29 +51,34 @@ The Exhibit Microsite Flex layout blocks are available on all exhibit pages; how
 ### Editing Exhibit Microsite View Files
 
 If you're PHP savvy, you can customize the Exhibit Microsite view files and add them to any theme, [much the same as you can customize Exhibit Builder view files](https://omeka.readthedocs.io/en/latest/Tutorials/extendingExhibitBuilder.html).
-The plugin will look for the files first inside the Exhbit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
+The plugin will look for the files first inside the Exhibit's active theme, so within your theme, create an exhibit-microsite directory with the following structure:
 
-|\_**\_exhibit-microsite
-| |\_\_**views
-| | |\_**\_public
-| | | |\_\_**collection
-| | | | |\_**\_filters
-| | | | | |\_\_**item-types.php
-| | | | | |\_**\_active-filters.php
-| | | | | |\_\_**creator.php
-| | | | | |\_**\_collection-id.php
-| | | | |\_\_**browse.php
-| | | |\_**\_exhibit-pages
-| | | | |\_\_**index.php
-| | | | |\_**\_show.php
-| | | | |\_\_**index-listing.php
-| | | |\_**\_exhibit
-| | | | |\_\_**summary.php
-| | | |\_**\_items
-| | | | |\_\_**show.php
-| | | | |\_**\_browse.php
-| | | |\_\_**sitewide
-| | | | |\_**\_pagination.php
-| | | | |\_\_**header-nav.php
-| | | | |\_**\_option-defaults.php
-| | | | |\_\_**microsite-header.php
+| ExhibitMicrosite
+| | views
+| | |public
+| | | | collection
+| | | | | filters
+| | | | | | item-types.php
+| | | | | | active-filters.php
+| | | | | | creator.php
+| | | | | | collection-id.php
+| | | | | browse.php
+| | | | exhibit-pages
+| | | | | index.php
+| | | | | show.php
+| | | | |index-listing.php
+| | | | search
+| | | | | index.php
+| | | | | advanced-search.php
+| | | | | simple-search.php
+| | | | exhibit
+| | | | | summary.php
+| | | | items
+| | | | | show.php
+| | | | | browse.php
+| | | | sitewide
+| | | | | search-form.php
+| | | | | pagination.php
+| | | | | header-nav.php
+| | | | | option-defaults.php
+| | | | | microsite-header.php
