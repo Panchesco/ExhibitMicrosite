@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * NOTE: If a native Exhibit Builder default Gallery Block is rendering, and you're seeing a
@@ -8,7 +7,6 @@
  *
  * Wrap for non-ems blocks:
  */
-
 echo $this->view->partial("microsite-header.php", [
   "title" => $microsite->options["microsite_title"],
   "breadcrumb" => $breadcrumb,
@@ -24,12 +22,12 @@ echo $this->view->partial("microsite-header.php", [
   "breadcrumb" => $breadcrumb,
   "exhibit" => $exhibit,
   "exhibit_theme_options" => $exhibit_theme_options,
-  "exhibitPage" => $exhibitPage,
+  "exhibitPage" => $exhibitPage ? $exhibitPage : null,
 ]); ?>
 <nav id="breadcrumb">
  <?php echo $breadcrumb; ?>
 </nav>
-<h1><?php echo $exhibitPage->title; ?></h1>
+<?php if ($exhibitPage): ?><h1><?php echo $exhibitPage->title; ?></h1>
 <div class="flex-blocks-wrapper d-flex flex-wrap g-0">
 <?php foreach ($exhibitPage->ExhibitPageBlocks as $block): ?>
 <?php
@@ -54,5 +52,6 @@ echo get_view()->partial($layout->getViewPartial(), [
 ]);
 ?>
 <?php endforeach; ?>
+<?php endif; ?>
 </div><!-- end .flex-blocks-wrapper -->
 <?php echo foot(); ?>

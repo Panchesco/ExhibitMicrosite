@@ -95,13 +95,15 @@ class BreadcrumbHelper
         "slug" => $this->params->page_slug_1,
       ]);
 
-      if($this->exhibitPage_1) {
+      if ($this->exhibitPage_1) {
         $this->data[] = [
           "atts" => [
             "class" => "",
             "data-target" => "",
           ],
-          "title" => ($this->exhibitPage_1->short_title) ? $this->exhibitPage_1->short_title : $this->exhibitPage_1->title,
+          "title" => $this->exhibitPage_1->short_title
+            ? $this->exhibitPage_1->short_title
+            : $this->exhibitPage_1->title,
           "slug" => $this->exhibitPage_1->slug,
           "url" => url(
             [
@@ -125,7 +127,7 @@ class BreadcrumbHelper
         "slug" => $this->params->page_slug_2,
       ]);
 
-      if($this->exhibitPage_2) {
+      if ($this->exhibitPage_2) {
         $this->data[] = [
           "atts" => [],
           "title" => $this->exhibitPage_2->title,
@@ -152,23 +154,23 @@ class BreadcrumbHelper
         "exhibit_id" => $this->exhibit->id,
         "slug" => $this->params->page_slug_3,
       ]);
-    if($this->exhibitPage_3) {
-          $this->data[] = [
-            "atts" => [],
-            "title" => $this->exhibitPage_3->title,
-            "slug" => $this->exhibitPage_3->slug,
-            "url" => url(
-              [
-                "action" => "show",
-                "controller" => "exhibitpage",
-                "slug" => $this->exhibit->slug,
-                "page_slug_1" => $this->exhibitPage_1->slug,
-                "page_slug_2" => $this->exhibitPage_2->slug,
-                "page_slug_3" => $this->exhibitPage_3->slug,
-              ],
-              "ems_exhibitPage3"
-            ),
-          ];
+      if ($this->exhibitPage_3) {
+        $this->data[] = [
+          "atts" => [],
+          "title" => $this->exhibitPage_3->title,
+          "slug" => $this->exhibitPage_3->slug,
+          "url" => url(
+            [
+              "action" => "show",
+              "controller" => "exhibitpage",
+              "slug" => $this->exhibit->slug,
+              "page_slug_1" => $this->exhibitPage_1->slug,
+              "page_slug_2" => $this->exhibitPage_2->slug,
+              "page_slug_3" => $this->exhibitPage_3->slug,
+            ],
+            "ems_exhibitPage3"
+          ),
+        ];
       }
     }
   }
@@ -410,35 +412,41 @@ class BreadcrumbHelper
       $title = $this->exhibit->title;
     }
 
-    if ($this->route == "ems_exhibitPage2") {
-      $data["action"] = "show";
-      $data["controller"] = "exhibitpage";
-      $route = "ems_exhibitPage1";
-      $data["slug"] = $this->params->slug;
-      $data["page_slug_1"] = $this->params->page_slug_1;
-      $title = $this->exhibitPage_2->title;
+    if ($this->exhibitPage_2) {
+      if ($this->route == "ems_exhibitPage2") {
+        $data["action"] = "show";
+        $data["controller"] = "exhibitpage";
+        $route = "ems_exhibitPage1";
+        $data["slug"] = $this->params->slug;
+        $data["page_slug_1"] = $this->params->page_slug_1;
+        $title = $this->exhibitPage_2->title;
+      }
     }
 
-    if ($this->route == "ems_exhibitPage3") {
-      $data["action"] = "show";
-      $data["controller"] = "exhibitpage";
-      $route = "ems_exhibitPage2";
-      $data["slug"] = $this->params->slug;
-      $data["page_slug_1"] = $this->params->page_slug_1;
-      $data["page_slug_2"] = $this->params->page_slug_2;
-      $title = $this->exhibitPage_2->title;
+    if ($this->exhibitPage_2) {
+      if ($this->route == "ems_exhibitPage3") {
+        $data["action"] = "show";
+        $data["controller"] = "exhibitpage";
+        $route = "ems_exhibitPage2";
+        $data["slug"] = $this->params->slug;
+        $data["page_slug_1"] = $this->params->page_slug_1;
+        $data["page_slug_2"] = $this->params->page_slug_2;
+        $title = $this->exhibitPage_2->title;
+      }
     }
 
-    if ($this->route == "ems_show_file3") {
-      $data["action"] = "show";
-      $data["controller"] = "item";
-      $route = "ems_exhibitPage3";
-      $data["slug"] = $this->params->slug;
-      $data["page_slug_1"] = $this->params->page_slug_1;
-      $data["page_slug_2"] = $this->params->page_slug_2;
-      $data["page_slug_3"] = $this->params->page_slug_3;
-      $data["item_id"] = $this->params->item_id;
-      $title = $this->exhibitPage_3->title;
+    if ($this->exhibitPage_3) {
+      if ($this->route == "ems_show_file3") {
+        $data["action"] = "show";
+        $data["controller"] = "item";
+        $route = "ems_exhibitPage3";
+        $data["slug"] = $this->params->slug;
+        $data["page_slug_1"] = $this->params->page_slug_1;
+        $data["page_slug_2"] = $this->params->page_slug_2;
+        $data["page_slug_3"] = $this->params->page_slug_3;
+        $data["item_id"] = $this->params->item_id;
+        $title = $this->exhibitPage_3->title;
+      }
     }
 
     if ($this->route == "ems_show_file2") {
